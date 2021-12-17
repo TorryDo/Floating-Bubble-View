@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/homeLauncherMainIcon"
+        android:layout_width="@dimen/icon_main_size"
+        android:layout_height="@dimen/icon_main_size"
+
+        android:alpha="0.6"
+        android:background="@drawable/circle_shape"
+        android:src="@drawable/ic_rounded_blue_diamond"
+        />
+
+</FrameLayout>
