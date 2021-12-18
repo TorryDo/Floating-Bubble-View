@@ -1,12 +1,12 @@
 package com.torrydo.floatingbubble
 
-import com.torrydo.floatingbubble.main_icon.FloatingIcon
+import com.torrydo.floatingbubble.main_icon.FloatingBubbleIcon
 
 class FloatingBubble(
     bubbleBuilder: FloatingBubbleBuilder
 ) {
 
-    var floatingIcon = FloatingIcon(bubbleBuilder)
+    var floatingIcon = FloatingBubbleIcon(bubbleBuilder)
 
     fun show() {
         floatingIcon.show()
