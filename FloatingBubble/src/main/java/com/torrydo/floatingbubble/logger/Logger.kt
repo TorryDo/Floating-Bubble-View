@@ -1,11 +1,11 @@
 package com.torrydo.floatingbubble.logger
 
 import android.util.Log
-import com.torrydo.floatingbubble.utils.Utils
+import com.torrydo.floatingbubble.utils.toTag
 
 class Logger : ILogger {
 
-    private var TAG = Utils.getTagName()
+    private var TAG = javaClass.simpleName.toTag()
     private var isEnabled = false         // is Debug Enabled
 
     override fun setTag(tag: String): ILogger {
@@ -27,6 +27,12 @@ class Logger : ILogger {
     override fun log(message: String, throwable: Throwable) {
         if (isEnabled) {
             Log.e(TAG, message, throwable)
+        }
+    }
+
+    override fun error(message: String) {
+        if (isEnabled) {
+            Log.e(TAG, message)
         }
     }
 

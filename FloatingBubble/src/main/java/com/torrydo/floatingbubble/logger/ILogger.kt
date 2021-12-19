@@ -10,4 +10,6 @@ interface ILogger {
 
     fun log(message: String, throwable: Throwable){}
 
+    fun error(message: String){}
+
 }

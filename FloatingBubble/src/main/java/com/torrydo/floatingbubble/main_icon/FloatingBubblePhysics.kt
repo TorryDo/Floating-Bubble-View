@@ -1,8 +1,8 @@
 package com.torrydo.floatingbubble.main_icon
 
-import com.torrydo.floatingbubble.physics.FloatingViewTouchListener
+import com.torrydo.floatingbubble.physics.FloatingBubbleTouchListener
 
-class FloatingBubblePhysics : FloatingViewTouchListener {
+class FloatingBubblePhysics : FloatingBubbleTouchListener {
 
     
 

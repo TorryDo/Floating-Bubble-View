@@ -1,6 +1,6 @@
 package com.torrydo.floatingbubble.physics
 
-interface FloatingViewTouchListener {
+interface FloatingBubbleTouchListener {
 
     fun onUp(x: Float, y: Float){}
 
