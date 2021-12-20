@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.base
+package com.torrydo.floatingbubbleview.main.base
 
 import android.app.Service
 import android.content.Context

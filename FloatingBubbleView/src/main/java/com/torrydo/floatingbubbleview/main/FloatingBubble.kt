@@ -1,14 +1,16 @@
-package com.torrydo.floatingbubbleview
+package com.torrydo.floatingbubbleview.main
 
-import com.torrydo.floatingbubbleview.utils.logger.Logger
-import com.torrydo.floatingbubbleview.bubble.icon.FloatingBubbleIcon
+import com.torrydo.floatingbubbleview.main.bubble.icon.FloatingBubbleIcon
+import com.torrydo.floatingbubbleview.main.layout_view.ExpandableView
+import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewListener
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
 import com.torrydo.floatingbubbleview.utils.Constant
 import com.torrydo.floatingbubbleview.utils.ScreenInfo
+import com.torrydo.floatingbubbleview.utils.logger.Logger
 import com.torrydo.floatingbubbleview.utils.toTag
 
 class FloatingBubble(
-    bubbleBuilder: FloatingBubbleBuilder
+    private val bubbleBuilder: FloatingBubbleBuilder
 ) {
 
     private val logger = Logger()
@@ -20,10 +22,15 @@ class FloatingBubble(
         ScreenInfo.getScreenSize(bubbleBuilder.context)
     )
 
+    private var expandableView: ExpandableView? = null
+
     private var IS_BUBBLE_CLICKABLE = true
 
     init {
         addBubbleListener()
+        expandableView = bubbleBuilder.evBuilder
+            ?.setExpandableViewListener(CustomExpandableViewListener())
+            ?.build()
     }
 
     // public func ---------------------------------------------------------------------------------
@@ -61,6 +68,33 @@ class FloatingBubble(
             }
 
         })
+    }
+
+    inner class CustomExpandableViewListener : ExpandableViewListener {
+        override fun popToBubble() {
+
+            removeExpandableView()
+
+            logger.log("heelo from floating bubble service")
+        }
+    }
+
+    private fun removeExpandableView() {
+
+        expandableView?.let { nonNullExpandableView ->
+            nonNullExpandableView.remove()
+            this.show()
+            logger.log("removeExpandableViewAndPopToBubble triggered")
+        }
+    }
+
+    private fun showExpandableView() {
+
+        this.remove()
+
+        expandableView?.show()
+
+
     }
 
 }

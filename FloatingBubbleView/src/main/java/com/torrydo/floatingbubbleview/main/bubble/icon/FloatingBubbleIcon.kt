@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.bubble.icon
+package com.torrydo.floatingbubbleview.main.bubble.icon
 
 import android.annotation.SuppressLint
 import android.graphics.Point
@@ -7,9 +7,9 @@ import android.util.Size
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.WindowManager
-import com.torrydo.floatingbubbleview.FloatingBubbleBuilder
+import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
 import com.torrydo.floatingbubbleview.R
-import com.torrydo.floatingbubbleview.base.BaseFloatingView
+import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
 import com.torrydo.floatingbubbleview.physics.anim.MyAnimationHelper
@@ -19,8 +19,7 @@ import com.torrydo.transe.utils.anim.AnimState
 class FloatingBubbleIcon(
     bubbleBuilder: FloatingBubbleBuilder,
     private val screenSize: Size
-) :
-    BaseFloatingView(bubbleBuilder.context) {
+) : BaseFloatingView(bubbleBuilder.context) {
 
     private val TAG = javaClass.simpleName
 
@@ -32,7 +31,6 @@ class FloatingBubbleIcon(
     private val pointF = PointF(0f, 0f)
     private val newPoint = Point(0, 0)
 
-    private var IS_CLICKABLE = true
     private val screenHalfWidth = screenSize.width / 2
     private val screenHalfHeight = screenSize.height / 2
 

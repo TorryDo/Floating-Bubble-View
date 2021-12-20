@@ -1,7 +1,8 @@
-package com.torrydo.floatingbubbleview
+package com.torrydo.floatingbubbleview.main
 
 import android.content.Context
 import android.graphics.Bitmap
+import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewBuilder
 import com.torrydo.floatingbubbleview.utils.Extension.toBitmap
 
 class FloatingBubbleBuilder : IFloatingBubbleBuilder {
@@ -10,6 +11,8 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
 
     var iconBitmap: Bitmap? = null
     var iconRemoveBitmap: Bitmap? = null
+
+    var evBuilder: ExpandableViewBuilder? = null
 
     var bubleSize = 40
     var movable = true
@@ -39,6 +42,11 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
 
     override fun setRemoveIcon(bitmap: Bitmap): FloatingBubbleBuilder {
         iconRemoveBitmap = bitmap
+        return this
+    }
+
+    override fun setExpandableViewBuilder(evBuilder: ExpandableViewBuilder): FloatingBubbleBuilder {
+        this.evBuilder = evBuilder
         return this
     }
 

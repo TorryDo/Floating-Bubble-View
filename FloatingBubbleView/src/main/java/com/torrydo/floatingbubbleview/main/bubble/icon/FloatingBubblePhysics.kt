@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.bubble.icon
+package com.torrydo.floatingbubbleview.main.bubble.icon
 
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
 
