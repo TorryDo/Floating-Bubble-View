@@ -8,4 +8,6 @@ interface FloatingBubbleTouchListener {
 
     fun onMove(x: Int, y: Int){}
 
+    fun onClick(){}
+
 }

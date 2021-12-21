@@ -3,6 +3,7 @@ package com.torrydo.floatingbubbleview.main
 import android.content.Context
 import android.graphics.Bitmap
 import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewBuilder
+import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
 import com.torrydo.floatingbubbleview.utils.Extension.toBitmap
 
 class FloatingBubbleBuilder : IFloatingBubbleBuilder {
@@ -13,6 +14,8 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
     var iconRemoveBitmap: Bitmap? = null
 
     var evBuilder: ExpandableViewBuilder? = null
+
+    var listener: FloatingBubbleTouchListener? = object : FloatingBubbleTouchListener{}
 
     var bubleSize = 40
     var movable = true
@@ -47,6 +50,11 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
 
     override fun setExpandableViewBuilder(evBuilder: ExpandableViewBuilder): FloatingBubbleBuilder {
         this.evBuilder = evBuilder
+        return this
+    }
+
+    override fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): IFloatingBubbleBuilder {
+        this.listener = listener
         return this
     }
 

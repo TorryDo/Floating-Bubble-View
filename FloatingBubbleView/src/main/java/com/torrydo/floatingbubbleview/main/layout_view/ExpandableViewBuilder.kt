@@ -22,7 +22,7 @@ class ExpandableViewBuilder : IExpandableViewBuilder {
         return this
     }
 
-    override fun setExpandableViewListener(listener: ExpandableViewListener): ExpandableViewBuilder {
+    override fun addExpandableViewListener(listener: ExpandableViewListener): ExpandableViewBuilder {
         this.listener = listener
         return this
     }
@@ -31,6 +31,7 @@ class ExpandableViewBuilder : IExpandableViewBuilder {
         this.dim = dimAmount
         return this
     }
+
 
     override fun build(): ExpandableView {
         return ExpandableView(this)

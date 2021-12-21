@@ -17,7 +17,7 @@ import com.torrydo.floatingbubbleview.utils.getXYPointOnScreen
 import com.torrydo.transe.utils.anim.AnimState
 
 class FloatingBubbleIcon(
-    bubbleBuilder: FloatingBubbleBuilder,
+    private val bubbleBuilder: FloatingBubbleBuilder,
     private val screenSize: Size
 ) : BaseFloatingView(bubbleBuilder.context) {
 
@@ -25,7 +25,6 @@ class FloatingBubbleIcon(
 
     private var binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
-    private var touchListener: FloatingBubbleTouchListener = object : FloatingBubbleTouchListener {}
 
     private val prevPoint = Point(0, 0)
     private val pointF = PointF(0f, 0f)
@@ -49,9 +48,9 @@ class FloatingBubbleIcon(
         super.remove(binding.root)
     }
 
-    fun addViewListener(listener: FloatingBubbleTouchListener) {
-        touchListener = listener
-    }
+//    fun addBubbleIconListener(listener: FloatingBubbleTouchListener) {
+//        bubbleBuilder.listener = listener
+//    }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
@@ -67,7 +66,7 @@ class FloatingBubbleIcon(
                         pointF.x = motionEvent.rawX
                         pointF.y = motionEvent.rawY
 
-                        touchListener.onDown(prevPoint.x, prevPoint.y)
+                        bubbleBuilder.listener?.onDown(prevPoint.x, prevPoint.y)
 
                         return@setOnTouchListener true
                     }
@@ -85,7 +84,7 @@ class FloatingBubbleIcon(
                         windowParams!!.y = newPoint.y
                         update(binding.root)
 
-                        touchListener.onMove(newPoint.x, newPoint.y)
+                        bubbleBuilder.listener?.onMove(newPoint.x, newPoint.y)
 
                         return@setOnTouchListener true
                     }
@@ -100,7 +99,9 @@ class FloatingBubbleIcon(
                         windowParams!!.y = newPoint.y
                         update(binding.root)
 
-                        touchListener.onUp(newPoint.x, newPoint.y)
+                        bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
+
+                        animateIconToEdge(68) {}
 
                         return@setOnTouchListener true
                     }
