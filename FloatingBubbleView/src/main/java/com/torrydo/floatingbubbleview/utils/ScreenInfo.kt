@@ -63,5 +63,9 @@ object ScreenInfo {
         }
     }
 
+    fun getViewSize(){
+
+    }
+
 
 }

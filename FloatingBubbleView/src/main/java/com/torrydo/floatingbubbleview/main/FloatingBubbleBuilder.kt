@@ -15,7 +15,7 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
 
     var evBuilder: ExpandableViewBuilder? = null
 
-    var listener: FloatingBubbleTouchListener? = object : FloatingBubbleTouchListener{}
+    var listener: FloatingBubbleTouchListener? = null
 
     var bubleSize = 40
     var movable = true
@@ -53,8 +53,35 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
         return this
     }
 
-    override fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): IFloatingBubbleBuilder {
-        this.listener = listener
+    override fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): FloatingBubbleBuilder {
+        val tempListener = this.listener
+        this.listener = object : FloatingBubbleTouchListener{
+            override fun onClick() {
+                tempListener?.onClick()
+                listener.onClick()
+            }
+
+            override fun onDown(x: Int, y: Int) {
+                tempListener?.onDown(x, y)
+                listener.onDown(x, y)
+            }
+
+            override fun onMove(x: Int, y: Int) {
+                tempListener?.onMove(x, y)
+                listener.onMove(x, y)
+            }
+
+            override fun onUp(x: Int, y: Int) {
+                tempListener?.onUp(x, y)
+                listener.onUp(x, y)
+            }
+
+            override fun onDestroy() {
+                tempListener?.onDestroy()
+                listener.onDestroy()
+            }
+
+        }
         return this
     }
 

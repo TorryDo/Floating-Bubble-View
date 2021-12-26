@@ -10,7 +10,6 @@ abstract class FloatingBubbleService : FloatingBubbleConfig() {
 
     private lateinit var logger: ILogger
 
-
     override fun onCreate() {
         super.onCreate()
         logger = Logger().setTag(javaClass.simpleName.toTag()).setDebugEnabled(true)

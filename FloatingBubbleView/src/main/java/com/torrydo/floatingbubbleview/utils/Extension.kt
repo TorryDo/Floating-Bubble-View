@@ -16,6 +16,7 @@ object Extension {
 
 fun String.toTag() = "<> $this"
 
+// -x | x
 fun View.getXYPointOnScreen(): Point {
     val arr = IntArray(2)
     this.getLocationOnScreen(arr)

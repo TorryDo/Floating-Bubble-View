@@ -10,4 +10,6 @@ interface FloatingBubbleTouchListener {
 
     fun onClick(){}
 
+    fun onDestroy(){}
+
 }

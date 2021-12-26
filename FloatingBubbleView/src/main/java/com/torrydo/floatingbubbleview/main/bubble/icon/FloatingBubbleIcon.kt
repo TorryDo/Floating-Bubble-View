@@ -7,11 +7,10 @@ import android.util.Size
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.WindowManager
-import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
 import com.torrydo.floatingbubbleview.R
-import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
-import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
+import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
+import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
 import com.torrydo.floatingbubbleview.physics.anim.MyAnimationHelper
 import com.torrydo.floatingbubbleview.utils.getXYPointOnScreen
 import com.torrydo.transe.utils.anim.AnimState
@@ -23,7 +22,7 @@ class FloatingBubbleIcon(
 
     private val TAG = javaClass.simpleName
 
-    private var binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
+    var binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
 
     private val prevPoint = Point(0, 0)
@@ -47,10 +46,6 @@ class FloatingBubbleIcon(
     fun remove() {
         super.remove(binding.root)
     }
-
-//    fun addBubbleIconListener(listener: FloatingBubbleTouchListener) {
-//        bubbleBuilder.listener = listener
-//    }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
@@ -101,7 +96,7 @@ class FloatingBubbleIcon(
 
                         bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
 
-                        animateIconToEdge(68) {}
+//                        animateIconToEdge(68) {}
 
                         return@setOnTouchListener true
                     }
@@ -178,6 +173,7 @@ class FloatingBubbleIcon(
     override fun setupDefaultLayoutParams() {
         super.setupDefaultLayoutParams()
         windowParams?.apply {
+
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS

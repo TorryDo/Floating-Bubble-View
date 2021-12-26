@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+
+    android:paddingBottom="@dimen/margin_bigger"
     >
 
     <ImageView
@@ -11,12 +13,12 @@
         android:layout_width="@dimen/size_removeview"
         android:layout_height="@dimen/size_removeview"
 
-        android:layout_marginBottom="@dimen/margin_big"
+        android:layout_gravity="center"
 
         android:backgroundTint="@color/purple_500"
         android:background="@drawable/circle_shape"
         android:alpha="0.6"
-
         />
 
-</LinearLayout>
+
+</FrameLayout>
