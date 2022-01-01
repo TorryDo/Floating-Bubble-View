@@ -10,6 +10,7 @@
     <color name="red">#d61616</color>
 
     <color name="theme_color">#ffffff</color>
+    <color name="theme_color_reversed">#000000</color>
 
     <color name="grey_lightest">#CFCFCF</color>
     <color name="grey_lighter">#BABABA</color>

@@ -91,12 +91,12 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
         return this
     }
 
-    override fun setMovable(boolean: Boolean): FloatingBubbleBuilder {
+    override fun isMovable(boolean: Boolean): FloatingBubbleBuilder {
         movable = boolean
         return this
     }
 
-    override fun setStartingPoint(x: Int, y: Int): FloatingBubbleBuilder {
+    override fun setStartPoint(x: Int, y: Int): FloatingBubbleBuilder {
         startingPoint.x = x
         startingPoint.y = y
         return this

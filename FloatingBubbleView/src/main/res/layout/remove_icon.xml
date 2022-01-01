@@ -5,7 +5,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
 
+    android:background="@drawable/remove_icon_gradient_background"
     android:paddingBottom="@dimen/margin_bigger"
+    android:paddingTop="@dimen/padding_big"
     >
 
     <ImageView
@@ -15,7 +17,6 @@
 
         android:layout_gravity="center"
 
-        android:backgroundTint="@color/purple_500"
         android:background="@drawable/circle_shape"
         android:alpha="0.6"
         />

@@ -19,8 +19,8 @@ interface IFloatingBubbleBuilder {
 
     fun setBubbleSizeDp(dp: Int): IFloatingBubbleBuilder
 
-    fun setMovable(boolean: Boolean): IFloatingBubbleBuilder
-    fun setStartingPoint(x: Int, y: Int): IFloatingBubbleBuilder
+    fun isMovable(boolean: Boolean): IFloatingBubbleBuilder
+    fun setStartPoint(x: Int, y: Int): IFloatingBubbleBuilder
     fun setElevation(dp: Int): IFloatingBubbleBuilder
     fun setAlpha(alpha: Float): IFloatingBubbleBuilder
 

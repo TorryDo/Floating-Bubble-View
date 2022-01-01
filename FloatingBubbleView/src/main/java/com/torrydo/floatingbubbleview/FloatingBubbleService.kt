@@ -24,16 +24,13 @@ abstract class FloatingBubbleService : FloatingBubbleConfig() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
+        Constant.IS_DEBUG_ENABLED = setDebugEnabled()
         setup()
 
         return START_NOT_STICKY
     }
 
-    open fun setDebugEnabled(debugEnabled: Boolean){
-        Constant.IS_DEBUG_ENABLED = debugEnabled
-    }
-
+    open fun setDebugEnabled(): Boolean = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 

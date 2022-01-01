@@ -4,9 +4,11 @@ import android.util.Size
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
+import com.torrydo.floatingbubbleview.R
 import com.torrydo.floatingbubbleview.databinding.RemoveIconBinding
 import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
 import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
+import com.torrydo.floatingbubbleview.utils.toBitmap
 
 class FloatingRemoveBubbleIcon(
     private val bubbleBuilder: FloatingBubbleBuilder,
@@ -18,6 +20,7 @@ class FloatingRemoveBubbleIcon(
 
     init {
         setupDefaultLayoutParams()
+        setupRemoveBubbleProperties()
     }
 
 
@@ -47,5 +50,20 @@ class FloatingRemoveBubbleIcon(
     }
 
     // private -------------------------------------------------------------------------------------
+
+    private fun setupRemoveBubbleProperties(){
+        val icBitmap = bubbleBuilder.iconRemoveBitmap ?: R.drawable.ic_remove_icon.toBitmap(
+            bubbleBuilder.context!!
+        )
+        binding.homeLauncherMainBinIcon.apply {
+            setImageBitmap(icBitmap)
+            layoutParams.width = bubbleBuilder.bubleSizePx
+            layoutParams.height = bubbleBuilder.bubleSizePx
+
+            elevation = bubbleBuilder.elevation.toFloat()
+
+            alpha = bubbleBuilder.alphaF
+        }
+    }
 
 }
