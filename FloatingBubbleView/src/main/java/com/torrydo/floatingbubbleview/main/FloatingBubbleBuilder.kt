@@ -2,25 +2,30 @@ package com.torrydo.floatingbubbleview.main
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewBuilder
+import android.graphics.Point
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
-import com.torrydo.floatingbubbleview.utils.Extension.toBitmap
+import com.torrydo.floatingbubbleview.utils.logger.Logger
+import com.torrydo.floatingbubbleview.utils.toPx
+import com.torrydo.floatingbubbleview.utils.toTag
 
 class FloatingBubbleBuilder : IFloatingBubbleBuilder {
 
-    lateinit var context: Context
+    private val logger = Logger().setTag(javaClass.simpleName.toTag()).setDebugEnabled(true)
+
+    var context: Context? = null
 
     var iconBitmap: Bitmap? = null
     var iconRemoveBitmap: Bitmap? = null
-
-    var evBuilder: ExpandableViewBuilder? = null
-
+    
     var listener: FloatingBubbleTouchListener? = null
 
-    var bubleSize = 40
+    var bubleSizePx = 100
     var movable = true
+    var startingPoint = Point(0, 0)
     var elevation = 0
-    var alpha = 0f
+    var alphaF = 1f
 
     // required
     override fun with(context: Context): FloatingBubbleBuilder {
@@ -29,7 +34,7 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
     }
 
     override fun setIcon(resource: Int): FloatingBubbleBuilder {
-        iconBitmap = resource.toBitmap()
+        iconBitmap = ContextCompat.getDrawable(context!!, resource)!!.toBitmap()
         return this
     }
 
@@ -39,7 +44,7 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
     }
 
     override fun setRemoveIcon(resource: Int): FloatingBubbleBuilder {
-        iconRemoveBitmap = resource.toBitmap()
+        iconRemoveBitmap = ContextCompat.getDrawable(context!!, resource)!!.toBitmap()
         return this
     }
 
@@ -47,11 +52,7 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
         iconRemoveBitmap = bitmap
         return this
     }
-
-    override fun setExpandableViewBuilder(evBuilder: ExpandableViewBuilder): FloatingBubbleBuilder {
-        this.evBuilder = evBuilder
-        return this
-    }
+    
 
     override fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): FloatingBubbleBuilder {
         val tempListener = this.listener
@@ -85,13 +86,19 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
         return this
     }
 
-    override fun setBubbleSize(dp: Int): FloatingBubbleBuilder {
-        bubleSize = dp
+    override fun setBubbleSizeDp(dp: Int): FloatingBubbleBuilder {
+        bubleSizePx = dp.toPx
         return this
     }
 
     override fun setMovable(boolean: Boolean): FloatingBubbleBuilder {
         movable = boolean
+        return this
+    }
+
+    override fun setStartingPoint(x: Int, y: Int): FloatingBubbleBuilder {
+        startingPoint.x = x
+        startingPoint.y = y
         return this
     }
 
@@ -101,7 +108,7 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
     }
 
     override fun setAlpha(alpha: Float): FloatingBubbleBuilder {
-        this.alpha = alpha
+        this.alphaF = alpha
         return this
     }
 

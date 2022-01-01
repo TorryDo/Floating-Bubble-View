@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.main.bubble.icon
+package com.torrydo.floatingbubbleview.main.bubble
 
 import android.annotation.SuppressLint
 import android.graphics.Point
@@ -11,14 +11,15 @@ import com.torrydo.floatingbubbleview.R
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
 import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
 import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
+import com.torrydo.floatingbubbleview.physics.anim.AnimState
 import com.torrydo.floatingbubbleview.physics.anim.MyAnimationHelper
 import com.torrydo.floatingbubbleview.utils.getXYPointOnScreen
-import com.torrydo.transe.utils.anim.AnimState
+import com.torrydo.floatingbubbleview.utils.toBitmap
 
 class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubbleBuilder,
     private val screenSize: Size
-) : BaseFloatingView(bubbleBuilder.context) {
+) : BaseFloatingView(bubbleBuilder.context!!) {
 
     private val TAG = javaClass.simpleName
 
@@ -34,7 +35,7 @@ class FloatingBubbleIcon(
 
     init {
         setupDefaultLayoutParams()
-        binding.homeLauncherMainIcon.setImageResource(R.drawable.ic_rounded_blue_diamond)
+        setupIconProperties()
         customTouch()
     }
 
@@ -45,66 +46,6 @@ class FloatingBubbleIcon(
 
     fun remove() {
         super.remove(binding.root)
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun customTouch() {
-
-        binding.homeLauncherMainIcon.let { imageView ->
-            imageView.setOnTouchListener { view, motionEvent ->
-                when (motionEvent.action) {
-                    MotionEvent.ACTION_DOWN -> {
-
-                        prevPoint.x = windowParams!!.x
-                        prevPoint.y = windowParams!!.y
-
-                        pointF.x = motionEvent.rawX
-                        pointF.y = motionEvent.rawY
-
-                        bubbleBuilder.listener?.onDown(prevPoint.x, prevPoint.y)
-
-                        return@setOnTouchListener true
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-
-                        val mIconDeltaX = motionEvent.rawX - pointF.x
-                        val mIconDeltaY = motionEvent.rawY - pointF.y
-
-                        // prev code here onmove
-
-                        newPoint.x = prevPoint.x + mIconDeltaX.toInt()  // -540 .. 540
-                        newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // -1xxx .. 1xxx
-
-                        windowParams!!.x = newPoint.x
-                        windowParams!!.y = newPoint.y
-                        update(binding.root)
-
-                        bubbleBuilder.listener?.onMove(newPoint.x, newPoint.y)
-
-                        return@setOnTouchListener true
-                    }
-                    MotionEvent.ACTION_UP -> {
-
-                        // k cho tọa độ Y của view ra ngoài màn hình khiến user khó vuốt
-                        if (newPoint.y > screenHalfHeight - 150) {
-                            newPoint.y = screenHalfHeight - 150
-                        } else if (newPoint.y < -screenHalfHeight + 100) {
-                            newPoint.y = -screenHalfHeight + 100
-                        }
-                        windowParams!!.y = newPoint.y
-                        update(binding.root)
-
-                        bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
-
-//                        animateIconToEdge(68) {}
-
-                        return@setOnTouchListener true
-                    }
-
-                    else -> return@setOnTouchListener false
-                }
-            }
-        }
     }
 
     private val myAnimationHelper = MyAnimationHelper()
@@ -178,6 +119,93 @@ class FloatingBubbleIcon(
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 //            windowAnimations = R.style.IconStyle
+        }
+    }
+
+
+    // private func --------------------------------------------------------------------------------
+
+    private fun setupIconProperties() {
+
+        val icBitmap = bubbleBuilder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
+            bubbleBuilder.context!!
+        )
+
+        binding.homeLauncherMainIcon.apply {
+            setImageBitmap(icBitmap)
+            layoutParams.width = bubbleBuilder.bubleSizePx
+            layoutParams.height = bubbleBuilder.bubleSizePx
+
+            elevation = bubbleBuilder.elevation.toFloat()
+
+            alpha = bubbleBuilder.alphaF
+        }
+
+        windowParams?.apply {
+            x = bubbleBuilder.startingPoint.x
+            y = bubbleBuilder.startingPoint.y
+        }
+
+
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun customTouch() {
+
+        binding.homeLauncherMainIcon.let { imageView ->
+            imageView.setOnTouchListener { view, motionEvent ->
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> {
+
+                        prevPoint.x = windowParams!!.x
+                        prevPoint.y = windowParams!!.y
+
+                        pointF.x = motionEvent.rawX
+                        pointF.y = motionEvent.rawY
+
+                        bubbleBuilder.listener?.onDown(prevPoint.x, prevPoint.y)
+
+                        return@setOnTouchListener true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+
+                        val mIconDeltaX = motionEvent.rawX - pointF.x
+                        val mIconDeltaY = motionEvent.rawY - pointF.y
+
+                        // prev code here onmove
+
+                        newPoint.x = prevPoint.x + mIconDeltaX.toInt()  // -540 .. 540
+                        newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // -1xxx .. 1xxx
+
+                        windowParams!!.x = newPoint.x
+                        windowParams!!.y = newPoint.y
+                        update(binding.root)
+
+                        bubbleBuilder.listener?.onMove(newPoint.x, newPoint.y)
+
+                        return@setOnTouchListener true
+                    }
+                    MotionEvent.ACTION_UP -> {
+
+                        // k cho tọa độ Y của view ra ngoài màn hình khiến user khó vuốt
+                        if (newPoint.y > screenHalfHeight - 150) {
+                            newPoint.y = screenHalfHeight - 150
+                        } else if (newPoint.y < -screenHalfHeight + 100) {
+                            newPoint.y = -screenHalfHeight + 100
+                        }
+                        windowParams!!.y = newPoint.y
+                        update(binding.root)
+
+                        bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
+
+//                        animateIconToEdge(68) {}
+
+                        return@setOnTouchListener true
+                    }
+
+                    else -> return@setOnTouchListener false
+                }
+            }
         }
     }
 }

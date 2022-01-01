@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.main.bubble.remove_icon
+package com.torrydo.floatingbubbleview.main.bubble
 
 import android.util.Size
 import android.view.Gravity
@@ -11,7 +11,7 @@ import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
 class FloatingRemoveBubbleIcon(
     private val bubbleBuilder: FloatingBubbleBuilder,
     private val screenSize: Size
-) : BaseFloatingView(bubbleBuilder.context) {
+) : BaseFloatingView(bubbleBuilder.context!!) {
 
     val binding = RemoveIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 

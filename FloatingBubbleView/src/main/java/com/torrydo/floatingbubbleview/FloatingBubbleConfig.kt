@@ -33,7 +33,6 @@ abstract class FloatingBubbleConfig : Service() {
     internal fun setup() {
 
         floatingBubble = setupBubble()
-            .setExpandableViewBuilder(setupExpandableView(CustomExpandableViewListener))
             .addFloatingBubbleTouchListener(CustomFloatingBubbleTouchListener)
             .build()
 

@@ -2,7 +2,6 @@ package com.torrydo.floatingbubbleview.physics.anim
 
 import android.view.View
 import androidx.dynamicanimation.animation.*
-import com.torrydo.transe.utils.anim.AnimState
 
 class MyAnimationHelper {
 

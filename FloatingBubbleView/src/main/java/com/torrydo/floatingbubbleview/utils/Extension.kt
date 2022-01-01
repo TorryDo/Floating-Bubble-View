@@ -1,17 +1,18 @@
 package com.torrydo.floatingbubbleview.utils
 
+import android.content.Context
 import android.content.res.Resources
+import android.content.res.Resources.getSystem
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Point
+import android.view.ContextMenu
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 
-object Extension {
-
-    fun Int.toBitmap(): Bitmap {
-        return BitmapFactory.decodeResource(Resources.getSystem(), this)
-    }
-
+fun Int.toBitmap(context: Context): Bitmap {
+    return ContextCompat.getDrawable(context, this)!!.toBitmap()
 }
 
 fun String.toTag() = "<> $this"
@@ -23,3 +24,6 @@ fun View.getXYPointOnScreen(): Point {
 
     return Point(arr[0], arr[1])
 }
+
+val Int.toDp: Int get() = (this / getSystem().displayMetrics.density).toInt()
+val Int.toPx: Int get() = (this * getSystem().displayMetrics.density).toInt()

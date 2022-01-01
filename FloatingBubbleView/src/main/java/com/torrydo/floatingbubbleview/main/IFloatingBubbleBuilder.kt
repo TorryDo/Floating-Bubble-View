@@ -15,13 +15,12 @@ interface IFloatingBubbleBuilder {
     fun setRemoveIcon(resource: Int): IFloatingBubbleBuilder
     fun setRemoveIcon(bitmap: Bitmap): IFloatingBubbleBuilder
 
-    fun setExpandableViewBuilder(evBuilder: ExpandableViewBuilder): IFloatingBubbleBuilder
-
     fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): IFloatingBubbleBuilder
 
-    fun setBubbleSize(dp: Int): IFloatingBubbleBuilder
+    fun setBubbleSizeDp(dp: Int): IFloatingBubbleBuilder
 
     fun setMovable(boolean: Boolean): IFloatingBubbleBuilder
+    fun setStartingPoint(x: Int, y: Int): IFloatingBubbleBuilder
     fun setElevation(dp: Int): IFloatingBubbleBuilder
     fun setAlpha(alpha: Float): IFloatingBubbleBuilder
 

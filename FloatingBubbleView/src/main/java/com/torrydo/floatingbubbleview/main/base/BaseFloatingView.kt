@@ -7,6 +7,9 @@ import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import com.torrydo.floatingbubbleview.utils.Constant
+import com.torrydo.floatingbubbleview.utils.logger.Logger
+import com.torrydo.floatingbubbleview.utils.toTag
 
 /**
  * have to do:
@@ -19,6 +22,10 @@ open class BaseFloatingView(
     context: Context
 ) {
 
+    private val logger = Logger()
+        .setTag(javaClass.simpleName.toTag())
+        .setDebugEnabled(Constant.IS_DEBUG_ENABLED)
+
     var windowManager: WindowManager? = null
     var windowParams: WindowManager.LayoutParams? = null
 
@@ -27,22 +34,29 @@ open class BaseFloatingView(
         windowParams = WindowManager.LayoutParams()
     }
 
-    protected fun show(view: View){
+    protected fun show(view: View) {
         try {
             windowManager?.addView(view, windowParams)
-        }catch (e: Exception){}
-    }
-    protected fun remove(view: View){
-        try {
-            windowManager?.removeView(view)
-        }catch (e: Exception){}
-    }
-    protected fun update(view: View){
-        try {
-            windowManager?.updateViewLayout(view, windowParams)
-        }catch (e: Exception){}
+        } catch (e: Exception) {
+            logger.error(e.message.toString())
+        }
     }
 
+    protected fun remove(view: View) {
+        try {
+            windowManager?.removeView(view)
+        } catch (e: Exception) {
+            logger.error(e.message.toString())
+        }
+    }
+
+    protected fun update(view: View) {
+        try {
+            windowManager?.updateViewLayout(view, windowParams)
+        } catch (e: Exception) {
+            logger.error(e.message.toString())
+        }
+    }
 
 
     // private -------------------------------------------------------------------------------------

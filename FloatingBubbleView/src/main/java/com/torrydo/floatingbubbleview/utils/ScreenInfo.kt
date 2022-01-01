@@ -11,7 +11,7 @@ import android.view.WindowMetrics
 import androidx.annotation.RequiresApi
 
 
-object ScreenInfo {
+internal object ScreenInfo {
 
     private val api: Api =
         when {
@@ -61,10 +61,6 @@ object ScreenInfo {
             }
             return Size(metrics.widthPixels, metrics.heightPixels)
         }
-    }
-
-    fun getViewSize(){
-
     }
 
 

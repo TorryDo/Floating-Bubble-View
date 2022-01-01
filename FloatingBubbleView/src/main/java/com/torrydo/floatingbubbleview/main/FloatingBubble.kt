@@ -1,14 +1,13 @@
 package com.torrydo.floatingbubbleview.main
 
-import com.torrydo.floatingbubbleview.main.bubble.icon.FloatingBubbleIcon
-import com.torrydo.floatingbubbleview.main.bubble.remove_icon.FloatingRemoveBubbleIcon
+import com.torrydo.floatingbubbleview.main.bubble.FloatingBubbleIcon
+import com.torrydo.floatingbubbleview.main.bubble.FloatingRemoveBubbleIcon
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
 import com.torrydo.floatingbubbleview.utils.Constant
 import com.torrydo.floatingbubbleview.utils.ScreenInfo
 import com.torrydo.floatingbubbleview.utils.getXYPointOnScreen
 import com.torrydo.floatingbubbleview.utils.logger.Logger
 import com.torrydo.floatingbubbleview.utils.toTag
-import kotlin.math.log
 
 class FloatingBubble(
     private val bubbleBuilder: FloatingBubbleBuilder
@@ -40,12 +39,12 @@ class FloatingBubble(
 
     private var floatingIcon: FloatingBubbleIcon = FloatingBubbleIcon(
         bubbleBuilder.addFloatingBubbleTouchListener(CustomBubbleTouchListener()),
-        ScreenInfo.getScreenSize(bubbleBuilder.context)
+        ScreenInfo.getScreenSize(bubbleBuilder.context!!)
     )
 
     private var floatingRemoveIcon: FloatingRemoveBubbleIcon = FloatingRemoveBubbleIcon(
         bubbleBuilder,
-        ScreenInfo.getScreenSize(bubbleBuilder.context)
+        ScreenInfo.getScreenSize(bubbleBuilder.context!!)
     )
 
 
@@ -86,9 +85,6 @@ class FloatingBubble(
 
         val currentIconX = iconArr.x
         val currentIconY = iconArr.y
-
-//        logger.log("binXmin : = $binXmin | binXmax = $binXmax")
-//        logger.log("binYmin : = $binYmin | binYmax = $binYmax")
 
         if (
             binXmin < currentIconX && currentIconX < binXmax

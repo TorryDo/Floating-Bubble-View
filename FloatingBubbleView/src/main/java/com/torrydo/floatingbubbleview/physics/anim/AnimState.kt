@@ -1,4 +1,4 @@
-package com.torrydo.transe.utils.anim
+package com.torrydo.floatingbubbleview.physics.anim
 
 interface AnimState {
 
