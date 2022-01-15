@@ -1,12 +1,9 @@
 package com.torrydo.floatingbubbleview.utils
 
 import android.content.Context
-import android.content.res.Resources
 import android.content.res.Resources.getSystem
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Point
-import android.view.ContextMenu
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap

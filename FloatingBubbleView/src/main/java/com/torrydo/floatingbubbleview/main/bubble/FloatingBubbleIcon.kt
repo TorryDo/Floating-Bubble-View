@@ -11,17 +11,22 @@ import com.torrydo.floatingbubbleview.R
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
 import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
 import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
-import com.torrydo.floatingbubbleview.physics.anim.AnimState
-import com.torrydo.floatingbubbleview.physics.anim.MyAnimationHelper
+import com.torrydo.floatingbubbleview.physics.anim.AnimationHelper
+import com.torrydo.floatingbubbleview.physics.anim.AnimationListener
+import com.torrydo.floatingbubbleview.utils.Constants
 import com.torrydo.floatingbubbleview.utils.getXYPointOnScreen
+import com.torrydo.floatingbubbleview.utils.logger.Logger
 import com.torrydo.floatingbubbleview.utils.toBitmap
+import com.torrydo.floatingbubbleview.utils.toTag
 
 class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubbleBuilder,
     private val screenSize: Size
 ) : BaseFloatingView(bubbleBuilder.context!!) {
 
-    private val TAG = javaClass.simpleName
+    private val logger = Logger()
+        .setTag(javaClass.simpleName.toTag())
+        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
     var binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
@@ -48,7 +53,7 @@ class FloatingBubbleIcon(
         super.remove(binding.root)
     }
 
-    private val myAnimationHelper = MyAnimationHelper()
+    private val myAnimationHelper = AnimationHelper()
     private var isAnimating = false
     fun animateIconToEdge(
         offsetPx: Int,        //    68
@@ -67,7 +72,7 @@ class FloatingBubbleIcon(
                 myAnimationHelper.startSpringX(
                     realX.toFloat(),
                     leftEdgeX.toFloat(),
-                    object : AnimState {
+                    object : AnimationListener {
                         override fun onUpdate(float: Float) {
                             try {
                                 windowParams!!.x = -(float.toInt())
@@ -92,7 +97,7 @@ class FloatingBubbleIcon(
                 myAnimationHelper.startSpringX(
                     realX.toFloat(),
                     rightEdgeX.toFloat(),
-                    object : AnimState {
+                    object : AnimationListener {
                         override fun onUpdate(float: Float) {
                             try {
                                 windowParams!!.x = float.toInt()
@@ -152,6 +157,8 @@ class FloatingBubbleIcon(
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
 
+        var isBubbleClickable = false
+
         binding.homeLauncherMainIcon.let { imageView ->
             imageView.setOnTouchListener { view, motionEvent ->
                 when (motionEvent.action) {
@@ -164,6 +171,8 @@ class FloatingBubbleIcon(
                         pointF.y = motionEvent.rawY
 
                         bubbleBuilder.listener?.onDown(prevPoint.x, prevPoint.y)
+
+                        isBubbleClickable = true
 
                         return@setOnTouchListener true
                     }
@@ -182,6 +191,7 @@ class FloatingBubbleIcon(
                         update(binding.root)
 
                         bubbleBuilder.listener?.onMove(newPoint.x, newPoint.y)
+                        if (isBubbleClickable) isBubbleClickable = false
 
                         return@setOnTouchListener true
                     }
@@ -197,6 +207,11 @@ class FloatingBubbleIcon(
                         update(binding.root)
 
                         bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
+
+                        if (isBubbleClickable) {
+                            bubbleBuilder.listener?.onClick()
+                            logger.log("onClick")
+                        }
 
 //                        animateIconToEdge(68) {}
 

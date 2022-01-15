@@ -52,11 +52,11 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
         iconRemoveBitmap = bitmap
         return this
     }
-    
 
     override fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): FloatingBubbleBuilder {
         val tempListener = this.listener
         this.listener = object : FloatingBubbleTouchListener{
+
             override fun onClick() {
                 tempListener?.onClick()
                 listener.onClick()

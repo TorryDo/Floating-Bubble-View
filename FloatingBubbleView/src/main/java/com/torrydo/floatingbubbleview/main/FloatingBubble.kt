@@ -3,7 +3,7 @@ package com.torrydo.floatingbubbleview.main
 import com.torrydo.floatingbubbleview.main.bubble.FloatingBubbleIcon
 import com.torrydo.floatingbubbleview.main.bubble.FloatingRemoveBubbleIcon
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
-import com.torrydo.floatingbubbleview.utils.Constant
+import com.torrydo.floatingbubbleview.utils.Constants
 import com.torrydo.floatingbubbleview.utils.ScreenInfo
 import com.torrydo.floatingbubbleview.utils.getXYPointOnScreen
 import com.torrydo.floatingbubbleview.utils.logger.Logger
@@ -15,7 +15,7 @@ class FloatingBubble(
 
     private val logger = Logger()
         .setTag(javaClass.simpleName.toTag())
-        .setDebugEnabled(Constant.IS_DEBUG_ENABLED)
+        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
     private inner class CustomBubbleTouchListener: FloatingBubbleTouchListener{
 

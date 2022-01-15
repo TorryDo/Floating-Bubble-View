@@ -1,6 +1,6 @@
 package com.torrydo.floatingbubbleview.physics.anim
 
-interface AnimState {
+interface AnimationListener {
 
     fun onStart(){}
 

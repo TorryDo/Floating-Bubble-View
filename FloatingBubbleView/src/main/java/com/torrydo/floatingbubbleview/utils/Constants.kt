@@ -1,5 +1,5 @@
 package com.torrydo.floatingbubbleview.utils
 
-object Constant {
+object Constants {
     var IS_DEBUG_ENABLED = true
 }

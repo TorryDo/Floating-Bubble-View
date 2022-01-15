@@ -3,12 +3,12 @@ package com.torrydo.floatingbubbleview.physics.anim
 import android.view.View
 import androidx.dynamicanimation.animation.*
 
-class MyAnimationHelper {
+class AnimationHelper {
 
     fun startSpringX(
         startValue: Float,
         position: Float,
-        animState: AnimState   // an interface
+        animationListener: AnimationListener   // an interface
     ) {
         SpringAnimation(FloatValueHolder()).apply {
             spring = SpringForce().apply {
@@ -20,11 +20,11 @@ class MyAnimationHelper {
             }
 
             addUpdateListener { animation, value, velocity ->
-                animState.onUpdate(value)
+                animationListener.onUpdate(value)
             }
 
             addEndListener { animation, canceled, value, velocity ->
-                animState.onFinish()
+                animationListener.onFinish()
             }
 
         }.start()
@@ -34,7 +34,7 @@ class MyAnimationHelper {
         v: View,
         startVelocity: Float,
         position: Float,
-        animState: AnimState   // an interface
+        animationListener: AnimationListener   // an interface
     ) {
         FlingAnimation(v, DynamicAnimation.SCROLL_X).apply {
             setStartVelocity(startVelocity)
@@ -43,7 +43,7 @@ class MyAnimationHelper {
             friction = 1.1f
 
             addUpdateListener { animation, value, velocity ->
-                animState.onUpdate(value)
+                animationListener.onUpdate(value)
             }
 
             start()

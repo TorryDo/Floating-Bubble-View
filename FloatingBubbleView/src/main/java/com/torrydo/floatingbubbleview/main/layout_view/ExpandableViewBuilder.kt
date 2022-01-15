@@ -8,7 +8,7 @@ class ExpandableViewBuilder : IExpandableViewBuilder {
     lateinit var context: Context
 
     var rootView: View? = null
-    var listener = object : ExpandableViewListener {}
+    var listener = object : ExpandableViewEvent {}
 
     var dim = 0.5f
 
@@ -22,8 +22,8 @@ class ExpandableViewBuilder : IExpandableViewBuilder {
         return this
     }
 
-    override fun addExpandableViewListener(listener: ExpandableViewListener): ExpandableViewBuilder {
-        this.listener = listener
+    override fun addExpandableViewListener(event: ExpandableViewEvent): ExpandableViewBuilder {
+        this.listener = event
         return this
     }
 

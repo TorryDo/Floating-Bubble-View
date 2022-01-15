@@ -7,7 +7,7 @@ import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import com.torrydo.floatingbubbleview.utils.Constant
+import com.torrydo.floatingbubbleview.utils.Constants
 import com.torrydo.floatingbubbleview.utils.logger.Logger
 import com.torrydo.floatingbubbleview.utils.toTag
 
@@ -24,7 +24,7 @@ open class BaseFloatingView(
 
     private val logger = Logger()
         .setTag(javaClass.simpleName.toTag())
-        .setDebugEnabled(Constant.IS_DEBUG_ENABLED)
+        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
     var windowManager: WindowManager? = null
     var windowParams: WindowManager.LayoutParams? = null

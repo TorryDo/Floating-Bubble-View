@@ -2,7 +2,6 @@ package com.torrydo.floatingbubbleview.main
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewBuilder
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
 
 interface IFloatingBubbleBuilder {

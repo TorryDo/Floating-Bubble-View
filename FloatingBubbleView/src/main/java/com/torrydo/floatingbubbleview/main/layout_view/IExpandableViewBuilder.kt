@@ -9,7 +9,7 @@ interface IExpandableViewBuilder {
 
     fun setExpandableView(view: View): IExpandableViewBuilder
 
-    fun addExpandableViewListener(listener: ExpandableViewListener): IExpandableViewBuilder
+    fun addExpandableViewListener(event: ExpandableViewEvent): IExpandableViewBuilder
 
     fun setDimAmount(dimAmount: Float): IExpandableViewBuilder
 

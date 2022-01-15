@@ -3,7 +3,7 @@ package com.torrydo.floatingbubbleview.utils
 import android.os.Handler
 import android.os.Looper
 
-class ThreadHelper {
+object ThreadHelper {
 
     fun runOnMainThread(doWork: () -> Unit) {
         Handler(Looper.getMainLooper()).post {

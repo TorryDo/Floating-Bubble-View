@@ -1,6 +1,6 @@
 package com.torrydo.floatingbubbleview.main.layout_view
 
-interface ExpandableViewListener {
+interface ExpandableViewEvent {
 
     fun popToBubble(){}
 

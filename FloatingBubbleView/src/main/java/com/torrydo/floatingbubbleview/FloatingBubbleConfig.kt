@@ -1,14 +1,13 @@
 package com.torrydo.floatingbubbleview
 
 import android.app.Service
-import android.util.Log
 import com.torrydo.floatingbubbleview.main.FloatingBubble
 import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
 import com.torrydo.floatingbubbleview.main.layout_view.ExpandableView
 import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewBuilder
-import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewListener
+import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewEvent
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
-import com.torrydo.floatingbubbleview.utils.Constant
+import com.torrydo.floatingbubbleview.utils.Constants
 import com.torrydo.floatingbubbleview.utils.ThreadHelper
 import com.torrydo.floatingbubbleview.utils.logger.Logger
 import com.torrydo.floatingbubbleview.utils.toTag
@@ -17,29 +16,28 @@ abstract class FloatingBubbleConfig : Service() {
 
     private val logger = Logger()
         .setTag(javaClass.simpleName.toTag())
-        .setDebugEnabled(Constant.IS_DEBUG_ENABLED)
+        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
     private var floatingBubble: FloatingBubble? = null
-
     private var expandableView: ExpandableView? = null
 
     // abstract func -------------------------------------------------------------------------------
 
     abstract fun setupBubble(): FloatingBubbleBuilder
 
-    abstract fun setupExpandableView(listener: ExpandableViewListener): ExpandableViewBuilder
+    abstract fun setupExpandableView(event: ExpandableViewEvent?): ExpandableViewBuilder
 
     // override func
-    internal fun setup() {
+    fun setup() {
 
         floatingBubble = setupBubble()
-            .addFloatingBubbleTouchListener(CustomFloatingBubbleTouchListener)
+            .addFloatingBubbleTouchListener(CustomFloatingBubbleTouchEvent)
             .build()
 
         expandableView = setupExpandableView(CustomExpandableViewListener)
             .build()
 
-        ThreadHelper().runOnMainThread {
+        ThreadHelper.runOnMainThread {
             try {
                 floatingBubble!!.showIcon()
                 logger.log("bubble show")
@@ -51,46 +49,27 @@ abstract class FloatingBubbleConfig : Service() {
 
     // private func --------------------------------------------------------------------------------
 
-    val CustomExpandableViewListener = object : ExpandableViewListener {
+    val CustomExpandableViewListener = object : ExpandableViewEvent {
         override fun popToBubble() {
 
-            removeExpandableView()
+            removeExpandableViewAndShowBubble()
 
-            logger.log("heelo from floating bubble service")
+            logger.log("pop to bubble")
         }
     }
 
-    private var IS_BUBBLE_CLICKABLE = true
-
-    private val CustomFloatingBubbleTouchListener = object : FloatingBubbleTouchListener {
-        override fun onDown(x: Int, y: Int) {
-
-            IS_BUBBLE_CLICKABLE = true
-        }
-
-        override fun onMove(x: Int, y: Int) {
-            if (IS_BUBBLE_CLICKABLE) IS_BUBBLE_CLICKABLE = false
-
-        }
-
-        override fun onUp(x: Int, y: Int) {
-            if (IS_BUBBLE_CLICKABLE) {
-                onClick()
-            }
-        }
-
+    private val CustomFloatingBubbleTouchEvent = object : FloatingBubbleTouchListener {
         override fun onClick() {
-            showExpandableView()
+            removeBubbleAndshowExpandableView()
         }
 
         override fun onDestroy() {
             stopThisService()
         }
 
-
     }
 
-    private fun removeExpandableView() {
+    private fun removeExpandableViewAndShowBubble() {
 
         expandableView?.let { nonNullExpandableView ->
             nonNullExpandableView.remove()
@@ -98,7 +77,7 @@ abstract class FloatingBubbleConfig : Service() {
         }
     }
 
-    private fun showExpandableView() {
+    private fun removeBubbleAndshowExpandableView() {
 
         floatingBubble?.removeIcon()
 
@@ -112,7 +91,7 @@ abstract class FloatingBubbleConfig : Service() {
 
     private fun stopThisService() {
         try {
-            removeExpandableView()
+            removeExpandableViewAndShowBubble()
             floatingBubble?.removeIcon()
             floatingBubble?.removeRemoveIcon()
             logger.log("destroy service 2222222")
