@@ -30,7 +30,6 @@ class FloatingBubbleIcon(
 
     var binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
-
     private val prevPoint = Point(0, 0)
     private val pointF = PointF(0f, 0f)
     private val newPoint = Point(0, 0)

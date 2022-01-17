@@ -12,7 +12,9 @@ import com.torrydo.floatingbubbleview.utils.toTag
 
 class FloatingBubbleBuilder : IFloatingBubbleBuilder {
 
-    private val logger = Logger().setTag(javaClass.simpleName.toTag()).setDebugEnabled(true)
+    private val logger = Logger()
+        .setTag(javaClass.simpleName.toTag())
+        .setDebugEnabled(true)
 
     var context: Context? = null
 
@@ -54,7 +56,7 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
     }
 
     override fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): FloatingBubbleBuilder {
-        val tempListener = this.listener
+        var tempListener = this.listener
         this.listener = object : FloatingBubbleTouchListener{
 
             override fun onClick() {
@@ -83,6 +85,7 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
             }
 
         }
+//        tempListener = null
         return this
     }
 

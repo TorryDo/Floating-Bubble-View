@@ -11,12 +11,6 @@ import com.torrydo.floatingbubbleview.utils.Constants
 import com.torrydo.floatingbubbleview.utils.logger.Logger
 import com.torrydo.floatingbubbleview.utils.toTag
 
-/**
- * have to do:
- * - logger class
- *
- *
- * */
 
 open class BaseFloatingView(
     context: Context

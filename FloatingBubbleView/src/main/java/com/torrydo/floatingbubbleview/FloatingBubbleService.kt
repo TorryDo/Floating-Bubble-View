@@ -6,6 +6,8 @@ import com.torrydo.floatingbubbleview.utils.Constants
 import com.torrydo.floatingbubbleview.utils.logger.ILogger
 import com.torrydo.floatingbubbleview.utils.logger.Logger
 import com.torrydo.floatingbubbleview.utils.toTag
+import io.github.esentsov.PackagePrivate
+
 
 abstract class FloatingBubbleService : FloatingBubbleConfig() {
 
