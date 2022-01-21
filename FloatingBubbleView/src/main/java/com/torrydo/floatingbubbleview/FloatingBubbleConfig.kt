@@ -31,10 +31,10 @@ abstract class FloatingBubbleConfig : Service() {
     fun setup() {
 
         floatingBubble = setupBubble()
-            .addFloatingBubbleTouchListener(CustomFloatingBubbleTouchEvent)
+            .addFloatingBubbleTouchListener(CustomFloatingBubbleTouchEvent())
             .build()
 
-        expandableView = setupExpandableView(CustomExpandableViewListener)
+        expandableView = setupExpandableView(CustomExpandableViewListener())
             .build()
 
         ThreadHelper.runOnMainThread {
@@ -49,7 +49,7 @@ abstract class FloatingBubbleConfig : Service() {
 
     // private func --------------------------------------------------------------------------------
 
-    private val CustomExpandableViewListener = object : ExpandableViewEvent {
+    inner class CustomExpandableViewListener : ExpandableViewEvent {
         override fun popToBubble() {
 
             removeExpandableViewAndShowBubble()
@@ -58,7 +58,7 @@ abstract class FloatingBubbleConfig : Service() {
         }
     }
 
-    private val CustomFloatingBubbleTouchEvent = object : FloatingBubbleTouchListener {
+    inner class CustomFloatingBubbleTouchEvent : FloatingBubbleTouchListener {
         override fun onClick() {
             removeBubbleAndshowExpandableView()
         }
