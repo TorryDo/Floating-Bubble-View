@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.utils
+package com.torrydo.floatingbubbleview
 
 import android.content.Context
 import android.content.res.Resources.getSystem

@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.main.layout_view
+package com.torrydo.floatingbubbleview
 
 interface ExpandableViewEvent {
 

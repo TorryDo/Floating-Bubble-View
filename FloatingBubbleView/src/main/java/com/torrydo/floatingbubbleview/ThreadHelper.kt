@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.utils
+package com.torrydo.floatingbubbleview
 
 import android.os.Handler
 import android.os.Looper

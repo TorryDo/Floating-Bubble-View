@@ -1,14 +1,10 @@
-package com.torrydo.floatingbubbleview.main
+package com.torrydo.floatingbubbleview
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
-import com.torrydo.floatingbubbleview.utils.logger.Logger
-import com.torrydo.floatingbubbleview.utils.toPx
-import com.torrydo.floatingbubbleview.utils.toTag
 
 class FloatingBubbleBuilder : IFloatingBubbleBuilder {
 

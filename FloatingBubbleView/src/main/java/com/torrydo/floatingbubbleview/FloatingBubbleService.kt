@@ -2,10 +2,6 @@ package com.torrydo.floatingbubbleview
 
 import android.content.Intent
 import android.os.IBinder
-import com.torrydo.floatingbubbleview.utils.Constants
-import com.torrydo.floatingbubbleview.utils.logger.ILogger
-import com.torrydo.floatingbubbleview.utils.logger.Logger
-import com.torrydo.floatingbubbleview.utils.toTag
 
 
 abstract class FloatingBubbleService : FloatingBubbleConfig() {

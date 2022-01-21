@@ -1,14 +1,10 @@
-package com.torrydo.floatingbubbleview.main.bubble
+package com.torrydo.floatingbubbleview
 
 import android.util.Size
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
-import com.torrydo.floatingbubbleview.R
 import com.torrydo.floatingbubbleview.databinding.RemoveIconBinding
-import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
-import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
-import com.torrydo.floatingbubbleview.utils.toBitmap
 
 class FloatingRemoveBubbleIcon(
     private val bubbleBuilder: FloatingBubbleBuilder,

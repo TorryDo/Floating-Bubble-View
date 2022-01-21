@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.physics.anim
+package com.torrydo.floatingbubbleview
 
 interface AnimationListener {
 

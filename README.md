@@ -10,22 +10,22 @@
 
 <br/>
 
-- STEP 1. Add the JitPack repository to your build.gradle (Project) file
+- ### <b> STEP 1. Add the JitPack repository to your build.gradle (Project) file </b>
 
 Add it in your root build.gradle at the end of repositories:
 
 ```gradle
-    // not buildScript
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+// not buildScript
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
 
 ```
 
-## If anything go WRONG, forget the step above, then go to your setting.gradle file
+## If anything go WRONG, forget the step above. Go to your setting.gradle file
 
 then add maven repository inside "dependencyResolutionManagement => repositories"
 
@@ -44,9 +44,9 @@ dependencyResolutionManagement {
 }
 ```
 
-<br/> <br/>
+<br/>
 
-- STEP 2. Add dependency in your app module
+- ### <b> STEP 2. Add dependency in your app module </b>
 
 ```
 	dependencies {
@@ -57,7 +57,7 @@ dependencyResolutionManagement {
 
 # II, How to use
 
-- Step 1 : create a class extending FloatingBubbleService
+- ### <b> Step 1 : create a class extending FloatingBubbleService </b>
 
 ```java
 public class MyService extends FloatingBubbleService {
@@ -65,7 +65,9 @@ public class MyService extends FloatingBubbleService {
 }
 ```
 
-- Step 2 : override 2 methods "setupBubble" and "setupExpandableView"
+</br>
+
+- ### <b> Step 2 : override 2 methods "setupBubble" and "setupExpandableView" </b>
 
 ```java
 public class MyService extends FloatingBubbleService {
@@ -84,13 +86,17 @@ public class MyService extends FloatingBubbleService {
 }
 ```
 
-- Step 3 : add your service class (your own class, not "MyService") into the manifest file. :)
+</br>
+
+- ### <b> Step 3 : add your service class into the manifest file... (your own class, not "MyService") </b>
 
 ```xml
 <service android:name="<YOUR_PACKAGE>.MyService" />
 ```
 
-- Step 4 : start your service and enjoy :)
+</br>
+
+- ### <b> Step 4 : start your service and enjoy :) </b>
 
 ```java
     Intent intent = new Intent(MainActivity.this, MyService.class);

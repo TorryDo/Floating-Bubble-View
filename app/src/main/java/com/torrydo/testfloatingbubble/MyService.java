@@ -7,10 +7,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.torrydo.floatingbubbleview.FloatingBubbleService;
-import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder;
-import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewBuilder;
-import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewEvent;
-import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener;
+import com.torrydo.floatingbubbleview.FloatingBubbleBuilder;
+import com.torrydo.floatingbubbleview.ExpandableViewBuilder;
+import com.torrydo.floatingbubbleview.ExpandableViewEvent;
+import com.torrydo.floatingbubbleview.FloatingBubbleTouchListener;
 
 
 public class MyService extends FloatingBubbleService {

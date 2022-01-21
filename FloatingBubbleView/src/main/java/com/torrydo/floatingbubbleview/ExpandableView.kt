@@ -1,11 +1,7 @@
-package com.torrydo.floatingbubbleview.main.layout_view
+package com.torrydo.floatingbubbleview
 
 import android.view.Gravity
 import android.view.WindowManager
-import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
-import com.torrydo.floatingbubbleview.utils.Constants
-import com.torrydo.floatingbubbleview.utils.logger.Logger
-import com.torrydo.floatingbubbleview.utils.toTag
 
 class ExpandableView(
     private val builder: ExpandableViewBuilder

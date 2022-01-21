@@ -1,13 +1,4 @@
-package com.torrydo.floatingbubbleview.main
-
-import com.torrydo.floatingbubbleview.main.bubble.FloatingBubbleIcon
-import com.torrydo.floatingbubbleview.main.bubble.FloatingRemoveBubbleIcon
-import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
-import com.torrydo.floatingbubbleview.utils.Constants
-import com.torrydo.floatingbubbleview.utils.ScreenInfo
-import com.torrydo.floatingbubbleview.utils.getXYPointOnScreen
-import com.torrydo.floatingbubbleview.utils.logger.Logger
-import com.torrydo.floatingbubbleview.utils.toTag
+package com.torrydo.floatingbubbleview
 
 class FloatingBubble(
     private val bubbleBuilder: FloatingBubbleBuilder
@@ -17,12 +8,12 @@ class FloatingBubble(
         .setTag(javaClass.simpleName.toTag())
         .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
-    private inner class CustomBubbleTouchListener: FloatingBubbleTouchListener{
+    private inner class CustomBubbleTouchListener : FloatingBubbleTouchListener {
 
         private var isBubbleMoving = false
 
         override fun onMove(x: Int, y: Int) {
-            if(isBubbleMoving) return
+            if (isBubbleMoving) return
             showRemoveIcon()
             isBubbleMoving = true
         }
@@ -48,7 +39,6 @@ class FloatingBubble(
     )
 
 
-
     // public func ---------------------------------------------------------------------------------
 
     fun showIcon() {
@@ -59,11 +49,11 @@ class FloatingBubble(
         floatingIcon.remove()
     }
 
-    fun showRemoveIcon(){
+    fun showRemoveIcon() {
         floatingRemoveIcon.show()
     }
 
-    fun removeRemoveIcon(){
+    fun removeRemoveIcon() {
         floatingRemoveIcon.remove()
     }
 
@@ -96,7 +86,7 @@ class FloatingBubble(
             return true
         }
 
-        floatingIcon.animateIconToEdge(68){}
+        floatingIcon.animateIconToEdge(68) {}
 
         return false
     }

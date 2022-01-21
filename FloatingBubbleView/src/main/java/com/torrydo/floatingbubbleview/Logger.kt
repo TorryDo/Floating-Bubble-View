@@ -1,7 +1,6 @@
-package com.torrydo.floatingbubbleview.utils.logger
+package com.torrydo.floatingbubbleview
 
 import android.util.Log
-import com.torrydo.floatingbubbleview.utils.toTag
 
 class Logger : ILogger {
 

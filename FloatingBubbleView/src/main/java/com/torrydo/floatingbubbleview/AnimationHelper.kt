@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.physics.anim
+package com.torrydo.floatingbubbleview
 
 import android.view.View
 import androidx.dynamicanimation.animation.*

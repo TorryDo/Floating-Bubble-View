@@ -1,16 +1,6 @@
 package com.torrydo.floatingbubbleview
 
 import android.app.Service
-import com.torrydo.floatingbubbleview.main.FloatingBubble
-import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
-import com.torrydo.floatingbubbleview.main.layout_view.ExpandableView
-import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewBuilder
-import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewEvent
-import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener
-import com.torrydo.floatingbubbleview.utils.Constants
-import com.torrydo.floatingbubbleview.utils.ThreadHelper
-import com.torrydo.floatingbubbleview.utils.logger.Logger
-import com.torrydo.floatingbubbleview.utils.toTag
 
 abstract class FloatingBubbleConfig : Service() {
 

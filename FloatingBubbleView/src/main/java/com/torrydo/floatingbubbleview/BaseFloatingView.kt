@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.main.base
+package com.torrydo.floatingbubbleview
 
 import android.app.Service
 import android.content.Context
@@ -7,9 +7,6 @@ import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import com.torrydo.floatingbubbleview.utils.Constants
-import com.torrydo.floatingbubbleview.utils.logger.Logger
-import com.torrydo.floatingbubbleview.utils.toTag
 
 
 open class BaseFloatingView(

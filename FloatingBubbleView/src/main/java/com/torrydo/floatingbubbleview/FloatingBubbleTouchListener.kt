@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.physics
+package com.torrydo.floatingbubbleview
 
 interface FloatingBubbleTouchListener {
 

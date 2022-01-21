@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.main.bubble
+package com.torrydo.floatingbubbleview
 
 import android.annotation.SuppressLint
 import android.graphics.Point
@@ -7,17 +7,7 @@ import android.util.Size
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.WindowManager
-import com.torrydo.floatingbubbleview.R
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
-import com.torrydo.floatingbubbleview.main.FloatingBubbleBuilder
-import com.torrydo.floatingbubbleview.main.base.BaseFloatingView
-import com.torrydo.floatingbubbleview.physics.anim.AnimationHelper
-import com.torrydo.floatingbubbleview.physics.anim.AnimationListener
-import com.torrydo.floatingbubbleview.utils.Constants
-import com.torrydo.floatingbubbleview.utils.getXYPointOnScreen
-import com.torrydo.floatingbubbleview.utils.logger.Logger
-import com.torrydo.floatingbubbleview.utils.toBitmap
-import com.torrydo.floatingbubbleview.utils.toTag
 
 class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubbleBuilder,

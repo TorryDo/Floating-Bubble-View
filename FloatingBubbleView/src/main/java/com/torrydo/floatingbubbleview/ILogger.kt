@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.utils.logger
+package com.torrydo.floatingbubbleview
 
 interface ILogger {
 
