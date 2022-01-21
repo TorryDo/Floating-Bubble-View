@@ -6,7 +6,6 @@ import com.torrydo.floatingbubbleview.utils.Constants
 import com.torrydo.floatingbubbleview.utils.logger.ILogger
 import com.torrydo.floatingbubbleview.utils.logger.Logger
 import com.torrydo.floatingbubbleview.utils.toTag
-import io.github.esentsov.PackagePrivate
 
 
 abstract class FloatingBubbleService : FloatingBubbleConfig() {
@@ -15,7 +14,8 @@ abstract class FloatingBubbleService : FloatingBubbleConfig() {
 
     override fun onCreate() {
         super.onCreate()
-        logger = Logger().setTag(javaClass.simpleName.toTag()).setDebugEnabled(Constants.IS_DEBUG_ENABLED)
+        logger = Logger().setTag(javaClass.simpleName.toTag())
+            .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
         logger.log("floating bubble service created")
     }
 
@@ -35,7 +35,6 @@ abstract class FloatingBubbleService : FloatingBubbleConfig() {
     open fun setDebugEnabled(): Boolean = false
 
     override fun onBind(intent: Intent?): IBinder? = null
-
 
 
 }

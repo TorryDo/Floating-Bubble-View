@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubble/src/main/res/drawable/circle.xml" value="0.14537037037037037" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubble/src/main/res/layout/icon_main.xml" value="0.2692502532928065" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubbleView/src/main/res/drawable/ic_remove_icon.xml" value="0.24814814814814815" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubbleView/src/main/res/drawable/ic_rounded_blue_diamond.xml" value="0.475" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubbleView/src/main/res/drawable/remove_icon_gradient_background.xml" value="0.24814814814814815" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubbleView/src/main/res/layout/icon_main.xml" value="0.2695035460992908" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubbleView/src/main/res/layout/remove_icon.xml" value="0.33" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingView/src/main/res/drawable/ic_rounded_blue_diamond.xml" value="0.25833333333333336" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/app/src/main/res/drawable/ic_launcher_background.xml" value="0.25833333333333336" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/app/src/main/res/drawable/ic_star.xml" value="0.31203703703703706" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/app/src/main/res/layout/activity_main.xml" value="0.490036231884058" />
+        <entry key="..\:/APP_Kotlin/TestFloatingBubble/app/src/main/res/layout/layout_view_test.xml" value="0.46197916666666666" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
