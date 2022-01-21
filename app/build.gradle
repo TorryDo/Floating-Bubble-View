@@ -42,7 +42,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
 
-//    implementation project(path: ':FloatingBubbleView')
-    implementation 'com.github.TorryDo:Floating-Bubble-View:0.1.5'
+    implementation project(path: ':FloatingBubbleView')
+//    implementation 'com.github.TorryDo:Floating-Bubble-View:0.1.6'
 
 }

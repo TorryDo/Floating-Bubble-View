@@ -15,7 +15,6 @@ import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener;
 
 public class MyService extends FloatingBubbleService {
 
-
     @NonNull
     @Override
     public FloatingBubbleBuilder setupBubble() {
@@ -58,14 +57,14 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public ExpandableViewBuilder setupExpandableView(@NonNull ExpandableViewEvent event) {
+    public ExpandableViewBuilder setupExpandableView(@NonNull ExpandableViewEvent expandableViewEvent) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
 
 
         layout.findViewById(R.id.card_view).setOnClickListener(v -> {
             Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
-            event.popToBubble();
+            expandableViewEvent.popToBubble();
         });
 
         return new ExpandableViewBuilder()
