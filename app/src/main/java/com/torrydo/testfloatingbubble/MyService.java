@@ -12,6 +12,7 @@ import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewBuilder;
 import com.torrydo.floatingbubbleview.main.layout_view.ExpandableViewEvent;
 import com.torrydo.floatingbubbleview.physics.FloatingBubbleTouchListener;
 
+
 public class MyService extends FloatingBubbleService {
 
 
@@ -24,7 +25,7 @@ public class MyService extends FloatingBubbleService {
                 .with(this)
                 .setIcon(R.drawable.ic_star)
                 .setRemoveIcon(R.mipmap.ic_launcher_round)
-                .addFloatingBubbleTouchListener(new FloatingBubbleTouchListener(){
+                .addFloatingBubbleTouchListener(new FloatingBubbleTouchListener() {
                     @Override
                     public void onDestroy() {
                         System.out.println("<><> on destroy on java");
@@ -55,11 +56,9 @@ public class MyService extends FloatingBubbleService {
                 .setAlpha(1f);
     }
 
-
     @NonNull
     @Override
-    public ExpandableViewBuilder setupExpandableView(ExpandableViewEvent event) {
-
+    public ExpandableViewBuilder setupExpandableView(@NonNull ExpandableViewEvent event) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
 

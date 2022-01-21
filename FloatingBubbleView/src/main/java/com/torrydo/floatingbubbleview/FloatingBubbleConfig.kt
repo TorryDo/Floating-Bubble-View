@@ -25,7 +25,7 @@ abstract class FloatingBubbleConfig : Service() {
 
     abstract fun setupBubble(): FloatingBubbleBuilder
 
-    abstract fun setupExpandableView(event: ExpandableViewEvent?): ExpandableViewBuilder
+    abstract fun setupExpandableView(event: ExpandableViewEvent): ExpandableViewBuilder
 
     // override func
     fun setup() {
@@ -49,7 +49,7 @@ abstract class FloatingBubbleConfig : Service() {
 
     // private func --------------------------------------------------------------------------------
 
-    val CustomExpandableViewListener = object : ExpandableViewEvent {
+    private val CustomExpandableViewListener = object : ExpandableViewEvent {
         override fun popToBubble() {
 
             removeExpandableViewAndShowBubble()
@@ -94,7 +94,7 @@ abstract class FloatingBubbleConfig : Service() {
             removeExpandableViewAndShowBubble()
             floatingBubble?.removeIcon()
             floatingBubble?.removeRemoveIcon()
-            logger.log("destroy service 2222222")
+
         } catch (e: Exception) {
             logger.error(e.message.toString())
         }

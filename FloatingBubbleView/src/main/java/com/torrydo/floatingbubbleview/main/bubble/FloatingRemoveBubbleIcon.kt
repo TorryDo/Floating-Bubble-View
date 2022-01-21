@@ -17,7 +17,6 @@ class FloatingRemoveBubbleIcon(
 
     val binding = RemoveIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
-
     init {
         setupDefaultLayoutParams()
         setupRemoveBubbleProperties()
