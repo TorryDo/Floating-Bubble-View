@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.RemoveIconBinding
 
-class FloatingRemoveBubbleIcon(
+internal class FloatingRemoveBubbleIcon(
     private val bubbleBuilder: FloatingBubbleBuilder,
     private val screenSize: Size
 ) : BaseFloatingView(bubbleBuilder.context!!) {
@@ -46,7 +46,7 @@ class FloatingRemoveBubbleIcon(
 
     // private -------------------------------------------------------------------------------------
 
-    private fun setupRemoveBubbleProperties(){
+    private fun setupRemoveBubbleProperties() {
         val icBitmap = bubbleBuilder.iconRemoveBitmap ?: R.drawable.ic_remove_icon.toBitmap(
             bubbleBuilder.context!!
         )

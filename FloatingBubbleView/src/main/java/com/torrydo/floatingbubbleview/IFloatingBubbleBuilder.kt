@@ -3,7 +3,7 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.graphics.Bitmap
 
-interface IFloatingBubbleBuilder {
+internal interface IFloatingBubbleBuilder {
 
     fun with(context: Context): IFloatingBubbleBuilder
 
@@ -13,7 +13,7 @@ interface IFloatingBubbleBuilder {
     fun setRemoveIcon(resource: Int): IFloatingBubbleBuilder
     fun setRemoveIcon(bitmap: Bitmap): IFloatingBubbleBuilder
 
-    fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): IFloatingBubbleBuilder
+    fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): IFloatingBubbleBuilder
 
     fun setBubbleSizeDp(dp: Int): IFloatingBubbleBuilder
 

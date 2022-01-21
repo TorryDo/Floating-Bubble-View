@@ -7,8 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 
-
-object Permissions {
+internal object Permissions {
 
     const val REQUEST_CODE_ASK_PERMISSIONS = 696
 

@@ -10,7 +10,6 @@ import android.view.WindowManager
 import android.view.WindowMetrics
 import androidx.annotation.RequiresApi
 
-
 internal object ScreenInfo {
 
     private val api: Api =

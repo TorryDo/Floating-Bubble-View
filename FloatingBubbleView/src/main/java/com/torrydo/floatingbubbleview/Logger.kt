@@ -2,7 +2,7 @@ package com.torrydo.floatingbubbleview
 
 import android.util.Log
 
-class Logger : ILogger {
+internal class Logger : ILogger {
 
     private var TAG = javaClass.simpleName.toTag()
     private var isEnabled = false         // is Debug Enabled

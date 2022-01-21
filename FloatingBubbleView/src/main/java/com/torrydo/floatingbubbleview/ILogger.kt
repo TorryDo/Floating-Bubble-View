@@ -1,6 +1,6 @@
 package com.torrydo.floatingbubbleview
 
-interface ILogger {
+internal interface ILogger {
 
     fun setTag(tag: String): ILogger
 

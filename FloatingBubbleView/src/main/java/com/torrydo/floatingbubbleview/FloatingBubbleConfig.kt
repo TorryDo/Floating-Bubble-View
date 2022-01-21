@@ -15,7 +15,7 @@ abstract class FloatingBubbleConfig : Service() {
 
     abstract fun setupBubble(): FloatingBubbleBuilder
 
-    abstract fun setupExpandableView(event: ExpandableViewEvent): ExpandableViewBuilder
+    abstract fun setupExpandableView(event: ExpandableView.Event): ExpandableViewBuilder
 
     // override func
     fun setup() {
@@ -39,7 +39,7 @@ abstract class FloatingBubbleConfig : Service() {
 
     // private func --------------------------------------------------------------------------------
 
-    inner class CustomExpandableViewListener : ExpandableViewEvent {
+    inner class CustomExpandableViewListener : ExpandableView.Event {
         override fun popToBubble() {
 
             removeExpandableViewAndShowBubble()
@@ -48,7 +48,7 @@ abstract class FloatingBubbleConfig : Service() {
         }
     }
 
-    inner class CustomFloatingBubbleTouchEvent : FloatingBubbleTouchListener {
+    inner class CustomFloatingBubbleTouchEvent : FloatingBubble.TouchEvent {
         override fun onClick() {
             removeBubbleAndshowExpandableView()
         }

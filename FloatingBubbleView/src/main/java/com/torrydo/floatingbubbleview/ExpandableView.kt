@@ -52,4 +52,12 @@ class ExpandableView(
         }
 
     }
+
+    // interface
+
+    interface Event {
+
+        fun popToBubble(){}
+
+    }
 }

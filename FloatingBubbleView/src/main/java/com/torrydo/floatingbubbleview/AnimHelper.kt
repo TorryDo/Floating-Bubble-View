@@ -3,12 +3,12 @@ package com.torrydo.floatingbubbleview
 import android.view.View
 import androidx.dynamicanimation.animation.*
 
-class AnimationHelper {
+internal class AnimHelper {
 
     fun startSpringX(
         startValue: Float,
         position: Float,
-        animationListener: AnimationListener   // an interface
+        animationListener: AnimHelper.Event   // an interface
     ) {
         SpringAnimation(FloatValueHolder()).apply {
             spring = SpringForce().apply {
@@ -34,7 +34,7 @@ class AnimationHelper {
         v: View,
         startVelocity: Float,
         position: Float,
-        animationListener: AnimationListener   // an interface
+        animationListener: AnimHelper.Event   // an interface
     ) {
         FlingAnimation(v, DynamicAnimation.SCROLL_X).apply {
             setStartVelocity(startVelocity)
@@ -48,6 +48,20 @@ class AnimationHelper {
 
             start()
         }
+    }
+
+    // event ---------------------------------------------------------------------------------------
+
+    interface Event {
+
+        fun onStart(){}
+
+        fun onFinish(){}
+
+        fun onFailure(){}
+
+        fun onUpdate(float: Float){}
+
     }
 
 }

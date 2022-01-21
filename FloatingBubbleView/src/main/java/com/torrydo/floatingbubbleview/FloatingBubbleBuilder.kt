@@ -17,7 +17,7 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
     var iconBitmap: Bitmap? = null
     var iconRemoveBitmap: Bitmap? = null
     
-    var listener: FloatingBubbleTouchListener? = null
+    var listener: FloatingBubble.TouchEvent? = null
 
     var bubleSizePx = 100
     var movable = true
@@ -51,33 +51,33 @@ class FloatingBubbleBuilder : IFloatingBubbleBuilder {
         return this
     }
 
-    override fun addFloatingBubbleTouchListener(listener: FloatingBubbleTouchListener): FloatingBubbleBuilder {
+    override fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): FloatingBubbleBuilder {
         var tempListener = this.listener
-        this.listener = object : FloatingBubbleTouchListener{
+        this.listener = object : FloatingBubble.TouchEvent{
 
             override fun onClick() {
                 tempListener?.onClick()
-                listener.onClick()
+                event.onClick()
             }
 
             override fun onDown(x: Int, y: Int) {
                 tempListener?.onDown(x, y)
-                listener.onDown(x, y)
+                event.onDown(x, y)
             }
 
             override fun onMove(x: Int, y: Int) {
                 tempListener?.onMove(x, y)
-                listener.onMove(x, y)
+                event.onMove(x, y)
             }
 
             override fun onUp(x: Int, y: Int) {
                 tempListener?.onUp(x, y)
-                listener.onUp(x, y)
+                event.onUp(x, y)
             }
 
             override fun onDestroy() {
                 tempListener?.onDestroy()
-                listener.onDestroy()
+                event.onDestroy()
             }
 
         }

@@ -8,7 +8,7 @@ class FloatingBubble(
         .setTag(javaClass.simpleName.toTag())
         .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
-    private inner class CustomBubbleTouchListener : FloatingBubbleTouchListener {
+    private inner class CustomBubbleTouchListener : FloatingBubble.TouchEvent {
 
         private var isBubbleMoving = false
 
@@ -91,5 +91,20 @@ class FloatingBubble(
         return false
     }
 
+    // listener ------------------------------------------------------------------------------------
+
+    interface TouchEvent {
+
+        fun onDown(x: Int, y: Int){}
+
+        fun onUp(x: Int, y: Int){}
+
+        fun onMove(x: Int, y: Int){}
+
+        fun onClick(){}
+
+        fun onDestroy(){}
+
+    }
 
 }

@@ -9,7 +9,7 @@ import android.view.MotionEvent
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
 
-class FloatingBubbleIcon(
+internal class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubbleBuilder,
     private val screenSize: Size
 ) : BaseFloatingView(bubbleBuilder.context!!) {
@@ -42,7 +42,7 @@ class FloatingBubbleIcon(
         super.remove(binding.root)
     }
 
-    private val myAnimationHelper = AnimationHelper()
+    private val myAnimationHelper = AnimHelper()
     private var isAnimating = false
     fun animateIconToEdge(
         offsetPx: Int,        //    68
@@ -61,7 +61,7 @@ class FloatingBubbleIcon(
                 myAnimationHelper.startSpringX(
                     realX.toFloat(),
                     leftEdgeX.toFloat(),
-                    object : AnimationListener {
+                    object : AnimHelper.Event {
                         override fun onUpdate(float: Float) {
                             try {
                                 windowParams!!.x = -(float.toInt())
@@ -86,7 +86,7 @@ class FloatingBubbleIcon(
                 myAnimationHelper.startSpringX(
                     realX.toFloat(),
                     rightEdgeX.toFloat(),
-                    object : AnimationListener {
+                    object : AnimHelper.Event {
                         override fun onUpdate(float: Float) {
                             try {
                                 windowParams!!.x = float.toInt()
