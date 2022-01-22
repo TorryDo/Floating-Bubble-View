@@ -47,8 +47,7 @@ class ExpandableView(
             width = WindowManager.LayoutParams.MATCH_PARENT
             gravity = Gravity.TOP
             flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
-            dimAmount =
-                builder.dim                                                           // default = 0.5f
+            dimAmount = builder.dim                                                           // default = 0.5f
             softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 //            windowAnimations = R.style.TransViewStyle
         }
@@ -57,7 +56,7 @@ class ExpandableView(
 
     // interface
 
-    interface Event {
+    interface Action {
 
         fun popToBubble(){}
 
@@ -70,7 +69,7 @@ class ExpandableView(
         lateinit var context: Context
 
         var rootView: View? = null
-        var listener = object : ExpandableView.Event {}
+        var listener = object : ExpandableView.Action {}
 
         var dim = 0.5f
 
@@ -84,8 +83,8 @@ class ExpandableView(
             return this
         }
 
-        override fun addExpandableViewListener(event: ExpandableView.Event): Builder {
-            this.listener = event
+        override fun addExpandableViewListener(action: ExpandableView.Action): Builder {
+            this.listener = action
             return this
         }
 
@@ -102,13 +101,13 @@ class ExpandableView(
     }
 }
 
-internal interface IExpandableViewBuilder {
+private interface IExpandableViewBuilder {
 
     fun with(context: Context): IExpandableViewBuilder
 
     fun setExpandableView(view: View): IExpandableViewBuilder
 
-    fun addExpandableViewListener(event: ExpandableView.Event): IExpandableViewBuilder
+    fun addExpandableViewListener(action: ExpandableView.Action): IExpandableViewBuilder
 
     fun setDimAmount(dimAmount: Float): IExpandableViewBuilder
 

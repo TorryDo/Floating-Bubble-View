@@ -44,7 +44,6 @@ class FloatingBubble(
         ScreenInfo.getScreenSize(bubbleBuilder.context!!)
     )
 
-
     // public func ---------------------------------------------------------------------------------
 
     fun showIcon() {
@@ -227,7 +226,7 @@ class FloatingBubble(
 
 }
 
-internal interface IFloatingBubbleBuilder {
+private interface IFloatingBubbleBuilder {
 
     fun with(context: Context): IFloatingBubbleBuilder
 

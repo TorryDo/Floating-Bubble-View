@@ -6,6 +6,12 @@
 ![GitHub forks](https://img.shields.io/github/forks/TorryDo/Floating-Bubble-View?label=Fork&style=social)
 ![Repo size](https://img.shields.io/github/repo-size/TorryDo/Floating-Bubble-View?style=social)
 
+# Demo
+
+<img src="art/demo.gif"/>
+
+<br/>
+
 # I, Prepare
 
 <br/>
@@ -74,13 +80,13 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public FloatingBubbleBuilder setupBubble() {
+    public FloatingBubble.Builder setupBubble() {
         return ...;
     }
 
     @NonNull
     @Override
-    public ExpandableViewBuilder setupExpandableView(@NonNull ExpandableViewEvent expandableViewEvent) {
+    public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
         return ...;
     }
 }
@@ -110,8 +116,8 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public FloatingBubbleBuilder setupBubble() {
-        return new FloatingBubbleBuilder()
+    public FloatingBubble.Builder setupBubble() {
+        return new FloatingBubble.Builder()
 
                 // context is required
                 .with(this)
@@ -132,7 +138,7 @@ public class MyService extends FloatingBubbleService {
                 .setAlpha(1f)
 
                 // add listener
-                .addFloatingBubbleTouchListener(new FloatingBubbleTouchListener() {
+                .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
                     @Override
                     public void onDestroy() { System.out.println("on Destroy"); }
 
@@ -153,7 +159,7 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public ExpandableViewBuilder setupExpandableView(@NonNull ExpandableViewEvent expandableViewEvent) {
+    public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
@@ -164,7 +170,7 @@ public class MyService extends FloatingBubbleService {
             expandableViewEvent.popToBubble();
         });
 
-        return new ExpandableViewBuilder()
+        return new ExpandableView.Builder()
                 .with(this)
                 .setExpandableView(layout);
     }

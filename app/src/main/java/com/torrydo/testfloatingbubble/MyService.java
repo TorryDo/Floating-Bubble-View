@@ -20,8 +20,11 @@ public class MyService extends FloatingBubbleService {
 
         return new FloatingBubble.Builder()
                 .with(this)
-                .setIcon(R.drawable.ic_star)
-                .setRemoveIcon(R.mipmap.ic_launcher_round)
+                .setIcon(R.drawable.ic_rounded_blue_diamond)
+                .setRemoveIcon(R.drawable.ic_remove_icon)
+
+                .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
+                })
 
                 .setBubbleSizeDp(60)
                 .setStartPoint(-200, 0)
@@ -30,14 +33,14 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Event event) {
+    public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
 
 
         layout.findViewById(R.id.card_view).setOnClickListener(v -> {
             Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
-            event.popToBubble();
+            action.popToBubble();
         });
 
         return new ExpandableView.Builder()
