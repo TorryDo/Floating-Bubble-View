@@ -1,10 +1,12 @@
 package com.torrydo.floatingbubbleview
 
+import android.content.Context
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 
 class ExpandableView(
-    private val builder: ExpandableViewBuilder
+    private val builder: ExpandableView.Builder
 ) : BaseFloatingView(builder.context) {
 
     private val logger = Logger()
@@ -60,4 +62,56 @@ class ExpandableView(
         fun popToBubble(){}
 
     }
+
+    // builder
+
+    class Builder : IExpandableViewBuilder {
+
+        lateinit var context: Context
+
+        var rootView: View? = null
+        var listener = object : ExpandableView.Event {}
+
+        var dim = 0.5f
+
+        override fun with(context: Context): Builder {
+            this.context = context
+            return this
+        }
+
+        override fun setExpandableView(view: View): Builder {
+            this.rootView = view
+            return this
+        }
+
+        override fun addExpandableViewListener(event: ExpandableView.Event): Builder {
+            this.listener = event
+            return this
+        }
+
+        override fun setDimAmount(dimAmount: Float): Builder {
+            this.dim = dimAmount
+            return this
+        }
+
+
+        override fun build(): ExpandableView {
+            return ExpandableView(this)
+        }
+
+    }
+}
+
+internal interface IExpandableViewBuilder {
+
+    fun with(context: Context): IExpandableViewBuilder
+
+    fun setExpandableView(view: View): IExpandableViewBuilder
+
+    fun addExpandableViewListener(event: ExpandableView.Event): IExpandableViewBuilder
+
+    fun setDimAmount(dimAmount: Float): IExpandableViewBuilder
+
+    fun build(): ExpandableView
+
 }

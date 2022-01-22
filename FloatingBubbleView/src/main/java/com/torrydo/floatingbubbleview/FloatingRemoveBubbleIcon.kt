@@ -7,7 +7,7 @@ import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.RemoveIconBinding
 
 internal class FloatingRemoveBubbleIcon(
-    private val bubbleBuilder: FloatingBubbleBuilder,
+    private val bubbleBuilder: FloatingBubble.Builder,
     private val screenSize: Size
 ) : BaseFloatingView(bubbleBuilder.context!!) {
 

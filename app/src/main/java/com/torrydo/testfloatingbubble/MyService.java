@@ -7,8 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.torrydo.floatingbubbleview.ExpandableView;
-import com.torrydo.floatingbubbleview.ExpandableViewBuilder;
-import com.torrydo.floatingbubbleview.FloatingBubbleBuilder;
+import com.torrydo.floatingbubbleview.FloatingBubble;
 import com.torrydo.floatingbubbleview.FloatingBubbleService;
 
 
@@ -16,9 +15,10 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public FloatingBubbleBuilder setupBubble() {
+    public FloatingBubble.Builder setupBubble() {
 
-        return new FloatingBubbleBuilder()
+
+        return new FloatingBubble.Builder()
                 .with(this)
                 .setIcon(R.drawable.ic_star)
                 .setRemoveIcon(R.mipmap.ic_launcher_round)
@@ -30,7 +30,7 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public ExpandableViewBuilder setupExpandableView(@NonNull ExpandableView.Event event) {
+    public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Event event) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
 
@@ -40,7 +40,7 @@ public class MyService extends FloatingBubbleService {
             event.popToBubble();
         });
 
-        return new ExpandableViewBuilder()
+        return new ExpandableView.Builder()
                 .with(this)
                 .setExpandableView(layout);
     }

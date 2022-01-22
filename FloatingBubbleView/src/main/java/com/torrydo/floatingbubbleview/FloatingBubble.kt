@@ -1,7 +1,13 @@
 package com.torrydo.floatingbubbleview
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Point
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
+
 class FloatingBubble(
-    private val bubbleBuilder: FloatingBubbleBuilder
+    private val bubbleBuilder: FloatingBubble.Builder
 ) {
 
     private val logger = Logger()
@@ -95,16 +101,151 @@ class FloatingBubble(
 
     interface TouchEvent {
 
-        fun onDown(x: Int, y: Int){}
+        fun onDown(x: Int, y: Int) {}
 
-        fun onUp(x: Int, y: Int){}
+        fun onUp(x: Int, y: Int) {}
 
-        fun onMove(x: Int, y: Int){}
+        fun onMove(x: Int, y: Int) {}
 
-        fun onClick(){}
+        fun onClick() {}
 
-        fun onDestroy(){}
+        fun onDestroy() {}
 
     }
+
+    // builder
+
+    class Builder : IFloatingBubbleBuilder {
+
+        private val logger = Logger()
+            .setTag(javaClass.simpleName.toTag())
+            .setDebugEnabled(true)
+
+        var context: Context? = null
+
+        var iconBitmap: Bitmap? = null
+        var iconRemoveBitmap: Bitmap? = null
+
+        var listener: FloatingBubble.TouchEvent? = null
+
+        var bubleSizePx = 100
+        var movable = true
+        var startingPoint = Point(0, 0)
+        var elevation = 0
+        var alphaF = 1f
+
+        // required
+        override fun with(context: Context): Builder {
+            this.context = context
+            return this
+        }
+
+        override fun setIcon(resource: Int): Builder {
+            iconBitmap = ContextCompat.getDrawable(context!!, resource)!!.toBitmap()
+            return this
+        }
+
+        override fun setIcon(bitmap: Bitmap): Builder {
+            iconBitmap = bitmap
+            return this
+        }
+
+        override fun setRemoveIcon(resource: Int): Builder {
+            iconRemoveBitmap = ContextCompat.getDrawable(context!!, resource)!!.toBitmap()
+            return this
+        }
+
+        override fun setRemoveIcon(bitmap: Bitmap): Builder {
+            iconRemoveBitmap = bitmap
+            return this
+        }
+
+        override fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): Builder {
+            var tempListener = this.listener
+            this.listener = object : FloatingBubble.TouchEvent {
+
+                override fun onClick() {
+                    tempListener?.onClick()
+                    event.onClick()
+                }
+
+                override fun onDown(x: Int, y: Int) {
+                    tempListener?.onDown(x, y)
+                    event.onDown(x, y)
+                }
+
+                override fun onMove(x: Int, y: Int) {
+                    tempListener?.onMove(x, y)
+                    event.onMove(x, y)
+                }
+
+                override fun onUp(x: Int, y: Int) {
+                    tempListener?.onUp(x, y)
+                    event.onUp(x, y)
+                }
+
+                override fun onDestroy() {
+                    tempListener?.onDestroy()
+                    event.onDestroy()
+                }
+
+            }
+//        tempListener = null
+            return this
+        }
+
+        override fun setBubbleSizeDp(dp: Int): Builder {
+            bubleSizePx = dp.toPx
+            return this
+        }
+
+        override fun isMovable(boolean: Boolean): Builder {
+            movable = boolean
+            return this
+        }
+
+        override fun setStartPoint(x: Int, y: Int): Builder {
+            startingPoint.x = x
+            startingPoint.y = y
+            return this
+        }
+
+        override fun setElevation(dp: Int): Builder {
+            elevation = dp
+            return this
+        }
+
+        override fun setAlpha(alpha: Float): Builder {
+            this.alphaF = alpha
+            return this
+        }
+
+        override fun build(): FloatingBubble {
+            return FloatingBubble(this)
+        }
+    }
+
+}
+
+internal interface IFloatingBubbleBuilder {
+
+    fun with(context: Context): IFloatingBubbleBuilder
+
+    fun setIcon(resource: Int): IFloatingBubbleBuilder
+    fun setIcon(bitmap: Bitmap): IFloatingBubbleBuilder
+
+    fun setRemoveIcon(resource: Int): IFloatingBubbleBuilder
+    fun setRemoveIcon(bitmap: Bitmap): IFloatingBubbleBuilder
+
+    fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): IFloatingBubbleBuilder
+
+    fun setBubbleSizeDp(dp: Int): IFloatingBubbleBuilder
+
+    fun isMovable(boolean: Boolean): IFloatingBubbleBuilder
+    fun setStartPoint(x: Int, y: Int): IFloatingBubbleBuilder
+    fun setElevation(dp: Int): IFloatingBubbleBuilder
+    fun setAlpha(alpha: Float): IFloatingBubbleBuilder
+
+    fun build(): FloatingBubble
 
 }

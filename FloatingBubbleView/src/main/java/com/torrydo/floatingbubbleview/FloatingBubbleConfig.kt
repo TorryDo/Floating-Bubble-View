@@ -13,9 +13,9 @@ abstract class FloatingBubbleConfig : Service() {
 
     // abstract func -------------------------------------------------------------------------------
 
-    abstract fun setupBubble(): FloatingBubbleBuilder
+    abstract fun setupBubble(): FloatingBubble.Builder
 
-    abstract fun setupExpandableView(event: ExpandableView.Event): ExpandableViewBuilder
+    abstract fun setupExpandableView(event: ExpandableView.Event): ExpandableView.Builder
 
     // override func
     fun setup() {
