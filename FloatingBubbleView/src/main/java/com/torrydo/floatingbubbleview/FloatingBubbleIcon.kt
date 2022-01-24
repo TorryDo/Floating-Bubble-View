@@ -7,13 +7,14 @@ import android.util.Size
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.WindowManager
+import androidx.viewbinding.ViewBinding
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
 import java.lang.ref.WeakReference
 
 internal class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubble.Builder,
     private val screenSize: Size
-) : BaseFloatingView <IconMainBinding> (WeakReference(bubbleBuilder.context!!).get()!!) {
+) : BaseFloatingView (bubbleBuilder.context!!) {
 
     private val logger = Logger()
         .setTag(javaClass.simpleName.toTag())
@@ -21,7 +22,7 @@ internal class FloatingBubbleIcon(
 
     var _binding: IconMainBinding? = null
     val binding get() = _binding!!
-//    var binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
+
 
     private val prevPoint = Point(0, 0)
     private val pointF = PointF(0f, 0f)

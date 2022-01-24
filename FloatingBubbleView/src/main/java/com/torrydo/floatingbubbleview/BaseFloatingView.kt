@@ -10,7 +10,7 @@ import android.view.WindowManager
 import androidx.viewbinding.ViewBinding
 
 
-abstract class BaseFloatingView <B: ViewBinding>(
+open class BaseFloatingView(
     context: Context
 ) {
 
@@ -54,8 +54,6 @@ abstract class BaseFloatingView <B: ViewBinding>(
 
 
     // override ------------------------------------------------------------------------------------
-
-    abstract fun setupViewBinding(): ViewBinding
 
     open fun setupDefaultLayoutParams() {
         windowParams?.apply {
