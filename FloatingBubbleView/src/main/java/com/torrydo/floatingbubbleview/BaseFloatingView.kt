@@ -10,7 +10,7 @@ import android.view.WindowManager
 import androidx.viewbinding.ViewBinding
 
 
-open class BaseFloatingView(
+abstract class BaseFloatingView <B: ViewBinding>(
     context: Context
 ) {
 
@@ -25,6 +25,8 @@ open class BaseFloatingView(
         windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
         windowParams = WindowManager.LayoutParams()
     }
+
+    // public --------------------------------------------------------------------------------------
 
     protected fun show(view: View) {
         try {
@@ -51,7 +53,9 @@ open class BaseFloatingView(
     }
 
 
-    // private -------------------------------------------------------------------------------------
+    // override ------------------------------------------------------------------------------------
+
+    abstract fun setupViewBinding(): ViewBinding
 
     open fun setupDefaultLayoutParams() {
         windowParams?.apply {
@@ -66,7 +70,7 @@ open class BaseFloatingView(
             type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
-                // use for android version lower than 8
+                // for android version lower than 8
                 WindowManager.LayoutParams.TYPE_PHONE
             }
         }

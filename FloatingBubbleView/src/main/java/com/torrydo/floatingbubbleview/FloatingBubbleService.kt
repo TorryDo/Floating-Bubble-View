@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.IBinder
 
 
-abstract class FloatingBubbleService : FloatingBubbleConfig() {
+abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
 
     private lateinit var logger: ILogger
 

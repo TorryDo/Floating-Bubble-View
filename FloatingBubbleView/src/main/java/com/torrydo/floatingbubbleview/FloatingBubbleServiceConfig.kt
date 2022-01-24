@@ -2,7 +2,7 @@ package com.torrydo.floatingbubbleview
 
 import android.app.Service
 
-abstract class FloatingBubbleConfig : Service() {
+abstract class FloatingBubbleServiceConfig : Service() {
 
     private val logger = Logger()
         .setTag(javaClass.simpleName.toTag())

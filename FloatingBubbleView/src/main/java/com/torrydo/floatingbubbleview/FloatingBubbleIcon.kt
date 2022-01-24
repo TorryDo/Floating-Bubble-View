@@ -8,11 +8,12 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
+import java.lang.ref.WeakReference
 
 internal class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubble.Builder,
     private val screenSize: Size
-) : BaseFloatingView(bubbleBuilder.context!!) {
+) : BaseFloatingView <IconMainBinding> (WeakReference(bubbleBuilder.context!!).get()!!) {
 
     private val logger = Logger()
         .setTag(javaClass.simpleName.toTag())

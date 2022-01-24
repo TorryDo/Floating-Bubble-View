@@ -5,7 +5,7 @@ import android.os.Looper
 
 internal object ThreadHelper {
 
-    fun runOnMainThread(doWork: () -> Unit) {
+    inline fun runOnMainThread(crossinline doWork: () -> Unit) {
         Handler(Looper.getMainLooper()).post {
             doWork()
         }

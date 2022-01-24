@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import java.lang.ref.WeakReference
 
-fun Int.toBitmap(context: Context): Bitmap {
-    return ContextCompat.getDrawable(context, this)!!.toBitmap()
+fun Int.toBitmap(context: Context): Bitmap? {
+    return WeakReference(context).get()?.let { weakContext ->
+        ContextCompat.getDrawable(weakContext, this)!!.toBitmap()
+    }
 }
 
 fun String.toTag() = "<> $this"
@@ -28,11 +31,15 @@ val Int.toPx: Int get() = (this * getSystem().displayMetrics.density).toInt()
 
 inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+
         override fun onGlobalLayout() {
+
             if (measuredWidth > 0 && measuredHeight > 0) {
                 viewTreeObserver.removeOnGlobalLayoutListener(this)
                 afterMeasuredWork()
             }
+
         }
+
     })
 }

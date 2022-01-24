@@ -9,6 +9,7 @@ import android.view.Display
 import android.view.WindowManager
 import android.view.WindowMetrics
 import androidx.annotation.RequiresApi
+import java.lang.ref.WeakReference
 
 internal object ScreenInfo {
 
@@ -25,7 +26,13 @@ internal object ScreenInfo {
     /**
      * Returns screen size in pixels.
      */
-    fun getScreenSize(context: Context): Size = api.getScreenSize(context)
+    fun getScreenSize(context: Context): Size {
+        return WeakReference(context).get()?.let {
+
+            api.getScreenSize(it)
+
+        } ?: Size(0, 0)
+    }
 
     private open class Api {
 

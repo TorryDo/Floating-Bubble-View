@@ -3,6 +3,10 @@ package com.torrydo.floatingbubbleview
 import android.view.View
 import androidx.dynamicanimation.animation.*
 
+/**
+ * ok
+ */
+
 internal class AnimHelper {
 
     fun startSpringX(
