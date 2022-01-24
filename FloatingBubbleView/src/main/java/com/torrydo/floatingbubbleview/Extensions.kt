@@ -5,6 +5,7 @@ import android.content.res.Resources.getSystem
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 
@@ -24,3 +25,14 @@ fun View.getXYPointOnScreen(): Point {
 
 val Int.toDp: Int get() = (this / getSystem().displayMetrics.density).toInt()
 val Int.toPx: Int get() = (this * getSystem().displayMetrics.density).toInt()
+
+inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            if (measuredWidth > 0 && measuredHeight > 0) {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                afterMeasuredWork()
+            }
+        }
+    })
+}

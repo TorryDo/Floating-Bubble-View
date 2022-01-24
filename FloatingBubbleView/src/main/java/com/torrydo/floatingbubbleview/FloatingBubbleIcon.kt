@@ -18,7 +18,9 @@ internal class FloatingBubbleIcon(
         .setTag(javaClass.simpleName.toTag())
         .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
-    var binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
+    var _binding: IconMainBinding? = null
+    val binding get() = _binding!!
+//    var binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
     private val prevPoint = Point(0, 0)
     private val pointF = PointF(0f, 0f)
@@ -28,9 +30,15 @@ internal class FloatingBubbleIcon(
     private val screenHalfHeight = screenSize.height / 2
 
     init {
+
+        _binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
+
+        logger.log("wtf")
+
         setupDefaultLayoutParams()
         setupIconProperties()
         customTouch()
+
     }
 
     // must be root view
@@ -41,6 +49,11 @@ internal class FloatingBubbleIcon(
     fun remove() {
         super.remove(binding.root)
     }
+
+    fun destroy() {
+        _binding = null
+    }
+
 
     private val myAnimationHelper = AnimHelper()
     private var isAnimating = false
@@ -105,18 +118,6 @@ internal class FloatingBubbleIcon(
         }
     }
 
-    override fun setupDefaultLayoutParams() {
-        super.setupDefaultLayoutParams()
-        windowParams?.apply {
-
-            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-//            windowAnimations = R.style.IconStyle
-        }
-    }
-
-
     // private func --------------------------------------------------------------------------------
 
     private fun setupIconProperties() {
@@ -148,7 +149,23 @@ internal class FloatingBubbleIcon(
 
         var isBubbleClickable = false
 
-        binding.homeLauncherMainIcon.let { imageView ->
+
+        // why log did not show?
+        logger.log("sfsdaf")
+
+        binding.homeLauncherMainIcon.also { imgView ->
+
+            logger.log("after measured 0")
+
+            imgView.afterMeasured {
+                bubbleBuilder.context?.let { nonNullContext ->
+                    imgView.updateGestureExclusion(nonNullContext)
+                }
+            }
+        }
+
+        binding.homeLauncherMainIcon.also { imageView ->
+
             imageView.setOnTouchListener { view, motionEvent ->
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -210,6 +227,19 @@ internal class FloatingBubbleIcon(
                     else -> return@setOnTouchListener false
                 }
             }
+        }
+    }
+
+    // override
+
+    override fun setupDefaultLayoutParams() {
+        super.setupDefaultLayoutParams()
+        windowParams?.apply {
+
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+//            windowAnimations = R.style.IconStyle
         }
     }
 }

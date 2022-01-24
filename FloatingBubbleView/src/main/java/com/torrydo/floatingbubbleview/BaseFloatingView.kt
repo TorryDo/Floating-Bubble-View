@@ -7,6 +7,7 @@ import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import androidx.viewbinding.ViewBinding
 
 
 open class BaseFloatingView(

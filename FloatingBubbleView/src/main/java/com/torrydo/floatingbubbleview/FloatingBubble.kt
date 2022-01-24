@@ -112,7 +112,7 @@ class FloatingBubble(
 
     }
 
-    // builder
+    // builder class -------------------------------------------------------------------------------
 
     class Builder : IFloatingBubbleBuilder {
 

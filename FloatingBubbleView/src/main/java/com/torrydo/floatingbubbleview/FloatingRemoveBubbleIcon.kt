@@ -11,9 +11,15 @@ internal class FloatingRemoveBubbleIcon(
     private val screenSize: Size
 ) : BaseFloatingView(bubbleBuilder.context!!) {
 
-    val binding = RemoveIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
+    private var _binding: RemoveIconBinding? = null
+    val binding get() = _binding!!
+
+//    val binding = RemoveIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
     init {
+
+        _binding = RemoveIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
+
         setupDefaultLayoutParams()
         setupRemoveBubbleProperties()
     }
@@ -42,6 +48,10 @@ internal class FloatingRemoveBubbleIcon(
 
     fun remove() {
         super.remove(binding.root)
+    }
+
+    fun destroy(){
+        _binding = null
     }
 
     // private -------------------------------------------------------------------------------------

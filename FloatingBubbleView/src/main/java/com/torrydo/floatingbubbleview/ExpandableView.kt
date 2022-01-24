@@ -18,7 +18,7 @@ class ExpandableView(
         setupDefaultLayoutParams()
     }
 
-    // public --------------------------------------------------------------------------------------
+    // public func ---------------------------------------------------------------------------------
 
     fun show() {
         builder.rootView?.let { nonNullableView ->
@@ -38,7 +38,8 @@ class ExpandableView(
         logger.error("expandableView = null")
     }
 
-    // private -------------------------------------------------------------------------------------
+
+    // private func --------------------------------------------------------------------------------
 
     override fun setupDefaultLayoutParams() {
         super.setupDefaultLayoutParams()
@@ -47,14 +48,14 @@ class ExpandableView(
             width = WindowManager.LayoutParams.MATCH_PARENT
             gravity = Gravity.TOP
             flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
-            dimAmount = builder.dim                                                           // default = 0.5f
+            dimAmount = builder.dim         // default = 0.5f
             softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 //            windowAnimations = R.style.TransViewStyle
         }
 
     }
 
-    // interface
+    // interface -----------------------------------------------------------------------------------
 
     interface Action {
 
@@ -62,7 +63,7 @@ class ExpandableView(
 
     }
 
-    // builder
+    // builder class -------------------------------------------------------------------------------
 
     class Builder : IExpandableViewBuilder {
 

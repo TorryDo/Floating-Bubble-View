@@ -22,10 +22,22 @@ public class MyService extends FloatingBubbleService {
                 .with(this)
                 .setIcon(R.drawable.ic_rounded_blue_diamond)
                 .setRemoveIcon(R.drawable.ic_remove_icon)
-
-                .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
-                })
-
+//                .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
+//                    @Override
+//                    public void onDestroy() { System.out.println("on Destroy"); }
+//
+//                    @Override
+//                    public void onClick() { System.out.println("onClick"); }
+//
+//                    @Override
+//                    public void onMove(int x, int y) { System.out.println("onMove"); }
+//
+//                    @Override
+//                    public void onUp(int x, int y) { System.out.println("onUp"); }
+//
+//                    @Override
+//                    public void onDown(int x, int y) { System.out.println("onDown"); }
+//                })
                 .setBubbleSizeDp(60)
                 .setStartPoint(-200, 0)
                 .setAlpha(1f);

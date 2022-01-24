@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         Button button = findViewById(R.id.button);
 
 
+
         button.setOnClickListener(v -> startService(new Intent(this, MyService.class)));
 
     }
