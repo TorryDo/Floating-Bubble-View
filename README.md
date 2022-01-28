@@ -170,7 +170,7 @@ public class MyService extends FloatingBubbleService {
 
         layout.findViewById(R.id.card_view).setOnClickListener(v -> {
             Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
-            expandableViewEvent.popToBubble();
+            action.popToBubble();
         });
 
         return new ExpandableView.Builder()
