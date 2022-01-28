@@ -14,50 +14,48 @@
 
 # I, Prepare
 
-<br/>
-
 - ### <b> STEP 1. Add the JitPack repository to your build.gradle (Project) file </b>
 
 Add it in your root build.gradle at the end of repositories:
 
 ```gradle
-// not buildScript
-allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
+    // not buildScript
+    allprojects {
+        repositories {
+            ...
+            maven { url 'https://jitpack.io' }
+        }
     }
-}
 
 ```
 
 ## If anything go WRONG, forget the step above. Go to your setting.gradle file
 
-then add maven repository inside "dependencyResolutionManagement => repositories"
+then add maven repository inside "dependencyResolutionManagement => repositories" like below
 
 ```gradle
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
+    dependencyResolutionManagement {
+        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+        repositories {
+            google()
+            mavenCentral()
 
-        // add here
-        maven { url 'https://jitpack.io' }
+            // add here
+            maven { url 'https://jitpack.io' }
 
-        jcenter() // Warning: this repository is going to shut down soon
+            jcenter() // Warning: this repository is going to shut down soon
+        }
     }
-}
 ```
 
 <br/>
 
 - ### <b> STEP 2. Add dependency in your app module </b>
 
-```
-	dependencies {
-	        implementation 'com.github.TorryDo:Floating-Bubble-View:0.1.6'
-	}
+```gradle
+    dependencies {
+            implementation 'com.github.TorryDo:Floating-Bubble-View:0.1.6'
+    }
 
 ```
 
@@ -66,9 +64,9 @@ dependencyResolutionManagement {
 - ### <b> Step 1 : create a class extending FloatingBubbleService </b>
 
 ```java
-public class MyService extends FloatingBubbleService {
-    ...
-}
+    public class MyService extends FloatingBubbleService {
+        ...
+    }
 ```
 
 </br>
@@ -76,28 +74,28 @@ public class MyService extends FloatingBubbleService {
 - ### <b> Step 2 : override 2 methods "setupBubble" and "setupExpandableView" </b>
 
 ```java
-public class MyService extends FloatingBubbleService {
+    public class MyService extends FloatingBubbleService {
 
-    @NonNull
-    @Override
-    public FloatingBubble.Builder setupBubble() {
-        return ...;
-    }
+        @NonNull
+        @Override
+        public FloatingBubble.Builder setupBubble() {
+            return ...;
+        }
 
-    @NonNull
-    @Override
-    public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
-        return ...;
+        @NonNull
+        @Override
+        public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
+            return ...;
+        }
     }
-}
 ```
 
 </br>
 
-- ### <b> Step 3 : add your service class into the manifest file... (your own class, not "MyService") </b>
+- ### <b> Step 3 : add your service class in manifest file... (your own class, not "MyService") </b>
 
 ```xml
-<service android:name="<YOUR_PACKAGE>.MyService" />
+    <service android:name="<YOUR_PACKAGE>.MyService" />
 ```
 
 </br>
