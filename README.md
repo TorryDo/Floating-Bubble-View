@@ -176,8 +176,8 @@ public class MyService extends FloatingBubbleService {
                 // layout is required
                 .setExpandableView(layout)
 
-                // set expandable view dim amount
-                .setDimAmount(1f);
+                // set expandable view dim
+                .setDimAmount(0.7f);
     }
 }
 ```
