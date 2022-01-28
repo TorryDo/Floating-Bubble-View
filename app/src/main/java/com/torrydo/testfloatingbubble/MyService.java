@@ -57,6 +57,7 @@ public class MyService extends FloatingBubbleService {
 
         return new ExpandableView.Builder()
                 .with(this)
-                .setExpandableView(layout);
+                .setExpandableView(layout)
+                .setDimAmount(1f);
     }
 }

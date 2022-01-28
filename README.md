@@ -92,7 +92,7 @@ then add maven repository inside "dependencyResolutionManagement => repositories
 
 </br>
 
-- ### <b> Step 3 : add your service class in manifest file... (your own class, not "MyService") </b>
+- ### <b> Step 3 : add your service class in manifest file... </b>
 
 ```xml
     <service android:name="<YOUR_PACKAGE>.MyService" />
@@ -169,8 +169,15 @@ public class MyService extends FloatingBubbleService {
         });
 
         return new ExpandableView.Builder()
+
+                // context is required
                 .with(this)
-                .setExpandableView(layout);
+
+                // layout is required
+                .setExpandableView(layout)
+
+                // set expandable view dim amount
+                .setDimAmount(1f);
     }
 }
 ```
