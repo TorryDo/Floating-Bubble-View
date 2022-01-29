@@ -134,7 +134,7 @@ public class MyService extends FloatingBubbleService {
                 // set bubble size in dp
                 .setBubbleSizeDp(60)
 
-                // set the point where the bubble appear
+                // set the point where the bubble appear. x,y=0 is the center of the screen
                 .setStartPoint(-200, 0)
 
                 // set alpha\opacity of the bubble
