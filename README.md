@@ -66,7 +66,7 @@ then add maven repository inside "dependencyResolutionManagement => repositories
 
 # II, How to use
 
-- ### <b> Step 1 : create a class extending FloatingBubbleService </b>
+- ### <b> Step 1 : create a subclass of FloatingBubbleService </b>
 
 ```java
     public class MyService extends FloatingBubbleService {
