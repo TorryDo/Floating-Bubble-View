@@ -2,64 +2,45 @@ package com.torrydo.floatingbubbleview
 
 import android.util.Log
 
-//class Logger{
-//
-//    companion object{
-//        fun d(message String){
-//
-//        }
-//    }
-//
-//}
-
+internal fun String?.toTag() = "<> $this"
 
 internal interface Logger {
 
-    fun getTagName(): String
-
+    @Deprecated("not implemented yet")
     fun setTagName(tagName: String)
 
     fun enableLogger(enabled: Boolean)
 
-    fun d(message: String)
+    fun d(message: String, tag: String? = javaClass.simpleName.toString())
 
-    fun e(message: String)
+    fun e(message: String, tag: String? = javaClass.simpleName.toString())
 }
 
 internal open class LoggerImpl : Logger {
 
-    private var tag: String? = null
-    private var isLoggerEnabled: Boolean = Const.IS_DEBUG_ENABLED
+    private var _tag: String? = null
+    private var _isLoggerEnabled: Boolean = Const.IS_LOGGER_ENABLED
 
-    override fun getTagName(): String {
-        if (tag == null) tag = getClassName()
-        return tag!!
-    }
 
     override fun setTagName(tagName: String) {
-        tag = tagName.toTag()
+        _tag = tagName.toTag()
     }
 
     override fun enableLogger(enabled: Boolean) {
-        isLoggerEnabled = enabled
+        _isLoggerEnabled = enabled
     }
 
-    override fun d(message: String) {
-        if (isLoggerEnabled) {
-            Log.d(getTagName(), message)
+    override fun d(message: String, tag: String?) {
+        if (_isLoggerEnabled) {
+            Log.d(tag.toTag(), message)
         }
     }
 
-    override fun e(message: String) {
-        if (isLoggerEnabled) {
-            Log.e(getTagName(), message)
+    override fun e(message: String, tag: String?) {
+        if (_isLoggerEnabled) {
+            Log.e(tag.toTag(), message)
         }
     }
 
-    // private -------------------------------------------------------------------------------------
-
-    open fun getClassName() = javaClass.simpleName.toTag()
 
 }
-
-internal fun String.toTag() = "<> $this"

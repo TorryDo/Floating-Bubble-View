@@ -27,7 +27,6 @@ open class BaseFloatingView(
     protected fun show(view: View) {
         try {
             windowManager?.addView(view, windowParams)
-            ld("<> hello world")
         } catch (e: Exception) {
             e(e.message.toString())
         }

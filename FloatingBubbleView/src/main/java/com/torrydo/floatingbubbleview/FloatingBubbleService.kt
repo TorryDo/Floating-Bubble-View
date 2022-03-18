@@ -9,7 +9,6 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
 
     override fun onCreate() {
         super.onCreate()
-        setTagName(javaClass.simpleName.toString())
         d("floating bubble service created")
     }
 
@@ -20,7 +19,7 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Const.IS_DEBUG_ENABLED = setDebugEnabled()
+        Const.IS_LOGGER_ENABLED = setDebugEnabled()
         setup()
 
         return START_NOT_STICKY
