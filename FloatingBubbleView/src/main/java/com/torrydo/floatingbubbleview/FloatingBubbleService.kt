@@ -6,29 +6,27 @@ import android.os.IBinder
 
 abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
 
-    private lateinit var logger: ILogger
 
     override fun onCreate() {
         super.onCreate()
-        logger = Logger().setTag(javaClass.simpleName.toTag())
-            .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
-        logger.log("floating bubble service created")
+        setTagName(javaClass.simpleName.toString())
+        d("floating bubble service created")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        logger.log("service destroyed")
+        d("service destroyed")
     }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Constants.IS_DEBUG_ENABLED = setDebugEnabled()
+        Const.IS_DEBUG_ENABLED = setDebugEnabled()
         setup()
 
         return START_NOT_STICKY
     }
 
-    open fun setDebugEnabled(): Boolean = false
+    open fun setDebugEnabled(): Boolean = true
 
     override fun onBind(intent: Intent?): IBinder? = null
 

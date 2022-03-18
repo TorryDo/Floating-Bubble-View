@@ -8,13 +8,10 @@ import androidx.core.graphics.drawable.toBitmap
 
 class FloatingBubble(
     private val bubbleBuilder: FloatingBubble.Builder
-) {
+) : Logger by LoggerImpl(){
 
-    private val logger = Logger()
-        .setTag(javaClass.simpleName.toTag())
-        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
-    private inner class CustomBubbleTouchListener : FloatingBubble.TouchEvent {
+    private inner class CustomBubbleTouchListener : TouchEvent {
 
         private var isBubbleMoving = false
 
@@ -87,7 +84,7 @@ class FloatingBubble(
             binYmin < currentIconY && currentIconY < binYmax
         ) {
             bubbleBuilder.listener?.onDestroy()
-            logger.log("destroy service")
+            d("destroy service")
             return true
         }
 
@@ -114,11 +111,8 @@ class FloatingBubble(
 
     // builder class -------------------------------------------------------------------------------
 
-    class Builder : IFloatingBubbleBuilder {
+    class Builder : IFloatingBubbleBuilder, Logger by LoggerImpl() {
 
-        private val logger = Logger()
-            .setTag(javaClass.simpleName.toTag())
-            .setDebugEnabled(true)
 
         var context: Context? = null
 

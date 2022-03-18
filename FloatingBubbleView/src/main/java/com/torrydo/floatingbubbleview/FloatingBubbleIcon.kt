@@ -16,9 +16,6 @@ internal class FloatingBubbleIcon(
     private val screenSize: Size
 ) : BaseFloatingView (bubbleBuilder.context!!) {
 
-    private val logger = Logger()
-        .setTag(javaClass.simpleName.toTag())
-        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
     var _binding: IconMainBinding? = null
     val binding get() = _binding!!
@@ -35,7 +32,7 @@ internal class FloatingBubbleIcon(
 
         _binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
-        logger.log("wtf")
+        d("wtf")
 
         setupDefaultLayoutParams()
         setupIconProperties()
@@ -153,11 +150,11 @@ internal class FloatingBubbleIcon(
 
 
         // why log did not show?
-        logger.log("sfsdaf")
+        d("sfsdaf")
 
         binding.homeLauncherMainIcon.also { imgView ->
 
-            logger.log("after measured 0")
+            d("after measured 0")
 
             imgView.afterMeasured {
                 bubbleBuilder.context?.let { nonNullContext ->
@@ -218,7 +215,7 @@ internal class FloatingBubbleIcon(
 
                         if (isBubbleClickable) {
                             bubbleBuilder.listener?.onClick()
-                            logger.log("onClick")
+                            d("onClick")
                         }
 
 //                        animateIconToEdge(68) {}

@@ -7,16 +7,12 @@ import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import androidx.viewbinding.ViewBinding
 
 
 open class BaseFloatingView(
     context: Context
-) {
+) : Logger by LoggerImpl() {
 
-    private val logger = Logger()
-        .setTag(javaClass.simpleName.toTag())
-        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
     var windowManager: WindowManager? = null
     var windowParams: WindowManager.LayoutParams? = null
@@ -31,16 +27,18 @@ open class BaseFloatingView(
     protected fun show(view: View) {
         try {
             windowManager?.addView(view, windowParams)
+            ld("<> hello world")
         } catch (e: Exception) {
-            logger.error(e.message.toString())
+            e(e.message.toString())
         }
+
     }
 
     protected fun remove(view: View) {
         try {
             windowManager?.removeView(view)
         } catch (e: Exception) {
-            logger.error(e.message.toString())
+            e(e.message.toString())
         }
     }
 
@@ -48,7 +46,7 @@ open class BaseFloatingView(
         try {
             windowManager?.updateViewLayout(view, windowParams)
         } catch (e: Exception) {
-            logger.error(e.message.toString())
+            e(e.message.toString())
         }
     }
 

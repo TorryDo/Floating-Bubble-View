@@ -2,11 +2,8 @@ package com.torrydo.floatingbubbleview
 
 import android.app.Service
 
-abstract class FloatingBubbleServiceConfig : Service() {
+abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
 
-    private val logger = Logger()
-        .setTag(javaClass.simpleName.toTag())
-        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
 
     private var floatingBubble: FloatingBubble? = null
     private var expandableView: ExpandableView? = null
@@ -27,13 +24,13 @@ abstract class FloatingBubbleServiceConfig : Service() {
         expandableView = setupExpandableView(customExpandableViewListener)
             .build()
 
-        ThreadHelper.runOnMainThread {
+        onMainThread {
             try {
                 floatingBubble!!.showIcon()
-                logger.log("bubble show")
             } catch (e: Exception) {
-                logger.error(e.message.toString())
+                e(e.message.toString())
             }
+
         }
     }
 
@@ -44,17 +41,17 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
             removeExpandableViewAndShowBubble()
 
-            logger.log("pop to bubble")
+            d("pop to bubble")
         }
     }
 
-    private val customFloatingBubbleTouchEvent = object: FloatingBubble.TouchEvent {
+    private val customFloatingBubbleTouchEvent = object : FloatingBubble.TouchEvent {
         override fun onClick() {
-            removeBubbleAndshowExpandableView()
+            removeBubbleAndShowExpandableView()
         }
 
         override fun onDestroy() {
-            stopThisService()
+            tryStopService()
         }
 
     }
@@ -67,28 +64,36 @@ abstract class FloatingBubbleServiceConfig : Service() {
         }
     }
 
-    private fun removeBubbleAndshowExpandableView() {
+    private fun removeBubbleAndShowExpandableView() {
 
         floatingBubble?.removeIcon()
 
         try {
             expandableView!!.show()
         } catch (e: Exception) {
-            logger.error(e.message.toString())
+            e(e.message.toString())
         }
 
     }
 
-    private fun stopThisService() {
+    private fun tryStopService() {
         try {
-            removeExpandableViewAndShowBubble()
-            floatingBubble?.removeIcon()
-            floatingBubble?.removeRemoveIcon()
-
+            removeAllView()
         } catch (e: Exception) {
-            logger.error(e.message.toString())
+            e(e.message.toString())
         }
         stopSelf()
     }
 
+    // splitter ------------------------------------------------------------------------------------
+
+    private fun removeAllView(){
+        removeExpandableViewAndShowBubble()
+        floatingBubble?.removeIcon()
+        floatingBubble?.removeRemoveIcon()
+    }
+
+
+
 }
+

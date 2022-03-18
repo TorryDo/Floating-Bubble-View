@@ -2,37 +2,64 @@ package com.torrydo.floatingbubbleview
 
 import android.util.Log
 
-internal class Logger : ILogger {
+//class Logger{
+//
+//    companion object{
+//        fun d(message String){
+//
+//        }
+//    }
+//
+//}
 
-    private var TAG = javaClass.simpleName.toTag()
-    private var isEnabled = false         // is Debug Enabled
 
-    override fun setTag(tag: String): ILogger {
-        TAG = tag
-        return this
+internal interface Logger {
+
+    fun getTagName(): String
+
+    fun setTagName(tagName: String)
+
+    fun enableLogger(enabled: Boolean)
+
+    fun d(message: String)
+
+    fun e(message: String)
+}
+
+internal open class LoggerImpl : Logger {
+
+    private var tag: String? = null
+    private var isLoggerEnabled: Boolean = Const.IS_DEBUG_ENABLED
+
+    override fun getTagName(): String {
+        if (tag == null) tag = getClassName()
+        return tag!!
     }
 
-    override fun setDebugEnabled(isEnabled: Boolean): ILogger {
-        this.isEnabled = isEnabled
-        return this
+    override fun setTagName(tagName: String) {
+        tag = tagName.toTag()
     }
 
-    override fun log(message: String) {
-        if (isEnabled) {
-            Log.d(TAG, message)
+    override fun enableLogger(enabled: Boolean) {
+        isLoggerEnabled = enabled
+    }
+
+    override fun d(message: String) {
+        if (isLoggerEnabled) {
+            Log.d(getTagName(), message)
         }
     }
 
-    override fun log(message: String, throwable: Throwable) {
-        if (isEnabled) {
-            Log.e(TAG, message, throwable)
+    override fun e(message: String) {
+        if (isLoggerEnabled) {
+            Log.e(getTagName(), message)
         }
     }
 
-    override fun error(message: String) {
-        if (isEnabled) {
-            Log.e(TAG, message)
-        }
-    }
+    // private -------------------------------------------------------------------------------------
+
+    open fun getClassName() = javaClass.simpleName.toTag()
 
 }
+
+internal fun String.toTag() = "<> $this"

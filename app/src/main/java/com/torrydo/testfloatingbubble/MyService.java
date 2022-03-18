@@ -60,4 +60,5 @@ public class MyService extends FloatingBubbleService {
                 .setExpandableView(layout)
                 .setDimAmount(0.8f);
     }
+
 }

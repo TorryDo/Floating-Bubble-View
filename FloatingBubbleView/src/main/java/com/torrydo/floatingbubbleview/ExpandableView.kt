@@ -6,12 +6,8 @@ import android.view.View
 import android.view.WindowManager
 
 class ExpandableView(
-    private val builder: ExpandableView.Builder
-) : BaseFloatingView(builder.context) {
-
-    private val logger = Logger()
-        .setTag(javaClass.simpleName.toTag())
-        .setDebugEnabled(Constants.IS_DEBUG_ENABLED)
+    private val builder: Builder
+) : BaseFloatingView(builder.context){
 
 
     init {
@@ -23,19 +19,19 @@ class ExpandableView(
     fun show() {
         builder.rootView?.let { nonNullableView ->
             super.show(nonNullableView)
-            logger.log("expandable view showing")
+            d("expandable view showing")
             return
         }
-        logger.error("expandableView = null")
+        e("expandableView = null")
     }
 
     fun remove() {
         builder.rootView?.let { nonNullableView ->
             super.remove(nonNullableView)
-            logger.log("expandable view removed")
+            d("expandable view removed")
             return
         }
-        logger.error("expandableView = null")
+        e("expandableView = null")
     }
 
 
@@ -59,7 +55,7 @@ class ExpandableView(
 
     interface Action {
 
-        fun popToBubble(){}
+        fun popToBubble() {}
 
     }
 

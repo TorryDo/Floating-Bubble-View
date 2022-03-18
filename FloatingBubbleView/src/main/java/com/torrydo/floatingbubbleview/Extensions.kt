@@ -16,8 +16,6 @@ fun Int.toBitmap(context: Context): Bitmap? {
     }
 }
 
-fun String.toTag() = "<> $this"
-
 // -x | x
 fun View.getXYPointOnScreen(): Point {
     val arr = IntArray(2)
