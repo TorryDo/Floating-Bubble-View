@@ -8,7 +8,12 @@
 
 # Demo
 
-<img src="art/demo.gif"/>
+<!-- <img src="art/demo.gif"/> -->
+
+
+https://user-images.githubusercontent.com/85553681/151544981-1e080474-77a5-48e7-922d-b01de19cf89a.mp4
+
+
 
 <br/>
 
@@ -54,14 +59,14 @@ then add maven repository inside "dependencyResolutionManagement => repositories
 
 ```gradle
     dependencies {
-            implementation 'com.github.TorryDo:Floating-Bubble-View:0.1.6'
+            implementation 'com.github.TorryDo:Floating-Bubble-View:0.2.0'
     }
 
 ```
 
 # II, How to use
 
-- ### <b> Step 1 : create a class extending FloatingBubbleService </b>
+- ### <b> Step 1 : create a subclass of FloatingBubbleService </b>
 
 ```java
     public class MyService extends FloatingBubbleService {
@@ -129,7 +134,7 @@ public class MyService extends FloatingBubbleService {
                 // set bubble size in dp
                 .setBubbleSizeDp(60)
 
-                // set the point where the bubble appear
+                // set the point where the bubble appear. x,y=0 is the center of the screen
                 .setStartPoint(-200, 0)
 
                 // set alpha\opacity of the bubble
@@ -165,7 +170,7 @@ public class MyService extends FloatingBubbleService {
 
         layout.findViewById(R.id.card_view).setOnClickListener(v -> {
             Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
-            expandableViewEvent.popToBubble();
+            action.popToBubble();
         });
 
         return new ExpandableView.Builder()
