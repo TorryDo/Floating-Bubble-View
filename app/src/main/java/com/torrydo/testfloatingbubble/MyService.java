@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.torrydo.floatingbubbleview.ExpandableView;
 import com.torrydo.floatingbubbleview.FloatingBubble;
@@ -43,7 +44,7 @@ public class MyService extends FloatingBubbleService {
                 .setAlpha(1f);
     }
 
-    @NonNull
+    @Nullable
     @Override
     public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -60,5 +61,6 @@ public class MyService extends FloatingBubbleService {
                 .setExpandableView(layout)
                 .setDimAmount(0.8f);
     }
+
 
 }

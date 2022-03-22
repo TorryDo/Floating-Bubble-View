@@ -8,29 +8,24 @@ abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
     private var floatingBubble: FloatingBubble? = null
     private var expandableView: ExpandableView? = null
 
-    // abstract func -------------------------------------------------------------------------------
+    // overridable ---------------------------------------------------------------------------------
 
+    /**
+     * bubble is required
+     * */
     abstract fun setupBubble(): FloatingBubble.Builder
 
-    abstract fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder
+    open fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? = null
 
-    // override func
-    fun setup() {
+    // public func ---------------------------------------------------------------------------------
+    fun setupViewAppearance() {
 
-        floatingBubble = setupBubble()
-            .addFloatingBubbleTouchListener(customFloatingBubbleTouchEvent)
-            .build()
+        initFloatingBubble()
 
-        expandableView = setupExpandableView(customExpandableViewListener)
-            .build()
+        initExpandableViewOrNull()
 
         onMainThread {
-            try {
-                floatingBubble!!.showIcon()
-            } catch (e: Exception) {
-                e(e.message.toString())
-            }
-
+            tryShowBubbles()
         }
     }
 
@@ -38,40 +33,19 @@ abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
 
     private val customExpandableViewListener = object : ExpandableView.Action {
         override fun popToBubble() {
-
-            removeExpandableViewAndShowBubble()
-
-            d("pop to bubble")
+            tryRemoveExpandableView()
+            tryShowBubbles()
         }
     }
 
     private val customFloatingBubbleTouchEvent = object : FloatingBubble.TouchEvent {
         override fun onClick() {
-            removeBubbleAndShowExpandableView()
+            tryRemoveBubbles()
+            tryShowExpandableView()
         }
 
         override fun onDestroy() {
             tryStopService()
-        }
-
-    }
-
-    private fun removeExpandableViewAndShowBubble() {
-
-        expandableView?.let { nonNullExpandableView ->
-            nonNullExpandableView.remove()
-            floatingBubble?.showIcon()
-        }
-    }
-
-    private fun removeBubbleAndShowExpandableView() {
-
-        floatingBubble?.removeIcon()
-
-        try {
-            expandableView!!.show()
-        } catch (e: Exception) {
-            e(e.message.toString())
         }
 
     }
@@ -85,14 +59,57 @@ abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
         stopSelf()
     }
 
-    // splitter ------------------------------------------------------------------------------------
+    private fun removeAllView() {
+        tryRemoveExpandableView()
 
-    private fun removeAllView(){
-        removeExpandableViewAndShowBubble()
-        floatingBubble?.removeIcon()
-        floatingBubble?.removeRemoveIcon()
+        tryRemoveBubbles()
     }
 
+    // shorten  ------------------------------------------------------------------------------------
+
+    private fun tryRemoveExpandableView() {
+        try {
+            expandableView!!.remove();
+        } catch (e: Exception) {
+            e(e.message.toString())
+        }
+    }
+
+    private fun tryShowExpandableView() {
+        try {
+            expandableView!!.show();
+        } catch (e: Exception) {
+            e(e.message.toString())
+        }
+    }
+
+    private fun initExpandableViewOrNull() {
+        expandableView = setupExpandableView(customExpandableViewListener)
+            ?.build()
+    }
+
+    private fun initFloatingBubble() {
+        floatingBubble = setupBubble()
+            .addFloatingBubbleTouchListener(customFloatingBubbleTouchEvent)
+            .build()
+    }
+
+    private fun tryShowBubbles() {
+        try {
+            floatingBubble!!.showIcon()
+        } catch (e: Exception) {
+            e(e.message.toString())
+        }
+    }
+
+    private fun tryRemoveBubbles() {
+        try {
+            floatingBubble!!.removeIcon()
+            floatingBubble!!.removeRemoveIcon()
+        } catch (e: Exception) {
+            e(e.message.toString())
+        }
+    }
 
 
 }

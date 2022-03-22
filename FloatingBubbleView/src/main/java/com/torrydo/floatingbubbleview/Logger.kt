@@ -14,6 +14,8 @@ internal interface Logger {
     fun d(message: String, tag: String? = javaClass.simpleName.toString())
 
     fun e(message: String, tag: String? = javaClass.simpleName.toString())
+
+    fun i(message: String, tag: String? = javaClass.simpleName.toString())
 }
 
 internal open class LoggerImpl : Logger {
@@ -39,6 +41,12 @@ internal open class LoggerImpl : Logger {
     override fun e(message: String, tag: String?) {
         if (_isLoggerEnabled) {
             Log.e(tag.toTag(), message)
+        }
+    }
+
+    override fun i(message: String, tag: String?) {
+        if (_isLoggerEnabled) {
+            Log.i(tag.toTag(), message)
         }
     }
 
