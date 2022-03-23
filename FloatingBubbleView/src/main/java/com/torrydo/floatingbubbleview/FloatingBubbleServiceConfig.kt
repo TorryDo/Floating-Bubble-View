@@ -8,6 +8,13 @@ abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
     private var floatingBubble: FloatingBubble? = null
     private var expandableView: ExpandableView? = null
 
+    // lifecycle -----------------------------------------------------------------------------------
+
+    override fun onDestroy() {
+        tryRemoveAllView()
+        super.onDestroy()
+    }
+
     // overridable ---------------------------------------------------------------------------------
 
     /**
@@ -20,9 +27,13 @@ abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
     // public func ---------------------------------------------------------------------------------
     fun setupViewAppearance() {
 
-        initFloatingBubble()
+        floatingBubble = setupBubble()
+            .addFloatingBubbleTouchListener(customFloatingBubbleTouchEvent)
+            .build()
 
-        initExpandableViewOrNull()
+        expandableView = setupExpandableView(customExpandableViewListener)
+            ?.build()
+
 
         onMainThread {
             tryShowBubbles()
@@ -52,14 +63,14 @@ abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
 
     private fun tryStopService() {
         try {
-            removeAllView()
+            tryRemoveAllView()
         } catch (e: Exception) {
             e(e.message.toString())
         }
         stopSelf()
     }
 
-    private fun removeAllView() {
+    private fun tryRemoveAllView() {
         tryRemoveExpandableView()
 
         tryRemoveBubbles()
@@ -81,17 +92,6 @@ abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
         } catch (e: Exception) {
             e(e.message.toString())
         }
-    }
-
-    private fun initExpandableViewOrNull() {
-        expandableView = setupExpandableView(customExpandableViewListener)
-            ?.build()
-    }
-
-    private fun initFloatingBubble() {
-        floatingBubble = setupBubble()
-            .addFloatingBubbleTouchListener(customFloatingBubbleTouchEvent)
-            .build()
     }
 
     private fun tryShowBubbles() {

@@ -32,19 +32,22 @@ internal class FloatingBubbleIcon(
 
         _binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
-        d("wtf")
-
         setupDefaultLayoutParams()
         setupIconProperties()
         customTouch()
 
     }
 
-    // must be root view
+    /**
+     * must be root view
+     * */
     fun show() {
         super.show(binding.root)
     }
 
+    /**
+     * must be root view
+     * */
     fun remove() {
         super.remove(binding.root)
     }
@@ -149,12 +152,7 @@ internal class FloatingBubbleIcon(
         var isBubbleClickable = false
 
 
-        // why log did not show?
-        d("sfsdaf")
-
         binding.homeLauncherMainIcon.also { imgView ->
-
-            d("after measured 0")
 
             imgView.afterMeasured {
                 bubbleBuilder.context?.let { nonNullContext ->

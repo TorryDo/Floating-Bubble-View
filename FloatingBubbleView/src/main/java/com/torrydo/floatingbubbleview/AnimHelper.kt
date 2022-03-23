@@ -5,6 +5,22 @@ import androidx.dynamicanimation.animation.*
 
 internal class AnimHelper {
 
+    // event ---------------------------------------------------------------------------------------
+
+    interface Event {
+
+        fun onStart() {}
+
+        fun onFinish() {}
+
+        fun onFailure() {}
+
+        fun onUpdate(float: Float) {}
+
+    }
+
+    // func ----------------------------------------------------------------------------------------
+
     fun startSpringX(
         startValue: Float,
         position: Float,
@@ -48,20 +64,6 @@ internal class AnimHelper {
 
             start()
         }
-    }
-
-    // event ---------------------------------------------------------------------------------------
-
-    interface Event {
-
-        fun onStart() {}
-
-        fun onFinish() {}
-
-        fun onFailure() {}
-
-        fun onUpdate(float: Float) {}
-
     }
 
 }

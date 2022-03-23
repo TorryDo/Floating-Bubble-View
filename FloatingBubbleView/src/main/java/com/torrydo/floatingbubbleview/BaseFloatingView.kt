@@ -26,7 +26,7 @@ open class BaseFloatingView(
 
     protected fun show(view: View) {
         try {
-            windowManager?.addView(view, windowParams)
+            windowManager!!.addView(view, windowParams)
         } catch (e: Exception) {
             e(e.message.toString())
         }
@@ -35,7 +35,7 @@ open class BaseFloatingView(
 
     protected fun remove(view: View) {
         try {
-            windowManager?.removeView(view)
+            windowManager!!.removeView(view)
         } catch (e: Exception) {
             e(e.message.toString())
         }
@@ -43,7 +43,7 @@ open class BaseFloatingView(
 
     protected fun update(view: View) {
         try {
-            windowManager?.updateViewLayout(view, windowParams)
+            windowManager!!.updateViewLayout(view, windowParams)
         } catch (e: Exception) {
             e(e.message.toString())
         }

@@ -8,8 +8,44 @@ import androidx.core.graphics.drawable.toBitmap
 
 class FloatingBubble(
     private val bubbleBuilder: FloatingBubble.Builder
-) : Logger by LoggerImpl(){
+) : Logger by LoggerImpl() {
 
+    // listener ------------------------------------------------------------------------------------
+
+    interface TouchEvent {
+
+        fun onDown(x: Int, y: Int) {}
+
+        fun onUp(x: Int, y: Int) {}
+
+        fun onMove(x: Int, y: Int) {}
+
+        fun onClick() {}
+
+        fun onDestroy() {}
+
+    }
+
+    // public func ---------------------------------------------------------------------------------
+
+    fun showIcon() {
+        floatingIcon.show()
+    }
+
+    fun removeIcon() {
+        floatingIcon.remove()
+    }
+
+    fun showRemoveIcon() {
+        floatingRemoveIcon.show()
+    }
+
+    fun removeRemoveIcon() {
+        floatingRemoveIcon.remove()
+    }
+
+
+    // private func --------------------------------------------------------------------------------
 
     private inner class CustomBubbleTouchListener : TouchEvent {
 
@@ -41,27 +77,6 @@ class FloatingBubble(
         ScreenInfo.getScreenSize(bubbleBuilder.context!!)
     )
 
-    // public func ---------------------------------------------------------------------------------
-
-    fun showIcon() {
-        floatingIcon.show()
-    }
-
-    fun removeIcon() {
-        floatingIcon.remove()
-    }
-
-    fun showRemoveIcon() {
-        floatingRemoveIcon.show()
-    }
-
-    fun removeRemoveIcon() {
-        floatingRemoveIcon.remove()
-    }
-
-
-    // private func --------------------------------------------------------------------------------
-
     private fun stopServiceIfSuitableCondition(): Boolean {
         // get X and Y of binIcon
         val arrBin = floatingRemoveIcon.binding.homeLauncherMainBinIcon.getXYPointOnScreen()
@@ -84,29 +99,12 @@ class FloatingBubble(
             binYmin < currentIconY && currentIconY < binYmax
         ) {
             bubbleBuilder.listener?.onDestroy()
-            d("destroy service")
             return true
         }
 
         floatingIcon.animateIconToEdge(68) {}
 
         return false
-    }
-
-    // listener ------------------------------------------------------------------------------------
-
-    interface TouchEvent {
-
-        fun onDown(x: Int, y: Int) {}
-
-        fun onUp(x: Int, y: Int) {}
-
-        fun onMove(x: Int, y: Int) {}
-
-        fun onClick() {}
-
-        fun onDestroy() {}
-
     }
 
     // builder class -------------------------------------------------------------------------------
@@ -154,7 +152,7 @@ class FloatingBubble(
         }
 
         override fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): Builder {
-            var tempListener = this.listener
+            val tempListener = this.listener
             this.listener = object : FloatingBubble.TouchEvent {
 
                 override fun onClick() {

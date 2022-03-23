@@ -9,12 +9,12 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
     // service lifecycle ---------------------------------------------------------------------------
     override fun onCreate() {
         super.onCreate()
-        d("floating bubble service created")
+        d("floatingBubble service is created")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        d("floating bubble service destroyed")
+        d("floatingBubble service is destroyed")
     }
 
 
@@ -27,7 +27,7 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    // lib func ------------------------------------------------------------------------------------
+    // overridable func ------------------------------------------------------------------------------------
 
     open fun setLoggerEnabled(): Boolean = true
 
