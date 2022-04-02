@@ -11,7 +11,7 @@ class ExpandableView(
 
 
     init {
-        setupDefaultLayoutParams()
+        setupLayoutParams()
     }
 
     // public func ---------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ class ExpandableView(
 
     // private func --------------------------------------------------------------------------------
 
-    override fun setupDefaultLayoutParams() {
-        super.setupDefaultLayoutParams()
+    override fun setupLayoutParams() {
+        super.setupLayoutParams()
 
         windowParams?.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT

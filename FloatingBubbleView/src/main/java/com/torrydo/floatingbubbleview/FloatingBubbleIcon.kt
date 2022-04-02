@@ -7,14 +7,19 @@ import android.util.Size
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.WindowManager
-import androidx.viewbinding.ViewBinding
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
-import java.lang.ref.WeakReference
 
 internal class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubble.Builder,
     private val screenSize: Size
-) : BaseFloatingView (bubbleBuilder.context!!) {
+) : BaseFloatingView(bubbleBuilder.context!!) {
+
+    companion object {
+
+        val MARGIN_PX_FROM_TOP = 100
+        val MARGIN_PX_FROM_BOTTOM = 150
+
+    }
 
 
     var _binding: IconMainBinding? = null
@@ -32,7 +37,7 @@ internal class FloatingBubbleIcon(
 
         _binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
-        setupDefaultLayoutParams()
+        setupLayoutParams()
         setupIconProperties()
         customTouch()
 
@@ -148,8 +153,56 @@ internal class FloatingBubbleIcon(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
-
         var isBubbleClickable = false
+
+        fun onActionDown(motionEvent: MotionEvent) {
+            prevPoint.x = windowParams!!.x
+            prevPoint.y = windowParams!!.y
+
+            pointF.x = motionEvent.rawX
+            pointF.y = motionEvent.rawY
+
+            bubbleBuilder.listener?.onDown(prevPoint.x, prevPoint.y)
+
+            isBubbleClickable = true
+        }
+
+        fun onActionMove(motionEvent: MotionEvent) {
+            val mIconDeltaX = motionEvent.rawX - pointF.x
+            val mIconDeltaY = motionEvent.rawY - pointF.y
+
+            // prev code here onmove
+
+            newPoint.x = prevPoint.x + mIconDeltaX.toInt()  // -540 .. 540                          (examples, those numbers are not important)
+            newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // -1xxx .. 1xxx
+
+            windowParams!!.x = newPoint.x
+            windowParams!!.y = newPoint.y
+            update(binding.root)
+
+            bubbleBuilder.listener?.onMove(newPoint.x, newPoint.y)
+            if (isBubbleClickable) isBubbleClickable = false
+        }
+
+        fun onActionUp() {
+            // k cho tọa độ Y của view ra ngoài màn hình khiến user khó vuốt
+            if (newPoint.y > screenHalfHeight - MARGIN_PX_FROM_BOTTOM) {
+                newPoint.y = screenHalfHeight - MARGIN_PX_FROM_BOTTOM
+            } else if (newPoint.y < -screenHalfHeight + MARGIN_PX_FROM_TOP) {
+                newPoint.y = -screenHalfHeight + MARGIN_PX_FROM_TOP
+            }
+            windowParams!!.y = newPoint.y
+            update(binding.root)
+
+            bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
+
+            if (isBubbleClickable) {
+                bubbleBuilder.listener?.onClick()
+                d("onClick")
+            }
+
+//                        animateIconToEdge(68) {}
+        }
 
 
         binding.homeLauncherMainIcon.also { imgView ->
@@ -163,60 +216,23 @@ internal class FloatingBubbleIcon(
 
         binding.homeLauncherMainIcon.also { imageView ->
 
-            imageView.setOnTouchListener { view, motionEvent ->
+            imageView.setOnTouchListener { _, motionEvent ->
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
 
-                        prevPoint.x = windowParams!!.x
-                        prevPoint.y = windowParams!!.y
-
-                        pointF.x = motionEvent.rawX
-                        pointF.y = motionEvent.rawY
-
-                        bubbleBuilder.listener?.onDown(prevPoint.x, prevPoint.y)
-
-                        isBubbleClickable = true
+                        onActionDown(motionEvent)
 
                         return@setOnTouchListener true
                     }
                     MotionEvent.ACTION_MOVE -> {
 
-                        val mIconDeltaX = motionEvent.rawX - pointF.x
-                        val mIconDeltaY = motionEvent.rawY - pointF.y
-
-                        // prev code here onmove
-
-                        newPoint.x = prevPoint.x + mIconDeltaX.toInt()  // -540 .. 540
-                        newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // -1xxx .. 1xxx
-
-                        windowParams!!.x = newPoint.x
-                        windowParams!!.y = newPoint.y
-                        update(binding.root)
-
-                        bubbleBuilder.listener?.onMove(newPoint.x, newPoint.y)
-                        if (isBubbleClickable) isBubbleClickable = false
+                        onActionMove(motionEvent)
 
                         return@setOnTouchListener true
                     }
                     MotionEvent.ACTION_UP -> {
 
-                        // k cho tọa độ Y của view ra ngoài màn hình khiến user khó vuốt
-                        if (newPoint.y > screenHalfHeight - 150) {
-                            newPoint.y = screenHalfHeight - 150
-                        } else if (newPoint.y < -screenHalfHeight + 100) {
-                            newPoint.y = -screenHalfHeight + 100
-                        }
-                        windowParams!!.y = newPoint.y
-                        update(binding.root)
-
-                        bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
-
-                        if (isBubbleClickable) {
-                            bubbleBuilder.listener?.onClick()
-                            d("onClick")
-                        }
-
-//                        animateIconToEdge(68) {}
+                        onActionUp()
 
                         return@setOnTouchListener true
                     }
@@ -229,8 +245,8 @@ internal class FloatingBubbleIcon(
 
     // override
 
-    override fun setupDefaultLayoutParams() {
-        super.setupDefaultLayoutParams()
+    override fun setupLayoutParams() {
+        super.setupLayoutParams()
         windowParams?.apply {
 
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or

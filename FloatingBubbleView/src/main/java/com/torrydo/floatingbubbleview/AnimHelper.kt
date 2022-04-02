@@ -5,6 +5,11 @@ import androidx.dynamicanimation.animation.*
 
 internal class AnimHelper {
 
+    companion object{
+        val MIN_VALUE = 0f          // I know this variable name is useless :(
+        val DEFAULT_FRACTION = 1.1f
+    }
+
     // event ---------------------------------------------------------------------------------------
 
     interface Event {
@@ -54,9 +59,9 @@ internal class AnimHelper {
     ) {
         FlingAnimation(v, DynamicAnimation.SCROLL_X).apply {
             setStartVelocity(startVelocity)
-            setMinValue(0f)
+            setMinValue(MIN_VALUE)
             setMaxValue(position)
-            friction = 1.1f
+            friction = DEFAULT_FRACTION
 
             addUpdateListener { animation, value, velocity ->
                 animationListener.onUpdate(value)

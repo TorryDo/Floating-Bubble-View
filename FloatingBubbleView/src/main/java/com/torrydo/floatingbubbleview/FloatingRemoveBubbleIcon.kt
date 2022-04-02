@@ -20,13 +20,13 @@ internal class FloatingRemoveBubbleIcon(
 
         _binding = RemoveIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
-        setupDefaultLayoutParams()
+        setupLayoutParams()
         setupRemoveBubbleProperties()
     }
 
 
-    override fun setupDefaultLayoutParams() {
-        super.setupDefaultLayoutParams()
+    override fun setupLayoutParams() {
+        super.setupLayoutParams()
 
         windowParams?.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT

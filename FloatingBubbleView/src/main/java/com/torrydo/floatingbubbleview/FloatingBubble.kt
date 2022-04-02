@@ -10,6 +10,11 @@ class FloatingBubble(
     private val bubbleBuilder: FloatingBubble.Builder
 ) : Logger by LoggerImpl() {
 
+    companion object {
+        val REMOVE_BIN_ICON_SIZE = 150  // check later
+        var DEFAULT_HALF_ICON_SIZE_PX = 68  // should replace this
+    }
+
     // listener ------------------------------------------------------------------------------------
 
     interface TouchEvent {
@@ -58,7 +63,6 @@ class FloatingBubble(
         }
 
         override fun onUp(x: Int, y: Int) {
-
             removeRemoveIcon()
             isBubbleMoving = false
 
@@ -81,11 +85,11 @@ class FloatingBubble(
         // get X and Y of binIcon
         val arrBin = floatingRemoveIcon.binding.homeLauncherMainBinIcon.getXYPointOnScreen()
 
-        val binXmin = arrBin.x - 150
-        val binXmax = arrBin.x + 150
+        val binXmin = arrBin.x - REMOVE_BIN_ICON_SIZE
+        val binXmax = arrBin.x + REMOVE_BIN_ICON_SIZE
 
-        val binYmin = arrBin.y - 150
-        val binYmax = arrBin.y + 150
+        val binYmin = arrBin.y - REMOVE_BIN_ICON_SIZE
+        val binYmax = arrBin.y + REMOVE_BIN_ICON_SIZE
 
         // get X and Y of Main Icon
         val iconArr = floatingIcon.binding.homeLauncherMainIcon.getXYPointOnScreen()
@@ -93,16 +97,15 @@ class FloatingBubble(
         val currentIconX = iconArr.x
         val currentIconY = iconArr.y
 
-        if (
-            binXmin < currentIconX && currentIconX < binXmax
-            &&
-            binYmin < currentIconY && currentIconY < binYmax
-        ) {
+        fun isIconWidthInsideRemoveIcon() = binXmin < currentIconX && currentIconX < binXmax
+        fun isIconHeightInsideRemoveIcon() = binYmin < currentIconY && currentIconY < binYmax
+
+        if (isIconWidthInsideRemoveIcon() && isIconHeightInsideRemoveIcon()) {
             bubbleBuilder.listener?.onDestroy()
             return true
         }
 
-        floatingIcon.animateIconToEdge(68) {}
+        floatingIcon.animateIconToEdge(DEFAULT_HALF_ICON_SIZE_PX) {}
 
         return false
     }
@@ -110,7 +113,6 @@ class FloatingBubble(
     // builder class -------------------------------------------------------------------------------
 
     class Builder : IFloatingBubbleBuilder, Logger by LoggerImpl() {
-
 
         var context: Context? = null
 
@@ -128,6 +130,7 @@ class FloatingBubble(
         // required
         override fun with(context: Context): Builder {
             this.context = context
+
             return this
         }
 

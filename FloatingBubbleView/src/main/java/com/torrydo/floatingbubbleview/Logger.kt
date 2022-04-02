@@ -11,6 +11,13 @@ internal interface Logger {
 
     fun enableLogger(enabled: Boolean)
 
+    /**
+     * The reason I add 'tag' parameter below is because
+     * I CAN NOT get class name in runtime using interface delegation
+     *
+     * - more information: interface delegation is compiled before it subclass be compiled.
+     * - strongly recommend changing in the future!
+     */
     fun d(message: String, tag: String? = javaClass.simpleName.toString())
 
     fun e(message: String, tag: String? = javaClass.simpleName.toString())

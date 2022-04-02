@@ -16,8 +16,8 @@ fun Int.toBitmap(context: Context): Bitmap? {
     }
 }
 
-// -x | x
-fun View.getXYPointOnScreen(): Point {
+
+fun View.getXYPointOnScreen(): Point {  // -x | x
     val arr = IntArray(2)
     this.getLocationOnScreen(arr)
 

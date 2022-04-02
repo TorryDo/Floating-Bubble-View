@@ -52,7 +52,7 @@ open class BaseFloatingView(
 
     // override ------------------------------------------------------------------------------------
 
-    open fun setupDefaultLayoutParams() {
+    open fun setupLayoutParams() {
         windowParams?.apply {
             width = WindowManager.LayoutParams.WRAP_CONTENT
             height = WindowManager.LayoutParams.WRAP_CONTENT
