@@ -11,6 +11,7 @@ import androidx.core.graphics.drawable.toBitmap
 import java.lang.ref.WeakReference
 
 fun Int.toBitmap(context: Context): Bitmap? {
+
     return WeakReference(context).get()?.let { weakContext ->
         ContextCompat.getDrawable(weakContext, this)!!.toBitmap()
     }

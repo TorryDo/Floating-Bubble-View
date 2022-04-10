@@ -4,6 +4,11 @@ import android.util.Log
 
 internal fun String?.toTag() = "<> $this"
 
+//val <T : Any > T.classNameJava: String
+//    get() {
+//        return javaClass.simpleName
+//    }
+
 internal interface Logger {
 
     @Deprecated("not implemented yet")

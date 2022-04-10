@@ -6,49 +6,11 @@ import android.view.View
 import android.view.WindowManager
 
 class ExpandableView(
-    private val builder: Builder
-) : BaseFloatingView(builder.context){
-
+    private val builder: ExpandableView.Builder
+) : BaseFloatingView(builder.context) {
 
     init {
         setupLayoutParams()
-    }
-
-    // public func ---------------------------------------------------------------------------------
-
-    fun show() {
-        builder.rootView?.let { nonNullableView ->
-            super.show(nonNullableView)
-            d("expandable view showing")
-            return
-        }
-        e("expandableView = null")
-    }
-
-    fun remove() {
-        builder.rootView?.let { nonNullableView ->
-            super.remove(nonNullableView)
-            d("expandable view removed")
-            return
-        }
-        e("expandableView = null")
-    }
-
-
-    // private func --------------------------------------------------------------------------------
-
-    override fun setupLayoutParams() {
-        super.setupLayoutParams()
-
-        windowParams?.apply {
-            width = WindowManager.LayoutParams.MATCH_PARENT
-            gravity = Gravity.TOP
-            flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
-            dimAmount = builder.dim         // default = 0.5f
-            softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-//            windowAnimations = R.style.TransViewStyle
-        }
-
     }
 
     // interface -----------------------------------------------------------------------------------
@@ -56,6 +18,46 @@ class ExpandableView(
     interface Action {
 
         fun popToBubble() {}
+
+    }
+
+    // public --------------------------------------------------------------------------------------
+
+    fun show() {
+
+        logIfError {
+            super.show(builder.rootView!!)
+            d("expandable view showing")
+        }
+
+    }
+
+    fun remove() {
+
+        logIfError {
+            super.remove(builder.rootView!!)
+            d("expandable view removed")
+        }
+    }
+
+
+    // private -------------------------------------------------------------------------------------
+
+    override fun setupLayoutParams() {
+        super.setupLayoutParams()
+
+        logIfError {
+
+            windowParams!!.apply {
+                width = WindowManager.LayoutParams.MATCH_PARENT
+                gravity = Gravity.TOP
+                flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
+                dimAmount = builder.dim         // default = 0.5f
+                softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+//            windowAnimations = R.style.TransViewStyle
+            }
+
+        }
 
     }
 

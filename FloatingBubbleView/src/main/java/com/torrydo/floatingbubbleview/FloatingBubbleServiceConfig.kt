@@ -2,7 +2,7 @@ package com.torrydo.floatingbubbleview
 
 import android.app.Service
 
-abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
+abstract class FloatingBubbleServiceConfig : Service() {
 
 
     private var floatingBubble: FloatingBubble? = null
@@ -62,52 +62,45 @@ abstract class FloatingBubbleServiceConfig : Service(), Logger by LoggerImpl() {
     }
 
     private fun tryStopService() {
-        try {
-            tryRemoveAllView()
-        } catch (e: Exception) {
-            e(e.message.toString())
-        }
+        tryRemoveAllView()
+
         stopSelf()
     }
 
     private fun tryRemoveAllView() {
-        tryRemoveExpandableView()
 
+        tryRemoveExpandableView()
         tryRemoveBubbles()
     }
 
     // shorten  ------------------------------------------------------------------------------------
 
     private fun tryRemoveExpandableView() {
-        try {
-            expandableView!!.remove();
-        } catch (e: Exception) {
-            e(e.message.toString())
+
+        logIfError {
+            expandableView!!.remove()
         }
     }
 
     private fun tryShowExpandableView() {
-        try {
-            expandableView!!.show();
-        } catch (e: Exception) {
-            e(e.message.toString())
+
+        logIfError {
+            expandableView!!.show()
         }
     }
 
     private fun tryShowBubbles() {
-        try {
+
+        logIfError {
             floatingBubble!!.showIcon()
-        } catch (e: Exception) {
-            e(e.message.toString())
         }
     }
 
     private fun tryRemoveBubbles() {
-        try {
+
+        logIfError {
             floatingBubble!!.removeIcon()
             floatingBubble!!.removeRemoveIcon()
-        } catch (e: Exception) {
-            e(e.message.toString())
         }
     }
 

@@ -83,10 +83,10 @@ internal class FloatingBubbleIcon(
                     leftEdgeX.toFloat(),
                     object : AnimHelper.Event {
                         override fun onUpdate(float: Float) {
-                            try {
+
+                            logIfError {
                                 windowParams!!.x = -(float.toInt())
                                 windowManager?.updateViewLayout(binding.root, windowParams)
-                            } catch (e: Exception) {
                             }
 
                         }
@@ -108,11 +108,12 @@ internal class FloatingBubbleIcon(
                     rightEdgeX.toFloat(),
                     object : AnimHelper.Event {
                         override fun onUpdate(float: Float) {
-                            try {
+
+                            logIfError {
                                 windowParams!!.x = float.toInt()
                                 windowManager?.updateViewLayout(binding.root, windowParams)
-                            } catch (e: Exception) {
                             }
+
                         }
 
                         override fun onFinish() {
@@ -173,7 +174,8 @@ internal class FloatingBubbleIcon(
 
             // prev code here onmove
 
-            newPoint.x = prevPoint.x + mIconDeltaX.toInt()  // -540 .. 540                          (examples, those numbers are not important)
+            newPoint.x =
+                prevPoint.x + mIconDeltaX.toInt()  // -540 .. 540                                   (examples, those numbers are not important)
             newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // -1xxx .. 1xxx
 
             windowParams!!.x = newPoint.x
@@ -247,12 +249,19 @@ internal class FloatingBubbleIcon(
 
     override fun setupLayoutParams() {
         super.setupLayoutParams()
-        windowParams?.apply {
 
-            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        logIfError {
+
+            windowParams!!.apply {
+
+                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 //            windowAnimations = R.style.IconStyle
+            }
+
         }
+
+
     }
 }

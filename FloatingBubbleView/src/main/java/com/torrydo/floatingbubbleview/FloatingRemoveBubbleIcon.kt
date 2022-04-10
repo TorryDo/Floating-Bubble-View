@@ -28,13 +28,15 @@ internal class FloatingRemoveBubbleIcon(
     override fun setupLayoutParams() {
         super.setupLayoutParams()
 
-        windowParams?.apply {
-            width = WindowManager.LayoutParams.MATCH_PARENT
-            gravity = Gravity.BOTTOM or Gravity.CENTER
-            flags =
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+        logIfError {
+            windowParams!!.apply {
+                width = WindowManager.LayoutParams.MATCH_PARENT
+                gravity = Gravity.BOTTOM or Gravity.CENTER
+                flags =
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
 //            windowAnimations = R.style.IconStyle
+            }
         }
 
 
@@ -50,7 +52,7 @@ internal class FloatingRemoveBubbleIcon(
         super.remove(binding.root)
     }
 
-    fun destroy(){
+    fun destroy() {
         _binding = null
     }
 
