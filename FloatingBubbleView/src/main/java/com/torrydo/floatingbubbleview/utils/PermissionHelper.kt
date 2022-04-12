@@ -9,18 +9,6 @@ import android.provider.Settings
 import androidx.core.content.ContextCompat
 
 
-//object PermissionHelper {
-//
-//    @Deprecated("not yet implemented")
-//    fun navigateToPermission(context: Context) {
-//        val intent = Intent(
-//            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-//            Uri.parse("package:" + context.packageName)
-//        )
-////        startActivityForResult(intent, 0)
-//    }
-//
-//}
 
 fun Context.isPermissionGranted(): Boolean {
 
