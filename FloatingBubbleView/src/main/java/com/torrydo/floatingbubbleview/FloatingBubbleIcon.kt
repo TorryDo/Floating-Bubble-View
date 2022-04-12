@@ -14,12 +14,9 @@ internal class FloatingBubbleIcon(
     private val screenSize: Size
 ) : BaseFloatingView(bubbleBuilder.context!!) {
 
-    companion object {
 
-        val MARGIN_PX_FROM_TOP = 100
-        val MARGIN_PX_FROM_BOTTOM = 150
-
-    }
+    private val MARGIN_PX_FROM_TOP = 100
+    private val MARGIN_PX_FROM_BOTTOM = 150
 
 
     var _binding: IconMainBinding? = null
@@ -46,16 +43,17 @@ internal class FloatingBubbleIcon(
     /**
      * must be root view
      * */
-    fun show() {
+    fun show() = logIfError {
         super.show(binding.root)
     }
 
     /**
      * must be root view
      * */
-    fun remove() {
+    fun remove() = logIfError {
         super.remove(binding.root)
     }
+
 
     fun destroy() {
         _binding = null

@@ -2,10 +2,6 @@ package com.torrydo.floatingbubbleview
 
 import android.util.Log
 
-//private val <T : Any > T.classNameJava: String
-//    get() {
-//        return javaClass.simpleName
-//    }
 
 fun String?.addPrefix() = "<> $this"
 
@@ -16,6 +12,9 @@ sealed class ActionState {
 
 // use ---------------------------------------------------------------------------------------------
 
+/**
+ * if error appear, do nothing
+ * */
 inline fun tryOnly(crossinline mayErrorWork: () -> Unit) {
     try {
         mayErrorWork()
@@ -29,12 +28,15 @@ inline fun mayError(
     try {
         mayErrorWork()
     } catch (e: Exception) {
-        ActionState.ActionError(e)
+        return ActionState.ActionError(e)
     }
 
     return ActionState.ActionComplete()
 }
 
+/**
+ * if error appear, print to console
+ * */
 inline fun <T : Any> T.logIfError(
     tag: String? = javaClass.simpleName.toString(),
     crossinline mayErrorWork: () -> Unit,
@@ -43,7 +45,7 @@ inline fun <T : Any> T.logIfError(
         mayErrorWork()
     } catch (e: Exception) {
         Log.e(tag.addPrefix(), e.message.toString())
-        ActionState.ActionError(e)
+        return ActionState.ActionError(e)
     }
 
     return ActionState.ActionComplete()
@@ -66,4 +68,14 @@ inline fun ActionState.onError(crossinline onIfError: (e: Exception) -> Unit): A
     }
     return this
 }
+
+// custom exception
+
+class PermissionDeniedException: Exception(){
+    override val message: String
+        get() = "display-over-other-app permission IS NOT granted!"
+}
+
+
+
 

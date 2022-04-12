@@ -8,12 +8,11 @@ import androidx.core.graphics.drawable.toBitmap
 
 class FloatingBubble(
     private val bubbleBuilder: FloatingBubble.Builder
-) : Logger by LoggerImpl() {
+) {
 
-    companion object {
-        val REMOVE_BIN_ICON_SIZE = 150  // check later
-        var DEFAULT_HALF_ICON_SIZE_PX = 68  // should replace this
-    }
+    private val REMOVE_BIN_ICON_SIZE = 150  // check later
+    private var DEFAULT_HALF_ICON_SIZE_PX = 68  // should replace this
+
 
     // listener ------------------------------------------------------------------------------------
 
@@ -112,7 +111,7 @@ class FloatingBubble(
 
     // builder class -------------------------------------------------------------------------------
 
-    class Builder : IFloatingBubbleBuilder, Logger by LoggerImpl() {
+    class Builder : IFloatingBubbleBuilder {
 
         var context: Context? = null
 

@@ -23,6 +23,7 @@ internal interface Logger {
      * - more information: interface delegation is compiled before it subclass be compiled.
      * - strongly recommend changing in the future!
      */
+
     fun d(message: String, tag: String? = javaClass.simpleName.toString())
 
     fun e(message: String, tag: String? = javaClass.simpleName.toString())

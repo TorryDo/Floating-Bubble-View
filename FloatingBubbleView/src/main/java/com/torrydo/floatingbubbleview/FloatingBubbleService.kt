@@ -2,9 +2,10 @@ package com.torrydo.floatingbubbleview
 
 import android.content.Intent
 import android.os.IBinder
+import com.torrydo.floatingbubbleview.utils.isPermissionGranted
 
 
-abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
+abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by LoggerImpl() {
 
     // service lifecycle ---------------------------------------------------------------------------
     override fun onCreate() {
@@ -20,7 +21,12 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Const.IS_LOGGER_ENABLED = setLoggerEnabled()
-        setupViewAppearance()
+
+//        if (isPermissionGranted()) {
+            setupViewAppearance()
+//        } else {
+//            throw PermissionDeniedException()
+//        }
 
         return START_NOT_STICKY
     }
@@ -29,6 +35,7 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
 
     // overridable func ------------------------------------------------------------------------------------
 
+    @Deprecated("this function may not work properly", ReplaceWith("true"))
     open fun setLoggerEnabled(): Boolean = true
 
 

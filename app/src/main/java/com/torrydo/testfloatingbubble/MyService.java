@@ -56,11 +56,10 @@ public class MyService extends FloatingBubbleService {
             action.popToBubble();
         });
 
+
         return new ExpandableView.Builder()
                 .with(this)
                 .setExpandableView(layout)
                 .setDimAmount(0.8f);
     }
-
-
 }

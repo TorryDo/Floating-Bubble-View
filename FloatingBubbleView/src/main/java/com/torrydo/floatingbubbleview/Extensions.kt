@@ -17,8 +17,10 @@ fun Int.toBitmap(context: Context): Bitmap? {
     }
 }
 
-
-fun View.getXYPointOnScreen(): Point {  // -x | x
+/**
+ * return: -x | x
+ * */
+fun View.getXYPointOnScreen(): Point {
     val arr = IntArray(2)
     this.getLocationOnScreen(arr)
 
@@ -39,6 +41,5 @@ inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
             }
 
         }
-
     })
 }
