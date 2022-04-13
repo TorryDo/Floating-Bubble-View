@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.RemoveIconBinding
+import com.torrydo.floatingbubbleview.utils.logIfError
 
 internal class FloatingRemoveBubbleIcon(
     private val bubbleBuilder: FloatingBubble.Builder,

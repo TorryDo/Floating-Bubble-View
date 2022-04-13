@@ -7,6 +7,7 @@ import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import com.torrydo.floatingbubbleview.utils.logIfError
 
 
 open class BaseFloatingView(

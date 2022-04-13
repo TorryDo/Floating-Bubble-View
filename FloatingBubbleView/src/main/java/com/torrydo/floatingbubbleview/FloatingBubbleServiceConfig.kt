@@ -1,9 +1,9 @@
 package com.torrydo.floatingbubbleview
 
 import android.app.Service
+import com.torrydo.floatingbubbleview.utils.logIfError
 
 abstract class FloatingBubbleServiceConfig : Service() {
-
 
     private var floatingBubble: FloatingBubble? = null
     private var expandableView: ExpandableView? = null
@@ -43,6 +43,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
     // private func --------------------------------------------------------------------------------
 
     private val customExpandableViewListener = object : ExpandableView.Action {
+
         override fun popToBubble() {
             tryRemoveExpandableView()
             tryShowBubbles()
@@ -50,6 +51,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
     }
 
     private val customFloatingBubbleTouchEvent = object : FloatingBubble.TouchEvent {
+
         override fun onClick() {
             tryRemoveBubbles()
             tryShowExpandableView()
@@ -62,8 +64,8 @@ abstract class FloatingBubbleServiceConfig : Service() {
     }
 
     private fun tryStopService() {
-        tryRemoveAllView()
 
+        tryRemoveAllView()
         stopSelf()
     }
 
@@ -75,33 +77,24 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
     // shorten  ------------------------------------------------------------------------------------
 
-    private fun tryRemoveExpandableView() {
-
-        logIfError {
-            expandableView!!.remove()
-        }
+    private fun tryRemoveExpandableView() = logIfError {
+        expandableView!!.remove()
     }
 
-    private fun tryShowExpandableView() {
 
-        logIfError {
-            expandableView!!.show()
-        }
+    private fun tryShowExpandableView() = logIfError {
+        expandableView!!.show()
     }
 
-    private fun tryShowBubbles() {
 
-        logIfError {
-            floatingBubble!!.showIcon()
-        }
+    private fun tryShowBubbles() = logIfError {
+        floatingBubble!!.showIcon()
     }
 
-    private fun tryRemoveBubbles() {
 
-        logIfError {
-            floatingBubble!!.removeIcon()
-            floatingBubble!!.removeRemoveIcon()
-        }
+    private fun tryRemoveBubbles() = logIfError {
+        floatingBubble!!.removeIcon()
+        floatingBubble!!.removeRemoveIcon()
     }
 
 
