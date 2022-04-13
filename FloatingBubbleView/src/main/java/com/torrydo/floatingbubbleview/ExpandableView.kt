@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import com.torrydo.floatingbubbleview.utils.logIfError
 
 class ExpandableView(
     private val builder: ExpandableView.Builder

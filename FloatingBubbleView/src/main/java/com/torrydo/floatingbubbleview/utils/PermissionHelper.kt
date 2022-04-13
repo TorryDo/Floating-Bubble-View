@@ -1,25 +1,20 @@
 package com.torrydo.floatingbubbleview.utils
 
-import android.Manifest
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
+import android.os.Build
 import android.provider.Settings
-import androidx.core.content.ContextCompat
 
+/**
+ * by default, display over other app permission will be granted automatically if minor than android M
+ *
+ * - some MIUI devices may not work properly
+ *
+ * */
+fun Context.isDrawOverlaysPermissionGranted(): Boolean {
 
-
-fun Context.isPermissionGranted(): Boolean {
-
-    val displayOverOtherAppPermission = ContextCompat.checkSelfPermission(
-        this,
-        Manifest.permission.SYSTEM_ALERT_WINDOW
-    )
-
-    if (displayOverOtherAppPermission == PackageManager.PERMISSION_GRANTED) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
         return true
     }
 
-    return false
+    return Settings.canDrawOverlays(this)
 }

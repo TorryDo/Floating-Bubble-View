@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview
+package com.torrydo.floatingbubbleview.utils
 
 import android.util.Log
 
