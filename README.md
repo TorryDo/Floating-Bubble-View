@@ -59,7 +59,7 @@ then add maven repository inside "dependencyResolutionManagement => repositories
 
 ```gradle
     dependencies {
-            implementation 'com.github.TorryDo:Floating-Bubble-View:0.2.0'
+            implementation 'com.github.TorryDo:Floating-Bubble-View:0.2.1'
     }
 
 ```
