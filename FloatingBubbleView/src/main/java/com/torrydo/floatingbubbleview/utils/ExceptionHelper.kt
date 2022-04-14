@@ -1,4 +1,4 @@
-package com.torrydo.floatingbubbleview.utils
+package com.torrydo.floatingbubbleview
 
 import android.util.Log
 
@@ -74,6 +74,11 @@ inline fun ActionState.onError(crossinline onIfError: (e: Exception) -> Unit): A
 class PermissionDeniedException: Exception(){
     override val message: String
         get() = "display-over-other-app permission IS NOT granted!"
+}
+
+class NullViewException(private val inputMessage: String): Exception(){
+    override val message: String?
+        get() = inputMessage
 }
 
 

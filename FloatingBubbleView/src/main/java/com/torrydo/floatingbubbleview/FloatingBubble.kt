@@ -16,6 +16,16 @@ class FloatingBubble(
 
     // listener ------------------------------------------------------------------------------------
 
+
+    interface Action{
+
+        /**
+         * if you do not override expandable view, throw exception
+         * */
+        fun navigateToExpandableView(){}
+
+    }
+
     interface TouchEvent {
 
         fun onDown(x: Int, y: Int) {}

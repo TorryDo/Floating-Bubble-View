@@ -1,7 +1,6 @@
 package com.torrydo.floatingbubbleview
 
 import android.app.Service
-import com.torrydo.floatingbubbleview.utils.logIfError
 
 abstract class FloatingBubbleServiceConfig : Service() {
 
@@ -15,19 +14,17 @@ abstract class FloatingBubbleServiceConfig : Service() {
         super.onDestroy()
     }
 
-    // overridable ---------------------------------------------------------------------------------
+    // override ------------------------------------------------------------------------------------
 
-    /**
-     * bubble is required
-     * */
-    abstract fun setupBubble(): FloatingBubble.Builder
+
+    abstract fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder
 
     open fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? = null
 
     // public func ---------------------------------------------------------------------------------
-    fun setupViewAppearance() {
+    protected fun setupViewAppearance() {
 
-        floatingBubble = setupBubble()
+        floatingBubble = setupBubble(customFloatingBubbleAction)
             .addFloatingBubbleTouchListener(customFloatingBubbleTouchEvent)
             .build()
 
@@ -39,6 +36,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
             tryShowBubbles()
         }
     }
+
 
     // private func --------------------------------------------------------------------------------
 
@@ -52,16 +50,30 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
     private val customFloatingBubbleTouchEvent = object : FloatingBubble.TouchEvent {
 
-        override fun onClick() {
-            tryRemoveBubbles()
-            tryShowExpandableView()
-        }
-
         override fun onDestroy() {
             tryStopService()
         }
 
     }
+
+    private val customFloatingBubbleAction = object : FloatingBubble.Action {
+
+        override fun navigateToExpandableView() {
+            tryNavigateToExpandableView()
+        }
+    }
+
+
+    private fun tryNavigateToExpandableView() {
+
+        tryShowExpandableView()
+            .onComplete {
+                tryRemoveBubbles()
+            }.onError {
+                throw NullViewException("you DID NOT override expandable view")
+            }
+    }
+
 
     private fun tryStopService() {
 
@@ -75,22 +87,19 @@ abstract class FloatingBubbleServiceConfig : Service() {
         tryRemoveBubbles()
     }
 
-    // shorten  ------------------------------------------------------------------------------------
+    // shorten -------------------------------------------------------------------------------------
 
     private fun tryRemoveExpandableView() = logIfError {
         expandableView!!.remove()
     }
 
-
     private fun tryShowExpandableView() = logIfError {
         expandableView!!.show()
     }
 
-
     private fun tryShowBubbles() = logIfError {
         floatingBubble!!.showIcon()
     }
-
 
     private fun tryRemoveBubbles() = logIfError {
         floatingBubble!!.removeIcon()
