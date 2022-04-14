@@ -119,51 +119,46 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public FloatingBubble.Builder setupBubble() {
+    public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
+
         return new FloatingBubble.Builder()
-
-                // context is required
                 .with(this)
-
-                // set bubble icon
-                .setIcon(R.drawable.ic_star)
-
-                // set remove bubble icon
-                .setRemoveIcon(R.mipmap.ic_launcher_round)
-
-                // set bubble size in dp
-                .setBubbleSizeDp(60)
-
-                // set the point where the bubble appear. x,y=0 is the center of the screen
-                .setStartPoint(-200, 0)
-
-                // set alpha\opacity of the bubble
-                .setAlpha(1f)
-
-                // add listener
+                .setIcon(R.drawable.ic_rounded_blue_diamond)
+                .setRemoveIcon(R.drawable.ic_remove_icon)
                 .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
                     @Override
-                    public void onDestroy() { System.out.println("on Destroy"); }
+                    public void onDestroy() {
+                        System.out.println("on Destroy");
+                    }
 
                     @Override
-                    public void onClick() { System.out.println("onClick"); }
+                    public void onClick() {
+                        action.navigateToExpandableView();
+                    }
 
                     @Override
-                    public void onMove(int x, int y) { System.out.println("onMove"); }
+                    public void onMove(int x, int y) {
+                        System.out.println("onMove");
+                    }
 
                     @Override
-                    public void onUp(int x, int y) { System.out.println("onUp"); }
+                    public void onUp(int x, int y) {
+                        System.out.println("onUp");
+                    }
 
                     @Override
-                    public void onDown(int x, int y) { System.out.println("onDown"); }
-                });
+                    public void onDown(int x, int y) {
+                        System.out.println("onDown");
+                    }
+                })
+                .setBubbleSizeDp(60)
+                .setStartPoint(-200, 0)
+                .setAlpha(1f);
     }
 
-
-    @NonNull
+    @Nullable
     @Override
     public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
-
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
 
@@ -173,16 +168,11 @@ public class MyService extends FloatingBubbleService {
             action.popToBubble();
         });
 
+
         return new ExpandableView.Builder()
-
-                // context is required
                 .with(this)
-
-                // layout is required
                 .setExpandableView(layout)
-
-                // set expandable view dim
-                .setDimAmount(0.7f);
+                .setDimAmount(0.8f);
     }
 }
 ```
