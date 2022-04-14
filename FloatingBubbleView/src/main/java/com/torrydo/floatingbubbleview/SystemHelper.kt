@@ -3,13 +3,15 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.graphics.Rect
 import android.os.Build
+import android.provider.Settings
 import android.view.View
 import com.torrydo.floatingbubbleview.Const.ANDROID_10
 
 
+// exclude view gesture on home screen -------------------------------------------------------------
 private var exclusionRects: MutableList<Rect> = ArrayList()
 
-fun View.updateGestureExclusion(context: Context) {
+internal fun View.updateGestureExclusion(context: Context) {
     if (Build.VERSION.SDK_INT < ANDROID_10) return
 
 
@@ -22,4 +24,21 @@ fun View.updateGestureExclusion(context: Context) {
 
 
     this.systemGestureExclusionRects = exclusionRects
+}
+
+// permission --------------------------------------------------------------------------------------
+
+/**
+ * by default, display over other app permission will be granted automatically if minor than android M
+ *
+ * - some MIUI devices may not work properly
+ *
+ * */
+fun Context.isDrawOverlaysPermissionGranted(): Boolean {
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        return true
+    }
+
+    return Settings.canDrawOverlays(this)
 }

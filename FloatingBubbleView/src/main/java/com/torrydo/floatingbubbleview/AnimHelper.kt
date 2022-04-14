@@ -29,7 +29,7 @@ internal class AnimHelper {
     fun startSpringX(
         startValue: Float,
         position: Float,
-        animationListener: AnimHelper.Event   // an interface
+        animationListener: AnimHelper.Event
     ) {
         SpringAnimation(FloatValueHolder()).apply {
             spring = SpringForce().apply {

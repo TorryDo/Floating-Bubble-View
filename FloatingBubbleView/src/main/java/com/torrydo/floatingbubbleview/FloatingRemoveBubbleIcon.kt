@@ -5,7 +5,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.RemoveIconBinding
-import com.torrydo.floatingbubbleview.utils.logIfError
 
 internal class FloatingRemoveBubbleIcon(
     private val bubbleBuilder: FloatingBubble.Builder,
@@ -15,7 +14,6 @@ internal class FloatingRemoveBubbleIcon(
     private var _binding: RemoveIconBinding? = null
     val binding get() = _binding!!
 
-//    val binding = RemoveIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
     init {
 
