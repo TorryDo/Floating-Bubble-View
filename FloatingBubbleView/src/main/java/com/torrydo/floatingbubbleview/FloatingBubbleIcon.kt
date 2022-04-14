@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.IconMainBinding
-import com.torrydo.floatingbubbleview.utils.logIfError
 
 internal class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubble.Builder,

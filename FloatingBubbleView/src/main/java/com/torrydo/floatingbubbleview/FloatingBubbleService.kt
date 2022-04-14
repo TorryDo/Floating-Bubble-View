@@ -2,8 +2,6 @@ package com.torrydo.floatingbubbleview
 
 import android.content.Intent
 import android.os.IBinder
-import com.torrydo.floatingbubbleview.utils.PermissionDeniedException
-import com.torrydo.floatingbubbleview.utils.isDrawOverlaysPermissionGranted
 
 
 abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by LoggerImpl() {
@@ -38,6 +36,8 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
 
     @Deprecated("this function may not work properly", ReplaceWith("true"))
     open fun setLoggerEnabled(): Boolean = true
+
+    // private -------------------------------------------------------------------------------------
 
 
 }
