@@ -23,12 +23,12 @@ https://user-images.githubusercontent.com/85553681/151544981-1e080474-77a5-48e7-
 
 Add it in your root build.gradle at the end of repositories:
 
-```gradle
+```diff
     // not buildScript
     allprojects {
         repositories {
             ...
-            maven { url 'https://jitpack.io' }
++           maven { url 'https://jitpack.io' }
         }
     }
 
@@ -38,7 +38,7 @@ Add it in your root build.gradle at the end of repositories:
 
 then add maven repository inside "dependencyResolutionManagement => repositories" like below
 
-```gradle
+```diff
     dependencyResolutionManagement {
         repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
         repositories {
@@ -46,7 +46,7 @@ then add maven repository inside "dependencyResolutionManagement => repositories
             mavenCentral()
 
             // add here
-            maven { url 'https://jitpack.io' }
++           maven { url 'https://jitpack.io' }
 
             jcenter() // Warning: this repository is going to shut down soon
         }
