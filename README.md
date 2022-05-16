@@ -23,12 +23,12 @@ https://user-images.githubusercontent.com/85553681/151544981-1e080474-77a5-48e7-
 
 Add it in your root build.gradle at the end of repositories:
 
-```gradle
+```diff
     // not buildScript
     allprojects {
         repositories {
             ...
-            maven { url 'https://jitpack.io' }
++           maven { url 'https://jitpack.io' }
         }
     }
 
@@ -38,7 +38,7 @@ Add it in your root build.gradle at the end of repositories:
 
 then add maven repository inside "dependencyResolutionManagement => repositories" like below
 
-```gradle
+```diff
     dependencyResolutionManagement {
         repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
         repositories {
@@ -46,7 +46,7 @@ then add maven repository inside "dependencyResolutionManagement => repositories
             mavenCentral()
 
             // add here
-            maven { url 'https://jitpack.io' }
++           maven { url 'https://jitpack.io' }
 
             jcenter() // Warning: this repository is going to shut down soon
         }
@@ -59,7 +59,7 @@ then add maven repository inside "dependencyResolutionManagement => repositories
 
 ```gradle
     dependencies {
-            implementation 'com.github.TorryDo:Floating-Bubble-View:0.2.0'
+            implementation 'com.github.TorryDo:Floating-Bubble-View:0.2.1'
     }
 
 ```
@@ -119,51 +119,46 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
-    public FloatingBubble.Builder setupBubble() {
+    public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
+
         return new FloatingBubble.Builder()
-
-                // context is required
                 .with(this)
-
-                // set bubble icon
-                .setIcon(R.drawable.ic_star)
-
-                // set remove bubble icon
-                .setRemoveIcon(R.mipmap.ic_launcher_round)
-
-                // set bubble size in dp
-                .setBubbleSizeDp(60)
-
-                // set the point where the bubble appear. x,y=0 is the center of the screen
-                .setStartPoint(-200, 0)
-
-                // set alpha\opacity of the bubble
-                .setAlpha(1f)
-
-                // add listener
+                .setIcon(R.drawable.ic_rounded_blue_diamond)
+                .setRemoveIcon(R.drawable.ic_remove_icon)
                 .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
                     @Override
-                    public void onDestroy() { System.out.println("on Destroy"); }
+                    public void onDestroy() {
+                        System.out.println("on Destroy");
+                    }
 
                     @Override
-                    public void onClick() { System.out.println("onClick"); }
+                    public void onClick() {
+                        action.navigateToExpandableView();
+                    }
 
                     @Override
-                    public void onMove(int x, int y) { System.out.println("onMove"); }
+                    public void onMove(int x, int y) {
+                        System.out.println("onMove");
+                    }
 
                     @Override
-                    public void onUp(int x, int y) { System.out.println("onUp"); }
+                    public void onUp(int x, int y) {
+                        System.out.println("onUp");
+                    }
 
                     @Override
-                    public void onDown(int x, int y) { System.out.println("onDown"); }
-                });
+                    public void onDown(int x, int y) {
+                        System.out.println("onDown");
+                    }
+                })
+                .setBubbleSizeDp(60)
+                .setStartPoint(-200, 0)
+                .setAlpha(1f);
     }
 
-
-    @NonNull
+    @Nullable
     @Override
     public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
-
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
 
@@ -173,16 +168,30 @@ public class MyService extends FloatingBubbleService {
             action.popToBubble();
         });
 
+
         return new ExpandableView.Builder()
-
-                // context is required
                 .with(this)
-
-                // layout is required
                 .setExpandableView(layout)
-
-                // set expandable view dim
-                .setDimAmount(0.7f);
+                .setDimAmount(0.8f);
     }
 }
+```
+## License
+```
+
+
+    Copyright 2022 TorryDo
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 ```
