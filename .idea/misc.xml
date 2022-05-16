@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/APP_Android/LIBRARY/floating bubble/TestFloatingBubble/app/src/main/res/drawable/ic_remove_icon.xml" value="0.4564814814814815" />
+        <entry key="..\:/APP_Android/LIBRARY/floating bubble/TestFloatingBubble/app/src/main/res/drawable/ic_rounded_blue_diamond.xml" value="0.4564814814814815" />
         <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubble/src/main/res/drawable/circle.xml" value="0.14537037037037037" />
         <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubble/src/main/res/layout/icon_main.xml" value="0.2692502532928065" />
         <entry key="..\:/APP_Kotlin/TestFloatingBubble/FloatingBubbleView/src/main/res/drawable/ic_remove_icon.xml" value="0.24814814814814815" />

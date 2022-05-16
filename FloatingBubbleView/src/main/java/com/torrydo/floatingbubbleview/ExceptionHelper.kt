@@ -44,7 +44,7 @@ inline fun <T : Any> T.logIfError(
     try {
         mayErrorWork()
     } catch (e: Exception) {
-        Log.e(tag.addPrefix(), e.message.toString())
+        Log.e(tag.addPrefix(), e.stackTraceToString())
         return ActionState.ActionError(e)
     }
 
@@ -71,12 +71,12 @@ inline fun ActionState.onError(crossinline onIfError: (e: Exception) -> Unit): A
 
 // custom exception
 
-class PermissionDeniedException: Exception(){
+class PermissionDeniedException : Exception() {
     override val message: String
         get() = "display-over-other-app permission IS NOT granted!"
 }
 
-class NullViewException(private val inputMessage: String): Exception(){
+class NullViewException(private val inputMessage: String?) : Exception() {
     override val message: String?
         get() = inputMessage
 }

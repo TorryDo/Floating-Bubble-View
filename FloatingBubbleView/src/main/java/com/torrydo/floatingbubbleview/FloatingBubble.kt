@@ -1,5 +1,6 @@
 package com.torrydo.floatingbubbleview
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
@@ -163,6 +164,7 @@ class FloatingBubble(
             return this
         }
 
+        @Deprecated("this function is not stable yet, it may cause laggy or even memory leaks if you override multiple times")
         override fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): Builder {
             val tempListener = this.listener
             this.listener = object : FloatingBubble.TouchEvent {
