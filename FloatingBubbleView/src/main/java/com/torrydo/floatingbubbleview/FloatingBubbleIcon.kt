@@ -82,7 +82,7 @@ internal class FloatingBubbleIcon(
                     object : AnimHelper.Event {
                         override fun onUpdate(float: Float) {
 
-                            logIfError {
+                            tryOnly {
                                 windowParams!!.x = -(float.toInt())
                                 windowManager?.updateViewLayout(binding.root, windowParams)
                             }
@@ -107,7 +107,7 @@ internal class FloatingBubbleIcon(
                     object : AnimHelper.Event {
                         override fun onUpdate(float: Float) {
 
-                            logIfError {
+                            tryOnly {
                                 windowParams!!.x = float.toInt()
                                 windowManager?.updateViewLayout(binding.root, windowParams)
                             }
@@ -198,7 +198,6 @@ internal class FloatingBubbleIcon(
 
             if (isBubbleClickable) {
                 bubbleBuilder.listener?.onClick()
-                d("onClick")
             }
 
 //                        animateIconToEdge(68) {}
