@@ -16,7 +16,7 @@ https://user-images.githubusercontent.com/85553681/151544981-1e080474-77a5-48e7-
 
 # I, Prepare
 
-- ### <b> STEP 1. Adding JitPack repository to your setting.gradle file ------------------------------------</b>
+- ### <b> STEP 1. Adding JitPack repository to your setting.gradle file -------------------------------</b>
 
 Adding maven repository inside "dependencyResolutionManagement => repositories" like below
 
@@ -61,7 +61,7 @@ Adding maven repository inside "dependencyResolutionManagement => repositories" 
 
 <br/>
 
-- ### <b> STEP 2. Add dependency in your build.gradle (app module) -------------------------------------</b>
+- ### <b> STEP 2. Add dependency in your build.gradle (app module) --------------------------------</b>
 
 ```gradle
     dependencies {
