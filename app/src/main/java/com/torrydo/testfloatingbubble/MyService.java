@@ -22,7 +22,7 @@ public class MyService extends FloatingBubbleService {
         return new NotificationCompat.Builder(this, channelId)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-                .setContentTitle("the fking bubble is running")
+                .setContentTitle("bubble is running")
                 .setContentText("click to do nothing")
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)

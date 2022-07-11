@@ -10,33 +10,15 @@
 
 <!-- <img src="art/demo.gif"/> -->
 
-
 https://user-images.githubusercontent.com/85553681/151544981-1e080474-77a5-48e7-922d-b01de19cf89a.mp4
-
-
 
 <br/>
 
 # I, Prepare
 
-- ### <b> STEP 1. Add the JitPack repository to your build.gradle (Project) file </b>
+- ### <b> STEP 1. Adding JitPack repository to your setting.gradle file ------------------------------------</b>
 
-Add it in your root build.gradle at the end of repositories:
-
-```diff
-    // not buildScript
-    allprojects {
-        repositories {
-            ...
-+           maven { url 'https://jitpack.io' }
-        }
-    }
-
-```
-
-## If anything go WRONG, forget the step above. Go to your setting.gradle file
-
-then add maven repository inside "dependencyResolutionManagement => repositories" like below
+Adding maven repository inside "dependencyResolutionManagement => repositories" like below
 
 ```diff
     dependencyResolutionManagement {
@@ -55,11 +37,35 @@ then add maven repository inside "dependencyResolutionManagement => repositories
 
 <br/>
 
-- ### <b> STEP 2. Add dependency in your app module </b>
+## <b>In older gradle version, please follow this step</b>
+
+<details><summary><b>Older gradle version</b></summary>
+
+1. Go to your build.gradle (top-level)
+2. Add jitpack repo like below
+
+```diff
+    // not buildScript
+    allprojects {
+        repositories {
+            ...
++           maven { url 'https://jitpack.io' }
+        }
+    }
+
+```
+
+</details>
+
+<br/> <br/>
+
+<br/>
+
+- ### <b> STEP 2. Add dependency in your build.gradle (app module) -------------------------------------</b>
 
 ```gradle
     dependencies {
-            implementation 'com.github.TorryDo:Floating-Bubble-View:0.2.1'
+            implementation 'com.github.TorryDo:Floating-Bubble-View:0.3'
     }
 
 ```
@@ -77,6 +83,25 @@ then add maven repository inside "dependencyResolutionManagement => repositories
 </br>
 
 - ### <b> Step 2 : override 2 methods "setupBubble" and "setupExpandableView" </b>
+
+<details><summary><b>KOTLIN version (click)</b></summary>
+
+```kotlin
+    class MyService: FloatingBubbleService() {
+
+        override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
+            return ...
+        }
+
+        override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
+            return ...
+        }
+    }
+```
+
+</details>
+
+### > <b> Java version <b>
 
 ```java
     public class MyService extends FloatingBubbleService {
@@ -107,12 +132,99 @@ then add maven repository inside "dependencyResolutionManagement => repositories
 
 - ### <b> Step 4 : start your service and enjoy :) </b>
 
+<details><summary><b>KOTLIN version (click)</b></summary>
+
+```kotlin
+    val intent = Intent(this, Myservice::class.java)  // 'this' is your activity class
+
+    startService(intent)           // for android version lower than 8 (android O)
+    startForegroundService(intent) // for android 8 and higher
+```
+
+</details>
+
+### > <b> Java version <b>
+
 ```java
     Intent intent = new Intent(MainActivity.this, MyService.class);
-    startService(intent);
+
+    startService(intent);           // for android version lower than 8 (android O)
+    startForegroundService(intent); // for android 8 and higher
+
+
 ```
 
 # Sample class
+<details><summary><b>KOTLIN version (click)</b></summary>
+
+```kotlin
+class MyServiceKt : FloatingBubbleService() {
+class MyServiceKt : FloatingBubbleService() {
+
+    override fun setupNotificationBuilder(channelId: String): Notification {
+        return NotificationCompat.Builder(this, channelId)
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+            .setContentTitle("bubble is running")
+            .setContentText("click to do nothing")
+            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setCategory(Notification.CATEGORY_SERVICE)
+            .build()
+    }
+
+    override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
+        return FloatingBubble.Builder()
+            .with(this)
+            .setIcon(R.drawable.ic_rounded_blue_diamond)
+            .setRemoveIcon(R.drawable.ic_remove_icon)
+            .addFloatingBubbleTouchListener(object : FloatingBubble.TouchEvent {
+                override fun onDestroy() {
+                    println("on Destroy")
+                }
+
+                override fun onClick() {
+                    action.navigateToExpandableView();
+                }
+
+                override fun onMove(x: Int, y: Int) {
+                    println("onMove")
+                }
+
+                override fun onUp(x: Int, y: Int) {
+                    println("onUp")
+                }
+
+                override fun onDown(x: Int, y: Int) {
+                    println("onDown")
+                }
+            })
+            .setBubbleSizeDp(60)
+            .setStartPoint(-200, 0)
+            .setAlpha(1f)
+    }
+
+    override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder {
+        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+        val layout = inflater.inflate(R.layout.layout_view_test, null)
+
+        layout.findViewById<View>(R.id.card_view).setOnClickListener { view ->
+            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
+            action.popToBubble()
+        }
+        return ExpandableView.Builder()
+            .with(this)
+            .setExpandableView(layout)
+            .setDimAmount(0.8f)
+    }
+
+
+}
+```
+
+</details>
+
+### > <b> Java version <b>
 
 ```java
 public class MyService extends FloatingBubbleService {
@@ -176,7 +288,9 @@ public class MyService extends FloatingBubbleService {
     }
 }
 ```
+
 ## License
+
 ```
 
 
