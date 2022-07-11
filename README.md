@@ -37,7 +37,7 @@ Adding maven repository inside "dependencyResolutionManagement => repositories" 
 
 <br/>
 
-## <b>In older gradle version, please follow this step</b>
+### <b>In older gradle version, please follow this step instead</b>
 
 <details><summary><b>Older gradle version</b></summary>
 
@@ -57,11 +57,11 @@ Adding maven repository inside "dependencyResolutionManagement => repositories" 
 
 </details>
 
-<br/> <br/>
+<br/>
 
 <br/>
 
-- ### <b> STEP 2. Add dependency in your build.gradle (app module) --------------------------------</b>
+- ### <b> STEP 2. Add dependency in your build.gradle (app module) -------------------------------</b>
 
 ```gradle
     dependencies {
