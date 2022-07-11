@@ -163,7 +163,7 @@ class FloatingBubble(
             return this
         }
 
-        @Deprecated("this function is not stable yet, it may cause laggy or even memory leaks if you override multiple times")
+//        @Deprecated("this function is not stable yet, it may cause laggy or even memory leaks if you override multiple times")
         override fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): Builder {
 
             val tempListener = this.listener

@@ -1,11 +1,9 @@
 package com.torrydo.floatingbubbleview
 
-import android.app.Activity
 import android.util.Size
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
-import androidx.core.content.ContextCompat
 import com.torrydo.floatingbubbleview.databinding.RemoveIconBinding
 
 internal class FloatingRemoveBubbleIcon(
@@ -18,7 +16,6 @@ internal class FloatingRemoveBubbleIcon(
 
 
     init {
-
         _binding = RemoveIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
 
         setupLayoutParams()
