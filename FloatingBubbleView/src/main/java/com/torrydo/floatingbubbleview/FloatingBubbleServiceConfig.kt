@@ -16,7 +16,6 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
     // override ------------------------------------------------------------------------------------
 
-
     abstract fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder
 
     open fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? = null

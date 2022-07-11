@@ -1,6 +1,7 @@
 package com.torrydo.testfloatingbubble;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
@@ -19,13 +20,25 @@ public class MainActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.button);
 
-        button.setOnClickListener(v -> startService(new Intent(this, MyService.class)));
+
+        button.setOnClickListener(v ->
+                {
+                    finish();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(
+                                new Intent(this, MyService.class)
+                        );
+                    } else {
+                        startService(new Intent(this, MyService.class));
+                    }
+                }
+        );
 
     }
 
-    public void showToast(String message){
+    public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-    
+
 }
 

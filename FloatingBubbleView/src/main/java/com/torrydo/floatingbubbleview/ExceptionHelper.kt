@@ -6,7 +6,7 @@ import android.util.Log
 fun String?.addPrefix() = "<> $this"
 
 sealed class ActionState {
-    class ActionComplete : ActionState()
+    object ActionComplete : ActionState()
     class ActionError(val e: Exception) : ActionState()
 }
 
@@ -31,7 +31,7 @@ inline fun mayError(
         return ActionState.ActionError(e)
     }
 
-    return ActionState.ActionComplete()
+    return ActionState.ActionComplete
 }
 
 /**
@@ -48,7 +48,7 @@ inline fun <T : Any> T.logIfError(
         return ActionState.ActionError(e)
     }
 
-    return ActionState.ActionComplete()
+    return ActionState.ActionComplete
 }
 
 // extension ---------------------------------------------------------------------------------------

@@ -30,7 +30,7 @@ open class BaseFloatingView(
     }
 
     protected fun remove(view: View) {
-        logIfError {
+        tryOnly {
             windowManager!!.removeView(view)
         }
     }
