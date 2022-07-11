@@ -1,15 +1,34 @@
 package com.torrydo.testfloatingbubble;
 
+import android.app.Notification;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
 import com.torrydo.floatingbubbleview.ExpandableView;
 import com.torrydo.floatingbubbleview.FloatingBubble;
 import com.torrydo.floatingbubbleview.FloatingBubbleService;
 
 
 public class MyService extends FloatingBubbleService {
+
+//    @NonNull
+//    @Override
+//    public Notification setupNotificationBuilder(@NonNull String channelId) {
+//        return new NotificationCompat.Builder(this, channelId)
+//                .setOngoing(true)
+//                .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+//                .setContentTitle("the fking bubble is running")
+//                .setContentText("click to do nothing")
+//                .setPriority(NotificationCompat.PRIORITY_MIN)
+//                .setCategory(Notification.CATEGORY_SERVICE)
+//                .build();
+//    }
+
+
 
     @NonNull
     @Override

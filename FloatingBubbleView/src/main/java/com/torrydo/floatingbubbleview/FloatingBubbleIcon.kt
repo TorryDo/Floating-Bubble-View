@@ -170,11 +170,8 @@ internal class FloatingBubbleIcon(
             val mIconDeltaX = motionEvent.rawX - pointF.x
             val mIconDeltaY = motionEvent.rawY - pointF.y
 
-            // prev code here onmove
-
-            newPoint.x =
-                prevPoint.x + mIconDeltaX.toInt()  // -540 .. 540                                   (examples, those numbers are not important)
-            newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // -1xxx .. 1xxx
+            newPoint.x = prevPoint.x + mIconDeltaX.toInt()  // eg: -X .. X  |> (-540 .. 540)
+            newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // eg: -Y .. Y  |> (-1xxx .. 1xxx)
 
             windowParams!!.x = newPoint.x
             windowParams!!.y = newPoint.y
@@ -185,7 +182,7 @@ internal class FloatingBubbleIcon(
         }
 
         fun onActionUp() {
-            // k cho tọa độ Y của view ra ngoài màn hình khiến user khó vuốt
+            // prevent bubble's Y coordinate move outside the screen
             if (newPoint.y > screenHalfHeight - MARGIN_PX_FROM_BOTTOM) {
                 newPoint.y = screenHalfHeight - MARGIN_PX_FROM_BOTTOM
             } else if (newPoint.y < -screenHalfHeight + MARGIN_PX_FROM_TOP) {

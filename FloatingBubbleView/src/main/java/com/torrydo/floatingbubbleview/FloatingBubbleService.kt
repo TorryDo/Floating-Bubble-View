@@ -16,93 +16,79 @@ import androidx.core.app.NotificationCompat.PRIORITY_MIN
 
 abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by LoggerImpl() {
 
-    // service lifecycle ---------------------------------------------------------------------------
-    override fun onCreate() {
-        super.onCreate()
-        d("floatingBubble service is created")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        d("floatingBubble service is destroyed")
-    }
-
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Const.IS_LOGGER_ENABLED = setLoggerEnabled()
 
         if (isDrawOverlaysPermissionGranted()) {
-            isHigherThanAndroid8 {
-                setupViewAppearance()
-                startForeground()
-                return START_STICKY
-            }
+
             setupViewAppearance()
 
-        } else {
-            throw PermissionDeniedException()
-        }
+            if (isHigherThanAndroid8()) {
+                startBubbleForeground()
+            }
+
+        } else throw PermissionDeniedException()
 
         return START_STICKY
     }
 
-    private val CHANNEL_DEFAULT_IMPORTANCE = "bubbles"
-    private val ONGOING_NOTIFICATION_ID = 101
+    override fun onBind(intent: Intent?): IBinder? = null
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun startForeground() {
-        val channelId =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannel(
-                    "bubble_service",
-                    "floating bubble"
-                )
-            } else {
-                // If earlier version channel ID is not used
-                // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
-                ""
-            }
+    // overridable func ----------------------------------------------------------------------------
 
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-        val notification = notificationBuilder.setOngoing(true)
+    open fun channelId() = "bubble_service"
+    open fun channelName() = "floating bubble"
+
+    open fun notificationId() = 101
+
+    open fun startBubbleForeground() {
+
+        val channelId = if (isHigherThanAndroid8()) {
+            createNotificationChannel(channelId(), channelName())
+        } else {
+            // In earlier version, channel ID is not used
+            // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
+            ""
+        }
+        val notification = setupNotificationBuilder(channelId)
+
+        startForeground(notificationId(), notification)
+    }
+
+    open fun setupNotificationBuilder(channelId: String): Notification {
+        return NotificationCompat.Builder(this, channelId)
+            .setOngoing(true)
             .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+            .setContentTitle("bubble is running")
+//            .setContentText("click to do nothing")
             .setPriority(PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
-        startForeground(ONGOING_NOTIFICATION_ID, notification)
     }
+
+
+    @Deprecated("this function may not work properly", ReplaceWith("true"))
+    open fun setLoggerEnabled(): Boolean = true
+
+    // helper --------------------------------------------------------------------------------------
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(
         channelId: String,
         channelName: String
     ): String {
-        val chan = NotificationChannel(
+        val channel = NotificationChannel(
             channelId,
             channelName, NotificationManager.IMPORTANCE_NONE
         )
-        chan.lightColor = Color.BLUE
-        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+        channel.lightColor = Color.BLUE
+        channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        service.createNotificationChannel(chan)
+        service.createNotificationChannel(channel)
         return channelId
     }
 
-    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O, lambda = 0)
-    private inline fun isHigherThanAndroid8(job: () -> Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            job()
-        }
-    }
-
-    override fun onBind(intent: Intent?): IBinder? = null
-
-    // overridable func ------------------------------------------------------------------------------------
-
-    @Deprecated("this function may not work properly", ReplaceWith("true"))
-    open fun setLoggerEnabled(): Boolean = true
-
-    // private -------------------------------------------------------------------------------------
-
+    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
+    private fun isHigherThanAndroid8() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
 }
