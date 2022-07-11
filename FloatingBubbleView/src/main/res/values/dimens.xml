@@ -17,8 +17,8 @@
     <dimen name="actionbar_height">60dp</dimen>
 
     <dimen name="view_trans_expandable_button_height">28dp</dimen>
-    <dimen name="size_iconview">54dp</dimen>
-    <dimen name="size_removeview">65dp</dimen>
+    <dimen name="size_icon_view">54dp</dimen>
+    <dimen name="size_remove_view">65dp</dimen>
 
     <dimen name="chip_height">30dp</dimen>
     <dimen name="chip_width">60dp</dimen>

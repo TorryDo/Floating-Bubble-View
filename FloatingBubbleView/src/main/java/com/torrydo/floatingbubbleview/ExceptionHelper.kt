@@ -69,7 +69,7 @@ inline fun ActionState.onError(crossinline onIfError: (e: Exception) -> Unit): A
     return this
 }
 
-// custom exception
+// exception ---------------------------------------------------------------------------------------
 
 class PermissionDeniedException : Exception() {
     override val message: String

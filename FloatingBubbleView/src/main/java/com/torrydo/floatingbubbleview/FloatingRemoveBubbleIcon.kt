@@ -1,9 +1,11 @@
 package com.torrydo.floatingbubbleview
 
+import android.app.Activity
 import android.util.Size
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import com.torrydo.floatingbubbleview.databinding.RemoveIconBinding
 
 internal class FloatingRemoveBubbleIcon(
@@ -31,9 +33,10 @@ internal class FloatingRemoveBubbleIcon(
             windowParams!!.apply {
                 width = WindowManager.LayoutParams.MATCH_PARENT
                 gravity = Gravity.BOTTOM or Gravity.CENTER
-                flags =
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+
 //            windowAnimations = R.style.IconStyle
             }
         }
@@ -63,8 +66,8 @@ internal class FloatingRemoveBubbleIcon(
         )
         binding.homeLauncherMainBinIcon.apply {
             setImageBitmap(icBitmap)
-            layoutParams.width = bubbleBuilder.bubleSizePx
-            layoutParams.height = bubbleBuilder.bubleSizePx
+            layoutParams.width = bubbleBuilder.bubbleSizePx
+            layoutParams.height = bubbleBuilder.bubbleSizePx
 
             elevation = bubbleBuilder.elevation.toFloat()
 

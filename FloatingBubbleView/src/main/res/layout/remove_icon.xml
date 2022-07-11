@@ -6,14 +6,14 @@
     android:orientation="vertical"
 
     android:background="@drawable/remove_icon_gradient_background"
-    android:paddingBottom="@dimen/margin_bigger"
+    android:paddingBottom="@dimen/margin_biggest"
     android:paddingTop="@dimen/padding_big"
     >
 
     <ImageView
         android:id="@+id/homeLauncherMainBinIcon"
-        android:layout_width="@dimen/size_removeview"
-        android:layout_height="@dimen/size_removeview"
+        android:layout_width="@dimen/size_remove_view"
+        android:layout_height="@dimen/size_remove_view"
 
         android:layout_gravity="center"
 

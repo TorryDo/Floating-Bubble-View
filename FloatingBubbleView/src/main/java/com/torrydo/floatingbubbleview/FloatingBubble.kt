@@ -130,7 +130,7 @@ class FloatingBubble(
 
         var listener: FloatingBubble.TouchEvent? = null
 
-        var bubleSizePx = 100
+        var bubbleSizePx = 100
         var movable = true
         var startingPoint = Point(0, 0)
         var elevation = 0
@@ -200,7 +200,7 @@ class FloatingBubble(
         }
 
         override fun setBubbleSizeDp(dp: Int): Builder {
-            bubleSizePx = dp.toPx
+            bubbleSizePx = dp.toPx
             return this
         }
 

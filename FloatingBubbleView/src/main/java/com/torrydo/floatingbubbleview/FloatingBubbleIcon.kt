@@ -131,14 +131,14 @@ internal class FloatingBubbleIcon(
 
     private fun setupIconProperties() {
 
-        val icBitmap = bubbleBuilder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
+        val iconBitmap = bubbleBuilder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
             bubbleBuilder.context!!
         )
 
         binding.homeLauncherMainIcon.apply {
-            setImageBitmap(icBitmap)
-            layoutParams.width = bubbleBuilder.bubleSizePx
-            layoutParams.height = bubbleBuilder.bubleSizePx
+            setImageBitmap(iconBitmap)
+            layoutParams.width = bubbleBuilder.bubbleSizePx
+            layoutParams.height = bubbleBuilder.bubbleSizePx
 
             elevation = bubbleBuilder.elevation.toFloat()
 
@@ -150,14 +150,11 @@ internal class FloatingBubbleIcon(
             y = bubbleBuilder.startingPoint.y
         }
 
-
     }
 
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
-        var isBubbleClickable = false
-
 
         fun onActionDown(motionEvent: MotionEvent) {
             prevPoint.x = windowParams!!.x
@@ -167,8 +164,6 @@ internal class FloatingBubbleIcon(
             pointF.y = motionEvent.rawY
 
             bubbleBuilder.listener?.onDown(prevPoint.x, prevPoint.y)
-
-            isBubbleClickable = true
         }
 
         fun onActionMove(motionEvent: MotionEvent) {
@@ -183,7 +178,6 @@ internal class FloatingBubbleIcon(
             update(binding.root)
 
             bubbleBuilder.listener?.onMove(newPoint.x, newPoint.y)
-            if (isBubbleClickable) isBubbleClickable = false
         }
 
         fun onActionUp() {
@@ -198,12 +192,9 @@ internal class FloatingBubbleIcon(
 
             bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
 
-//            if (isBubbleClickable) {
-//                bubbleBuilder.listener?.onClick()
-//            }
-
 //                        animateIconToEdge(68) {}
         }
+
 
         val gestureDetector = GestureDetector(bubbleBuilder.context, SingleTapConfirm())
 
@@ -218,39 +209,22 @@ internal class FloatingBubbleIcon(
 
             imageView.setOnTouchListener { _, motionEvent ->
 
+                // detect onTouch event first. If event is consumed, return@setOnTouch...
                 if (gestureDetector.onTouchEvent(motionEvent)) {
-
                     bubbleBuilder.listener?.onClick()
-
                     return@setOnTouchListener true
                 }
 
                 when (motionEvent.action) {
-                    MotionEvent.ACTION_DOWN -> {
-
-                        onActionDown(motionEvent)
-
-                        return@setOnTouchListener true
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-
-                        onActionMove(motionEvent)
-
-                        return@setOnTouchListener true
-                    }
-                    MotionEvent.ACTION_UP -> {
-
-                        onActionUp()
-
-                        return@setOnTouchListener true
-                    }
-
-                    else -> return@setOnTouchListener true
+                    MotionEvent.ACTION_DOWN -> onActionDown(motionEvent)
+                    MotionEvent.ACTION_MOVE -> onActionMove(motionEvent)
+                    MotionEvent.ACTION_UP -> onActionUp()
                 }
+
+                return@setOnTouchListener true
             }
         }
     }
-
 
     private class SingleTapConfirm : SimpleOnGestureListener() {
         override fun onSingleTapUp(event: MotionEvent): Boolean {

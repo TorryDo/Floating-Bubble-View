@@ -21,17 +21,6 @@
 
     <color name="background">#ffffff</color>
 
-    <color name="main_color_lightest">#F3F7FF</color>
-    <color name="main_color_lighter">#B6D1FF</color>
-    <color name="main_color">#5E96F6</color>
-    <color name="main_color_darker">#2676FF</color>
-    <color name="main_color_darkest">#0252DC</color>
-
-    <color name="noun">#d61616</color>
-    <color name="adjective">#7952B3</color>
-    <color name="verb">#F9B208</color>
-    <color name="etc">#000000</color>
-
     <color name="text_color">#000000</color>
     <color name="text_color_reversed">#ffffff</color>
 
