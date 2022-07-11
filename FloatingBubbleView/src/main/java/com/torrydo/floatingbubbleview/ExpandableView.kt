@@ -25,13 +25,11 @@ class ExpandableView(
 
     fun show() = logIfError {
         super.show(builder.rootView!!)
-        d("expandable view showing")
     }
 
 
     fun remove() = logIfError {
         super.remove(builder.rootView!!)
-        d("expandable view removed")
     }
 
 
