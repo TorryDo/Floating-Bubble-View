@@ -19,17 +19,24 @@ class ExpandableView(
 
         fun popToBubble() {}
 
+        fun onOpenExpandableView() {}
+        fun onCloseExpandableView() {}
+
     }
 
     // public --------------------------------------------------------------------------------------
 
     fun show() = logIfError {
         super.show(builder.rootView!!)
+    }.onComplete {
+        builder.listener.onOpenExpandableView()
     }
 
 
     fun remove() = logIfError {
         super.remove(builder.rootView!!)
+    }.onComplete {
+        builder.listener.onCloseExpandableView()
     }
 
 

@@ -1,6 +1,7 @@
 package com.torrydo.testfloatingbubble;
 
 import android.app.Notification;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -86,6 +87,22 @@ public class MyService extends FloatingBubbleService {
         return new ExpandableView.Builder()
                 .with(this)
                 .setExpandableView(layout)
-                .setDimAmount(0.8f);
+                .setDimAmount(0.8f)
+                .addExpandableViewListener(new ExpandableView.Action() {
+                    @Override
+                    public void popToBubble() {
+                        this.popToBubble();
+                    }
+
+                    @Override
+                    public void onOpenExpandableView() {
+                        Log.d("<>", "onOpenFloatingView: ");
+                    }
+
+                    @Override
+                    public void onCloseExpandableView() {
+                        Log.d("<>", "onCloseFloatingView: ");
+                    }
+                });
     }
 }
