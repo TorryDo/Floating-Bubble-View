@@ -63,7 +63,7 @@ Adding maven repository inside "dependencyResolutionManagement => repositories" 
 
 ```gradle
     dependencies {
-            implementation 'com.github.TorryDo:Floating-Bubble-View:0.3'
+            implementation 'com.github.TorryDo:Floating-Bubble-View:0.3.1'
     }
 
 ```
@@ -156,7 +156,6 @@ Adding maven repository inside "dependencyResolutionManagement => repositories" 
 <details><summary><b>KOTLIN version (click)</b></summary>
 
 ```kotlin
-class MyServiceKt : FloatingBubbleService() {
 class MyServiceKt : FloatingBubbleService() {
 
     override fun setupNotificationBuilder(channelId: String): Notification {
