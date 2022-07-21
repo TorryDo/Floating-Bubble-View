@@ -8,9 +8,7 @@
 
 # Demo
 
-<!-- <img src="art/demo.gif"/> -->
-
-https://user-images.githubusercontent.com/85553681/151544981-1e080474-77a5-48e7-922d-b01de19cf89a.mp4
+https://user-images.githubusercontent.com/85553681/180191018-dd9de96a-ccb5-412a-af33-5d2d50914d8a.mp4
 
 <br/>
 
