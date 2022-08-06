@@ -228,6 +228,19 @@ public class MyService extends FloatingBubbleService {
 
     @NonNull
     @Override
+    public Notification setupNotificationBuilder(@NonNull String channelId) {
+        return new NotificationCompat.Builder(this, channelId)
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+            .setContentTitle("bubble is running")
+            .setContentText("click to do nothing")
+            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setCategory(Notification.CATEGORY_SERVICE)
+            .build();
+    }
+
+    @NonNull
+    @Override
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
 
         return new FloatingBubble.Builder()
