@@ -29,7 +29,7 @@ internal fun View.updateGestureExclusion(context: Context) {
 // permission --------------------------------------------------------------------------------------
 
 /**
- * by default, display over other app permission will be granted automatically if minor than android M
+ * by default, display over other app permission will be granted automatically if android's version smaller than android M
  *
  * - some MIUI devices may not work properly
  *
