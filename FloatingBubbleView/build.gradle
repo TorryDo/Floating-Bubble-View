@@ -2,15 +2,25 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
 
-    id 'maven-publish'
+//    id 'maven-publish'
+    id 'com.vanniktech.maven.publish'
 }
 
 android {
-    compileSdk 31
+
+    publishing {
+        singleVariant("release") {
+            // if you don't want sources/javadoc, remove these lines
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+
+    compileSdk 33
 
     defaultConfig {
         minSdk 21
-        targetSdk 31
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -38,23 +48,9 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
 
     implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
 
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-
-                groupId = 'com.github.torrydo'
-                artifactId = 'floating-bubble-view'
-                version = '0.2.1'
-            }
-        }
-    }
 }
