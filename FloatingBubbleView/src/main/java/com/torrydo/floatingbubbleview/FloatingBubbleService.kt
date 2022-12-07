@@ -16,6 +16,31 @@ import androidx.core.app.NotificationCompat.PRIORITY_MIN
 
 abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by LoggerImpl() {
 
+    companion object {
+        /**
+         * this bool works as expected if only one bubble showed at a time, multiple bubbles may cause unexpected results
+         * */
+        @JvmStatic
+        var isRunning = false
+            private set
+
+//        /**
+//         * force the bubble to stop
+//         * */
+//        fun <T: FloatingBubbleService> stop(context: Context){
+//            context.stopService(Intent(context, T::class.java))
+//        }
+
+    }
+
+
+    override fun onBind(intent: Intent?): IBinder? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        isRunning = true
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Const.IS_LOGGER_ENABLED = setLoggerEnabled()
 
@@ -32,7 +57,11 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    override fun onDestroy() {
+        super.onDestroy()
+        isRunning = false
+    }
+
 
     // overridable func ----------------------------------------------------------------------------
 

@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    boolean b = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -20,16 +19,20 @@ public class MainActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.button);
 
-
         button.setOnClickListener(v ->
                 {
-                    finish();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startForegroundService(
-                                new Intent(this, MyService.class)
-                        );
+
+                    if (MyService.isRunning()) {
+                        this.stopService(new Intent(this, MyService.class));
                     } else {
-                        startService(new Intent(this, MyService.class));
+                        finish();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(
+                                    new Intent(this, MyService.class)
+                            );
+                        } else {
+                            startService(new Intent(this, MyService.class));
+                        }
                     }
                 }
         );
