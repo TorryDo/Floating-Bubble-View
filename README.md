@@ -15,6 +15,7 @@ https://user-images.githubusercontent.com/85553681/180191018-dd9de96a-ccb5-412a-
 </br>
 
 ## I, Getting started 🍕🍔🍟
+
 <details> <summary> Ensure your app’s minimum SDK version is 21+ and `mavenCentral()` included</summary>
 </br>
 1. Ensure your app’s minimum SDK version is 21+. This is declared in the module-level `build.gradle` file 
@@ -136,7 +137,7 @@ Declare the dependencies in the module-level `build.gradle` file
 </br>
 
 ### Step 3 : start your service and enjoy 3️⃣ :)
-
+> Make sure "display over other apps" permission is granted, otherwise the app will crash
 <details><summary><b>Kotlin version</b></summary>
 
 ```kotlin
