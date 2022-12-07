@@ -9,6 +9,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.torrydo.floatingbubbleview.FloatingBubbleService;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -19,17 +21,18 @@ public class MainActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.button);
 
+        if(FloatingBubbleService.isRunning()){
+            // println()
+        }
+
         button.setOnClickListener(v ->
                 {
-
-                    if (MyService.isRunning()) {
+                    if (FloatingBubbleService.isRunning()) {
                         this.stopService(new Intent(this, MyService.class));
                     } else {
                         finish();
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(
-                                    new Intent(this, MyService.class)
-                            );
+                            startForegroundService(new Intent(this, MyService.class));
                         } else {
                             startService(new Intent(this, MyService.class));
                         }

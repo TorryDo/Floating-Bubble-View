@@ -1,88 +1,88 @@
 # Floating-Bubble-View-Library-Android
 
-[![platform](https://img.shields.io/badge/platform-Android-yellow.svg)](https://www.android.com)
-[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
-![GitHub stars](https://img.shields.io/github/stars/TorryDo/Floating-Bubble-View?style=social)
-![GitHub forks](https://img.shields.io/github/forks/TorryDo/Floating-Bubble-View?label=Fork&style=social)
-![Repo size](https://img.shields.io/github/repo-size/TorryDo/Floating-Bubble-View?style=social)
 
-# Demo
 
 https://user-images.githubusercontent.com/85553681/180191018-dd9de96a-ccb5-412a-af33-5d2d50914d8a.mp4
 
 <br/>
 
-# I, Prepare
+[<img src="https://img.shields.io/badge/platform-Android-yellow.svg" valign="middle">](https://www.android.com)
 
-- ### <b> STEP 1. Adding JitPack repository to your setting.gradle file -------------------------------</b>
-
-Adding maven repository inside "dependencyResolutionManagement => repositories" like below
-
-```diff
-    dependencyResolutionManagement {
-        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-        repositories {
-            google()
-            mavenCentral()
-
-            // add here
-+           maven { url 'https://jitpack.io' }
-
-            jcenter() // Warning: this repository is going to shut down soon
-        }
-    }
-```
-
-<br/>
-
-### <b>In older gradle version, please follow this step instead</b>
-
-<details><summary><b>Older gradle version</b></summary>
-
-1. Go to your build.gradle (top-level)
-2. Add jitpack repo like below
-
-```diff
-    // not buildScript
-    allprojects {
-        repositories {
-            ...
-+           maven { url 'https://jitpack.io' }
-        }
-    }
-
-```
-
-</details>
-
-<br/>
-
-<br/>
-
-- ### <b> STEP 2. Add dependency in your build.gradle (app module) -------------------------------</b>
-
-```gradle
-    dependencies {
-            implementation 'com.github.TorryDo:Floating-Bubble-View:0.3.1'
-    }
-
-```
-
-# II, How to use
-
-- ### <b> Step 1 : create a subclass of FloatingBubbleService </b>
-
-```java
-    public class MyService extends FloatingBubbleService {
-        ...
-    }
-```
+|  API  | Version | License |
+| :---: | :-----: | :-----: | 
+| [<img src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat" valign="middle">](https://android-arsenal.com/api?level=21) | [<img src="https://img.shields.io/maven-central/v/io.github.torrydo/floating-bubble-view" valign="middle">]() | [<img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" valign="middle">](https://www.apache.org/licenses/LICENSE-2.0) |
 
 </br>
 
-- ### <b> Step 2 : override 2 methods "setupBubble" and "setupExpandableView" </b>
+## I, Getting started 🍕🍔🍟
+<details> <summary> Ensure your app’s minimum SDK version is 21+ and `mavenCentral()` included</summary>
+</br>
+1. Ensure your app’s minimum SDK version is 21+. This is declared in the module-level `build.gradle` file 
 
-<details><summary><b>KOTLIN version (click)</b></summary>
+```gradle
+android {
+    defaultConfig {
+        ...
+        minSdk 21
+    }
+```
+
+2. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` or `setting.gradle` file:
+
+    <details><summary>build.gradle (project-level)</summary>
+
+    ```gradle
+        allprojects {
+            repositories {
+                mavenCentral()
+                ...
+            }
+            ...
+        }
+    ```
+
+    </details>
+
+
+    <details><summary>settings.gradle (alternative step If "allprojects" not found in the above step)</summary>
+
+    ```gradle
+    pluginManagement {
+        repositories {
+            ...
+            mavenCentral()
+        }
+    }
+    dependencyResolutionManagement {
+        ...
+        repositories {
+            ...
+            mavenCentral()
+        }
+    }
+    ```
+
+    </details>
+
+</details>
+
+</br>
+
+Declare the dependencies in the module-level `build.gradle` file
+
+```gradle
+    dependencies {
+        implementation("io.github.torrydo:floating-bubble-view:<LATEST_VERSION>")
+    }
+```
+</br>
+
+## II, Setup & Useage 🚀✈🛰
+
+
+###  Step 1 : extends FloatingBubbleService then implements `setupBubble()` and `setupExpandableView()` 1️⃣
+
+<details><summary><b>Kotlin version</b></summary>
 
 ```kotlin
     class MyService: FloatingBubbleService() {
@@ -99,41 +99,48 @@ Adding maven repository inside "dependencyResolutionManagement => repositories" 
 
 </details>
 
-### > <b> Java version <b>
+<details open><summary><b>Java version</b></summary>
 
 ```java
     public class MyService extends FloatingBubbleService {
 
         @NonNull
         @Override
-        public FloatingBubble.Builder setupBubble() {
+        public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
             return ...;
         }
 
-        @NonNull
+        @Nullable
         @Override
         public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
             return ...;
         }
     }
 ```
+</details>
+
+
 
 </br>
 
-- ### <b> Step 3 : add your service class in manifest file... </b>
+### Step 2 : add your bubble service in your manifest file 2️⃣
 
 ```xml
-    <service android:name="<YOUR_PACKAGE>.MyService" />
+    <application>
+        ...
+        <service android:name="<YOUR_PACKAGE>.MyService" />
+
+    </application>
 ```
 
 </br>
 
-- ### <b> Step 4 : start your service and enjoy :) </b>
+### Step 3 : start your service and enjoy 3️⃣ :)
 
-<details><summary><b>KOTLIN version (click)</b></summary>
+<details><summary><b>Kotlin version</b></summary>
 
 ```kotlin
-    val intent = Intent(this, Myservice::class.java)  // 'this' is your activity class
+    val intent = Intent(context, Myservice::class.java)
 
     startService(intent)           // for android version lower than 8 (android O)
     startForegroundService(intent) // for android 8 and higher
@@ -141,19 +148,32 @@ Adding maven repository inside "dependencyResolutionManagement => repositories" 
 
 </details>
 
-### > <b> Java version <b>
+<details open><summary><b>Java version</b></summary>
+
 
 ```java
-    Intent intent = new Intent(MainActivity.this, MyService.class);
+    Intent intent = new Intent(context, MyService.class);
 
     startService(intent);           // for android version lower than 8 (android O)
     startForegroundService(intent); // for android 8 and higher
+```
+</details>
 
+</br>
 
+> ## API
+
+### Check if bubble is running:
+
+```java
+    Boolean b = FloatingBubbleService.isRunning(); // works on both kotlin and java
 ```
 
-# Sample class
-<details><summary><b>KOTLIN version (click)</b></summary>
+</br>
+
+## Sample class ✌😉
+
+<details><summary><b>Kotlin version</b></summary>
 
 ```kotlin
 class MyServiceKt : FloatingBubbleService() {
@@ -221,7 +241,7 @@ class MyServiceKt : FloatingBubbleService() {
 
 </details>
 
-### > <b> Java version <b>
+<details open><summary><b>Java version</b></summary>
 
 ```java
 public class MyService extends FloatingBubbleService {
@@ -298,6 +318,9 @@ public class MyService extends FloatingBubbleService {
     }
 }
 ```
+</details>
+
+</br>
 
 ## License
 

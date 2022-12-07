@@ -1,10 +1,12 @@
 package com.torrydo.testfloatingbubble
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.torrydo.floatingbubbleview.FloatingBubbleService
 
-class MainKt: AppCompatActivity() {
+class MainKt : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -12,8 +14,12 @@ class MainKt: AppCompatActivity() {
 
         val intent = Intent(this, MyService::class.java)
 
-        startService(intent)
-//        startForegroundService(intent)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
 
     }
 

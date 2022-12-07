@@ -44,6 +44,7 @@ dependencies {
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 
     implementation project(path: ':FloatingBubbleView')
+//    implementation("io.github.torrydo:floating-bubble-view:0.3.2")
 //    implementation 'com.github.TorryDo:Floating-Bubble-View:0.1.6'
 
 }

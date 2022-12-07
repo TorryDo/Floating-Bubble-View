@@ -31,7 +31,6 @@ public class MyService extends FloatingBubbleService {
     }
 
 
-
     @NonNull
     @Override
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
