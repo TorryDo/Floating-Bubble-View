@@ -1,9 +1,10 @@
-package com.torrydo.testfloatingbubble;
+package com.torrydo.testfloatingbubble.java_sample;
 
 import android.app.Notification;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,6 +13,7 @@ import androidx.core.app.NotificationCompat;
 import com.torrydo.floatingbubbleview.ExpandableView;
 import com.torrydo.floatingbubbleview.FloatingBubble;
 import com.torrydo.floatingbubbleview.FloatingBubbleService;
+import com.torrydo.testfloatingbubble.R;
 
 
 public class MyService extends FloatingBubbleService {
@@ -42,7 +44,7 @@ public class MyService extends FloatingBubbleService {
                 .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
                     @Override
                     public void onDestroy() {
-//                        System.out.println("on Destroy");
+                        System.out.println("on Destroy");
                     }
 
                     @Override
@@ -57,12 +59,12 @@ public class MyService extends FloatingBubbleService {
 
                     @Override
                     public void onUp(int x, int y) {
-//                        System.out.println("onUp");
+                        System.out.println("onUp");
                     }
 
                     @Override
                     public void onDown(int x, int y) {
-//                        System.out.println("onDown");
+                        System.out.println("onDown");
                     }
                 })
                 .setBubbleSizeDp(60)
@@ -78,7 +80,7 @@ public class MyService extends FloatingBubbleService {
 
 
         layout.findViewById(R.id.card_view).setOnClickListener(v -> {
-//            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
             action.popToBubble();
         });
 

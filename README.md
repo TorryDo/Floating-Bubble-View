@@ -167,7 +167,7 @@ Declare the dependencies in the module-level `build.gradle` file
 ### Check if bubble is running:
 
 ```java
-    Boolean b = FloatingBubbleService.isRunning(); // works on both kotlin and java
+    Boolean b = FloatingBubbleService.isRunning();
 ```
 
 </br>
