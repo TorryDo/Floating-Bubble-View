@@ -37,7 +37,7 @@ class MyServiceKt : FloatingBubbleService() {
                 }
 
                 override fun onMove(x: Int, y: Int) {
-                    println("onMove")
+//                    println("onMove")
                 }
 
                 override fun onUp(x: Int, y: Int) {
@@ -59,7 +59,7 @@ class MyServiceKt : FloatingBubbleService() {
         val layout = inflater.inflate(R.layout.layout_view_test, null)
 
         layout.findViewById<View>(R.id.card_view).setOnClickListener { view ->
-            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "hello from card view from kotlin", Toast.LENGTH_SHORT).show();
             action.popToBubble()
         }
         return ExpandableView.Builder()
@@ -67,6 +67,5 @@ class MyServiceKt : FloatingBubbleService() {
             .setExpandableView(layout)
             .setDimAmount(0.8f)
     }
-
 
 }

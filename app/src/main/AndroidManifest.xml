@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TestFloatingBubble">
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivityKt"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".MyService"
+            android:name=".MyServiceKt"
             />
     </application>
 
