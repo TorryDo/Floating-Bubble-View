@@ -13,6 +13,8 @@ import java.lang.ref.WeakReference
 
 internal object ScreenInfo {
 
+    internal var screenSize = Size(0, 0)
+
     private val api: Api =
         when {
             // android 4 to 5
@@ -26,7 +28,7 @@ internal object ScreenInfo {
     /**
      * Returns screen size in pixels.
      */
-    fun getScreenSize(context: Context): Size {
+    internal fun getScreenSize(context: Context): Size {
         return WeakReference(context).get()?.let {
 
             api.getScreenSize(it)

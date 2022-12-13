@@ -19,10 +19,12 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
     companion object {
 
         private var isRunning = false
+
         /**
          * this function works as expected if only one bubble showed at a time, multiple bubbles may cause unexpected results
          * */
-        @JvmStatic fun isRunning() = isRunning
+        @JvmStatic
+        fun isRunning() = isRunning
 
     }
 
@@ -34,7 +36,7 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Const.IS_LOGGER_ENABLED = setLoggerEnabled()
+        Logger.isLoggerEnabled = enableLogger()
 
         if (isDrawOverlaysPermissionGranted()) {
 
@@ -88,8 +90,7 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
     }
 
 
-    @Deprecated("this function may not work properly", ReplaceWith("true"))
-    open fun setLoggerEnabled(): Boolean = true
+    open fun enableLogger(): Boolean = false
 
     // helper --------------------------------------------------------------------------------------
 

@@ -3,7 +3,6 @@ package com.torrydo.floatingbubbleview
 import android.annotation.SuppressLint
 import android.graphics.Point
 import android.graphics.PointF
-import android.util.Size
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.LayoutInflater
@@ -14,15 +13,18 @@ import com.torrydo.floatingbubbleview.databinding.IconMainBinding
 
 internal class FloatingBubbleIcon(
     private val bubbleBuilder: FloatingBubble.Builder,
-    private val screenSize: Size
-) : BaseFloatingView(bubbleBuilder.context!!) {
+) : BaseFloatingView(bubbleBuilder.context), Logger by LoggerImpl() {
 
+    companion object {
+        internal var widthPx = 0
+        internal var heightPx = 0
+    }
 
     private val MARGIN_PX_FROM_TOP = 100
     private val MARGIN_PX_FROM_BOTTOM = 150
 
 
-    var _binding: IconMainBinding? = null
+    private var _binding: IconMainBinding? = null
     val binding get() = _binding!!
 
 
@@ -30,17 +32,14 @@ internal class FloatingBubbleIcon(
     private val pointF = PointF(0f, 0f)
     private val newPoint = Point(0, 0)
 
-    private val screenHalfWidth = screenSize.width / 2
-    private val screenHalfHeight = screenSize.height / 2
+    private val halfScreenWidth = ScreenInfo.screenSize.width / 2
+    private val halfScreenHeight = ScreenInfo.screenSize.height / 2
 
     init {
-
         _binding = IconMainBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
-
         setupLayoutParams()
         setupIconProperties()
         customTouch()
-
     }
 
     /**
@@ -58,72 +57,75 @@ internal class FloatingBubbleIcon(
     }
 
 
-    fun destroy() {
+    override fun destroy() {
         _binding = null
+        super.destroy()
     }
 
 
-    private val myAnimationHelper = AnimHelper()
-    private var isAnimating = false
-    fun animateIconToEdge(
-        offsetPx: Int,        //    68
-        onFinished: () -> Unit
-    ) {
-        if (!isAnimating) {
-            isAnimating = true
+    private val animHelper = AnimHelper()
+    private var isAnimatingToEdge = false
+    fun animateIconToEdge(onFinished: (() -> Unit)? = null) {
+        if (isAnimatingToEdge) return
 
-            val currentIconX = binding.root.getXYPointOnScreen().x
+        isAnimatingToEdge = true
+        d("---------------------------------------------------------------------------------------")
+        val iconX = binding.root.getXYPointOnScreen().x // 0..X
+        val halfIconWidthPx = if (widthPx == 0) 0 else widthPx / 2
 
-            if (currentIconX < screenHalfWidth - offsetPx) {    // animate icon to the LEFT side
+        d("iconX = $iconX | halfIconWidth = $halfIconWidthPx | screenHalfWidth = $halfScreenWidth")
 
-                val realX = screenHalfWidth - currentIconX  // 235
-                val leftEdgeX = screenHalfWidth - offsetPx  // 540 - 68 = 472
+        // animate icon to the LEFT side
+        if (iconX + halfIconWidthPx < halfScreenWidth) {
 
-                myAnimationHelper.startSpringX(
-                    realX.toFloat(),
-                    leftEdgeX.toFloat(),
-                    object : AnimHelper.Event {
-                        override fun onUpdate(float: Float) {
+            val startX = halfScreenWidth - iconX - halfIconWidthPx
+            val endX = halfScreenWidth - halfIconWidthPx
 
-                            tryOnly {
-                                windowParams!!.x = -(float.toInt())
-                                windowManager?.updateViewLayout(binding.root, windowParams)
-                            }
+            d("startX = $startX | endX = $endX ")
 
-                        }
-
-                        override fun onFinish() {
-                            isAnimating = false
-                            onFinished()
+            animHelper.startSpringX(
+                startValue = startX.toFloat(),
+                finalPosition = endX.toFloat(),
+                animationListener = object : AnimHelper.Event {
+                    override fun onUpdate(float: Float) {
+                        tryOnly {
+                            windowParams!!.x = -(float.toInt())
+                            windowManager?.updateViewLayout(binding.root, windowParams)
                         }
                     }
-                )
 
-            } else {                                            // animate icon to the RIGHT side
+                    override fun onFinish() {
+                        isAnimatingToEdge = false
+                        onFinished?.invoke()
+                    }
+                }
+            )
 
-                val realX = currentIconX - screenHalfWidth + offsetPx  // 235
-                val rightEdgeX = screenHalfWidth - offsetPx            // 540 - 68 = 472
+            // animate icon to the RIGHT side
+        } else {
+            val startX = iconX - halfScreenWidth + halfIconWidthPx
+            val endX = halfScreenWidth - halfIconWidthPx
 
-                myAnimationHelper.startSpringX(
-                    realX.toFloat(),
-                    rightEdgeX.toFloat(),
-                    object : AnimHelper.Event {
-                        override fun onUpdate(float: Float) {
+            d("startX = $startX | endX = $endX ")
 
-                            tryOnly {
-                                windowParams!!.x = float.toInt()
-                                windowManager?.updateViewLayout(binding.root, windowParams)
-                            }
-
-                        }
-
-                        override fun onFinish() {
-                            isAnimating = false
-                            onFinished()
+            animHelper.startSpringX(
+                startValue = startX.toFloat(),
+                finalPosition = endX.toFloat(),
+                animationListener = object : AnimHelper.Event {
+                    override fun onUpdate(float: Float) {
+                        tryOnly {
+                            windowParams!!.x = float.toInt()
+                            windowManager?.updateViewLayout(binding.root, windowParams)
                         }
                     }
-                )
-            }
+
+                    override fun onFinish() {
+                        isAnimatingToEdge = false
+                        onFinished?.invoke()
+                    }
+                }
+            )
+
         }
     }
 
@@ -132,13 +134,13 @@ internal class FloatingBubbleIcon(
     private fun setupIconProperties() {
 
         val iconBitmap = bubbleBuilder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
-            bubbleBuilder.context!!
+            bubbleBuilder.context
         )
 
         binding.homeLauncherMainIcon.apply {
             setImageBitmap(iconBitmap)
-            layoutParams.width = bubbleBuilder.bubbleSizePx
-            layoutParams.height = bubbleBuilder.bubbleSizePx
+            layoutParams.width = widthPx
+            layoutParams.height = heightPx
 
             elevation = bubbleBuilder.elevation.toFloat()
 
@@ -155,6 +157,8 @@ internal class FloatingBubbleIcon(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
+
+        // actions ---------------------------------------------------------------------------------
 
         fun onActionDown(motionEvent: MotionEvent) {
             prevPoint.x = windowParams!!.x
@@ -182,32 +186,26 @@ internal class FloatingBubbleIcon(
 
         fun onActionUp() {
             // prevent bubble's Y coordinate move outside the screen
-            if (newPoint.y > screenHalfHeight - MARGIN_PX_FROM_BOTTOM) {
-                newPoint.y = screenHalfHeight - MARGIN_PX_FROM_BOTTOM
-            } else if (newPoint.y < -screenHalfHeight + MARGIN_PX_FROM_TOP) {
-                newPoint.y = -screenHalfHeight + MARGIN_PX_FROM_TOP
+            if (newPoint.y > halfScreenHeight - MARGIN_PX_FROM_BOTTOM) {
+                newPoint.y = halfScreenHeight - MARGIN_PX_FROM_BOTTOM
+            } else if (newPoint.y < -halfScreenHeight + MARGIN_PX_FROM_TOP) {
+                newPoint.y = -halfScreenHeight + MARGIN_PX_FROM_TOP
             }
             windowParams!!.y = newPoint.y
             update(binding.root)
 
             bubbleBuilder.listener?.onUp(newPoint.x, newPoint.y)
-
-//                        animateIconToEdge(68) {}
         }
 
+        // listen actions --------------------------------------------------------------------------
 
         val gestureDetector = GestureDetector(bubbleBuilder.context, SingleTapConfirm())
 
-        binding.homeLauncherMainIcon.also { imageView ->
+        binding.homeLauncherMainIcon.apply {
 
-            imageView.afterMeasured {
-                bubbleBuilder.context?.let { nonNullContext ->
-                    imageView.updateGestureExclusion(nonNullContext)
-                }
-            }
+            afterMeasured { updateGestureExclusion(bubbleBuilder.context) }
 
-
-            imageView.setOnTouchListener { _, motionEvent ->
+            setOnTouchListener { _, motionEvent ->
 
                 // detect onTouch event first. If event is consumed, return@setOnTouch...
                 if (gestureDetector.onTouchEvent(motionEvent)) {
@@ -244,7 +242,6 @@ internal class FloatingBubbleIcon(
                 flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-//            windowAnimations = R.style.IconStyle
             }
 
         }

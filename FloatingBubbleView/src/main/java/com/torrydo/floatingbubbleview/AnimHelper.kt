@@ -6,36 +6,36 @@ import androidx.dynamicanimation.animation.*
 internal class AnimHelper {
 
     companion object{
-        val MIN_VALUE = 0f          // I know this variable name is useless :(
-        val DEFAULT_FRACTION = 1.1f
+        /**
+         * default minimum value of the property to be animated
+         * */
+        const val MIN_VALUE = 0f
+        const val DEFAULT_FRICTION = 1.1f
     }
 
     // event ---------------------------------------------------------------------------------------
 
     interface Event {
-
         fun onStart() {}
-
         fun onFinish() {}
-
         fun onFailure() {}
-
         fun onUpdate(float: Float) {}
-
     }
 
     // func ----------------------------------------------------------------------------------------
 
     fun startSpringX(
         startValue: Float,
-        position: Float,
-        animationListener: AnimHelper.Event
+        finalPosition: Float,
+        animationListener: Event
     ) {
         SpringAnimation(FloatValueHolder()).apply {
+
             spring = SpringForce().apply {
+
                 setStartValue(startValue)
+                setFinalPosition(finalPosition)
                 stiffness = SpringForce.STIFFNESS_LOW
-                finalPosition = position
                 dampingRatio = SpringForce.DAMPING_RATIO_LOW_BOUNCY
 
             }
@@ -55,13 +55,13 @@ internal class AnimHelper {
         v: View,
         startVelocity: Float,
         position: Float,
-        animationListener: AnimHelper.Event   // an interface
+        animationListener: Event
     ) {
         FlingAnimation(v, DynamicAnimation.SCROLL_X).apply {
             setStartVelocity(startVelocity)
             setMinValue(MIN_VALUE)
             setMaxValue(position)
-            friction = DEFAULT_FRACTION
+            friction = DEFAULT_FRICTION
 
             addUpdateListener { animation, value, velocity ->
                 animationListener.onUpdate(value)

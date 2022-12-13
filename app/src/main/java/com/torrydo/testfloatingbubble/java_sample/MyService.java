@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +16,11 @@ import com.torrydo.testfloatingbubble.R;
 
 
 public class MyService extends FloatingBubbleService {
+
+    @Override
+    public boolean enableLogger() {
+        return true;
+    }
 
     // for android 8 and above
     @NonNull
@@ -37,10 +41,10 @@ public class MyService extends FloatingBubbleService {
     @Override
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
 
-        return new FloatingBubble.Builder()
-                .with(this)
+        return new FloatingBubble.Builder(this)
                 .setIcon(R.drawable.ic_rounded_blue_diamond)
-                .setRemoveIcon(R.drawable.ic_remove_icon)
+                .setCloseIcon(R.drawable.ic_remove_icon)
+                .setBubbleSizeDp(60, 60)
                 .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
                     @Override
                     public void onDestroy() {
@@ -67,9 +71,12 @@ public class MyService extends FloatingBubbleService {
                         System.out.println("onDown");
                     }
                 })
-                .setBubbleSizeDp(60)
+
                 .setStartPoint(-200, 0)
-                .setAlpha(1f);
+                .setAlpha(1f)
+//                .enableAnimateToEdge(false)
+//                .enableCloseIcon(false)
+                ;
     }
 
     @Nullable
@@ -80,13 +87,12 @@ public class MyService extends FloatingBubbleService {
 
 
         layout.findViewById(R.id.card_view).setOnClickListener(v -> {
-            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
             action.popToBubble();
         });
 
 
-        return new ExpandableView.Builder()
-                .with(this)
+        return new ExpandableView.Builder(this)
                 .setExpandableView(layout)
                 .setDimAmount(0.8f)
                 .addExpandableViewListener(new ExpandableView.Action() {

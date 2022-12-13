@@ -3,16 +3,41 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.util.Size
+import android.view.View
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import com.torrydo.floatingbubbleview.FloatingCloseBubbleIcon.Companion.DEFAULT_LARGER_PX
 
-class FloatingBubble(
-    private val bubbleBuilder: FloatingBubble.Builder
-) {
+class FloatingBubble
+internal constructor(
+    private val bubbleBuilder: Builder
+) : Logger by LoggerImpl() {
 
-    private val REMOVE_BIN_ICON_SIZE = 150  // check later
-    private var DEFAULT_HALF_ICON_SIZE_PX = 68  // should replace this
+    init {
+        ScreenInfo.screenSize = ScreenInfo.getScreenSize(bubbleBuilder.context)
 
+        bubbleBuilder.iconBitmap?.let {
+
+            FloatingBubbleIcon.apply {
+                if(bubbleBuilder.bubbleSizePx.notZero()){
+                    widthPx = bubbleBuilder.bubbleSizePx.width
+                    heightPx = bubbleBuilder.bubbleSizePx.height
+                }else{
+                    widthPx = it.width
+                    heightPx = it.height
+                }
+            }
+
+            FloatingCloseBubbleIcon.apply {
+                widthPx = FloatingBubbleIcon.widthPx + DEFAULT_LARGER_PX
+                heightPx = FloatingBubbleIcon.heightPx + DEFAULT_LARGER_PX
+            }
+
+        }
+
+    }
 
     // listener ------------------------------------------------------------------------------------
 
@@ -43,19 +68,22 @@ class FloatingBubble(
     // public func ---------------------------------------------------------------------------------
 
     fun showIcon() {
-        floatingIcon.show()
+        floatingIcon.show().onError {
+            e("force destroy because not show")
+            bubbleBuilder.listener?.onDestroy()
+        }
     }
 
     fun removeIcon() {
         floatingIcon.remove()
     }
 
-    fun showRemoveIcon() {
-        floatingRemoveIcon.show()
+    fun showCloseIcon() {
+        floatingCloseIcon.show()
     }
 
-    fun removeRemoveIcon() {
-        floatingRemoveIcon.remove()
+    fun removeCloseIcon() {
+        floatingCloseIcon.remove()
     }
 
 
@@ -67,12 +95,15 @@ class FloatingBubble(
 
         override fun onMove(x: Int, y: Int) {
             if (isBubbleMoving) return
-            showRemoveIcon()
+            if (bubbleBuilder.isCloseIconEnabled.not()) return
+
+            showCloseIcon()
             isBubbleMoving = true
+
         }
 
         override fun onUp(x: Int, y: Int) {
-            removeRemoveIcon()
+            removeCloseIcon()
             isBubbleMoving = false
 
             stopServiceIfSuitableCondition()
@@ -81,90 +112,102 @@ class FloatingBubble(
     }
 
     private var floatingIcon: FloatingBubbleIcon = FloatingBubbleIcon(
-        bubbleBuilder.addFloatingBubbleTouchListener(CustomBubbleTouchListener()),
-        ScreenInfo.getScreenSize(bubbleBuilder.context!!)
+        bubbleBuilder.addFloatingBubbleTouchListener(CustomBubbleTouchListener())
     )
 
-    private var floatingRemoveIcon: FloatingRemoveBubbleIcon = FloatingRemoveBubbleIcon(
-        bubbleBuilder,
-        ScreenInfo.getScreenSize(bubbleBuilder.context!!)
+    private var floatingCloseIcon: FloatingCloseBubbleIcon = FloatingCloseBubbleIcon(
+        bubbleBuilder
     )
 
     private fun stopServiceIfSuitableCondition(): Boolean {
-        // get X and Y of binIcon
-        val arrBin = floatingRemoveIcon.binding.homeLauncherMainBinIcon.getXYPointOnScreen()
+        val closePoint = floatingCloseIcon.binding.homeLauncherMainBinIcon.getXYPointOnScreen()
 
-        val binXmin = arrBin.x - REMOVE_BIN_ICON_SIZE
-        val binXmax = arrBin.x + REMOVE_BIN_ICON_SIZE
+        val closeXmin = closePoint.x - FloatingCloseBubbleIcon.widthPx
+        val closeXmax = closePoint.x + FloatingCloseBubbleIcon.widthPx
 
-        val binYmin = arrBin.y - REMOVE_BIN_ICON_SIZE
-        val binYmax = arrBin.y + REMOVE_BIN_ICON_SIZE
+        val closeYmin = closePoint.y - FloatingCloseBubbleIcon.heightPx
+        val closeYmax = closePoint.y + FloatingCloseBubbleIcon.heightPx
 
-        // get X and Y of Main Icon
-        val iconArr = floatingIcon.binding.homeLauncherMainIcon.getXYPointOnScreen()
+        val bubblePoint = floatingIcon.binding.homeLauncherMainIcon.getXYPointOnScreen()
 
-        val currentIconX = iconArr.x
-        val currentIconY = iconArr.y
+        val bubbleX = bubblePoint.x
+        val bubbleY = bubblePoint.y
 
-        fun isIconWidthInsideRemoveIcon() = binXmin < currentIconX && currentIconX < binXmax
-        fun isIconHeightInsideRemoveIcon() = binYmin < currentIconY && currentIconY < binYmax
+        fun isBubbleXInsideCloseWidth() = (closeXmin < bubbleX) && (bubbleX < closeXmax)
+        fun isBubbleYInsideCloseHeight() = (closeYmin < bubbleY) && (bubbleY < closeYmax)
 
-        if (isIconWidthInsideRemoveIcon() && isIconHeightInsideRemoveIcon()) {
+        if (isBubbleXInsideCloseWidth() && isBubbleYInsideCloseHeight()) {
             bubbleBuilder.listener?.onDestroy()
             return true
         }
 
-        floatingIcon.animateIconToEdge(DEFAULT_HALF_ICON_SIZE_PX) {}
+        if (bubbleBuilder.isAnimateToEdgeEnabled) {
+            floatingIcon.animateIconToEdge()
+        }
 
         return false
     }
 
-    // builder class -------------------------------------------------------------------------------
+    // builder -------------------------------------------------------------------------------------
 
-    class Builder : IFloatingBubbleBuilder {
+    class Builder(internal val context: Context) {
 
-        var context: Context? = null
+        internal var iconView: View? = null
+        internal var iconBitmap: Bitmap? = null
+        internal var iconRemoveBitmap: Bitmap? = null
 
-        var iconBitmap: Bitmap? = null
-        var iconRemoveBitmap: Bitmap? = null
+        internal var listener: FloatingBubble.TouchEvent? = null
 
-        var listener: FloatingBubble.TouchEvent? = null
+        internal var bubbleSizePx: Size = Size(0, 0)
 
-        var bubbleSizePx = 100
-        var movable = true
-        var startingPoint = Point(0, 0)
-        var elevation = 0
-        var alphaF = 1f
+        internal var isMovable = true
+        internal var startingPoint = Point(0, 0)
+        internal var elevation = 0
+        internal var alphaF = 1f
+        internal var isCloseIconEnabled = true
+        internal var isAnimateToEdgeEnabled = true
 
-        // required
-        override fun with(context: Context): Builder {
-            this.context = context
-
+        fun enableAnimateToEdge(enabled: Boolean): Builder {
+            isAnimateToEdgeEnabled = enabled
             return this
         }
 
-        override fun setIcon(resource: Int): Builder {
-            iconBitmap = ContextCompat.getDrawable(context!!, resource)!!.toBitmap()
+        fun enableCloseIcon(enabled: Boolean): Builder {
+            isCloseIconEnabled = enabled
             return this
         }
 
-        override fun setIcon(bitmap: Bitmap): Builder {
+        fun setIcon(view: View): Builder {
+            iconView = view
+            return this
+        }
+
+        fun setIcon(@DrawableRes drawable: Int): Builder {
+            iconBitmap = ContextCompat.getDrawable(context, drawable)!!.toBitmap()
+            return this
+        }
+
+        fun setIcon(bitmap: Bitmap): Builder {
             iconBitmap = bitmap
             return this
         }
 
-        override fun setRemoveIcon(resource: Int): Builder {
-            iconRemoveBitmap = ContextCompat.getDrawable(context!!, resource)!!.toBitmap()
+        fun setCloseIcon(resource: Int): Builder {
+            iconRemoveBitmap = ContextCompat.getDrawable(context, resource)!!.toBitmap()
             return this
         }
 
-        override fun setRemoveIcon(bitmap: Bitmap): Builder {
+        fun setCloseIcon(bitmap: Bitmap): Builder {
             iconRemoveBitmap = bitmap
             return this
         }
 
-//        @Deprecated("this function is not stable yet, it may cause laggy or even memory leaks if you override multiple times")
-        override fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): Builder {
+        fun setBubbleSizeDp(width: Int, height: Int): Builder {
+            bubbleSizePx = Size(width.toPx, height.toPx)
+            return this
+        }
+
+        fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): Builder {
 
             val tempListener = this.listener
             this.listener = object : FloatingBubble.TouchEvent {
@@ -199,58 +242,31 @@ class FloatingBubble(
             return this
         }
 
-        override fun setBubbleSizeDp(dp: Int): Builder {
-            bubbleSizePx = dp.toPx
-            return this
+        fun isMovable(enabled: Boolean): Builder {
+            throw Exception("currently working on this, not implemented yet")
+//            isMovable = enabled
+//            return this
         }
 
-        override fun isMovable(boolean: Boolean): Builder {
-            movable = boolean
-            return this
-        }
-
-        override fun setStartPoint(x: Int, y: Int): Builder {
+        fun setStartPoint(x: Int, y: Int): Builder {
             startingPoint.x = x
             startingPoint.y = y
             return this
         }
 
-        override fun setElevation(dp: Int): Builder {
+        fun setElevation(dp: Int): Builder {
             elevation = dp
             return this
         }
 
-        override fun setAlpha(alpha: Float): Builder {
+        fun setAlpha(alpha: Float): Builder {
             this.alphaF = alpha
             return this
         }
 
-        override fun build(): FloatingBubble {
+        internal fun build(): FloatingBubble {
             return FloatingBubble(this)
         }
     }
-
-}
-
-private interface IFloatingBubbleBuilder {
-
-    fun with(context: Context): IFloatingBubbleBuilder
-
-    fun setIcon(resource: Int): IFloatingBubbleBuilder
-    fun setIcon(bitmap: Bitmap): IFloatingBubbleBuilder
-
-    fun setRemoveIcon(resource: Int): IFloatingBubbleBuilder
-    fun setRemoveIcon(bitmap: Bitmap): IFloatingBubbleBuilder
-
-    fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): IFloatingBubbleBuilder
-
-    fun setBubbleSizeDp(dp: Int): IFloatingBubbleBuilder
-
-    fun isMovable(boolean: Boolean): IFloatingBubbleBuilder
-    fun setStartPoint(x: Int, y: Int): IFloatingBubbleBuilder
-    fun setElevation(dp: Int): IFloatingBubbleBuilder
-    fun setAlpha(alpha: Float): IFloatingBubbleBuilder
-
-    fun build(): FloatingBubble
 
 }

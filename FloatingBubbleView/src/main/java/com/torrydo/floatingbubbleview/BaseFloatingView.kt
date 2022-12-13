@@ -10,11 +10,11 @@ import android.view.WindowManager
 
 
 open class BaseFloatingView(
-    context: Context
-) : Logger by LoggerImpl() {
+    context: Context,
+) {
 
-    var windowManager: WindowManager? = null
-    var windowParams: WindowManager.LayoutParams? = null
+    protected var windowManager: WindowManager? = null
+    protected var windowParams: WindowManager.LayoutParams? = null
 
     init {
         windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
@@ -24,48 +24,47 @@ open class BaseFloatingView(
     // public --------------------------------------------------------------------------------------
 
     protected fun show(view: View) {
-        logIfError {
-            windowManager!!.addView(view, windowParams)
-        }
+        windowManager!!.addView(view, windowParams)
     }
 
     protected fun remove(view: View) {
-        tryOnly {
-            windowManager!!.removeView(view)
-        }
+        if(view.windowToken == null) return
+        windowManager!!.removeView(view)
     }
 
     protected fun update(view: View) {
-        logIfError {
-            windowManager!!.updateViewLayout(view, windowParams)
-        }
+        windowManager!!.updateViewLayout(view, windowParams)
+    }
+
+    protected open fun destroy() {
+        windowManager = null
+        windowParams = null
     }
 
 
     // override ------------------------------------------------------------------------------------
-
+    /**
+     * it's required to call `super.setupLayoutParams()` before override windowParams properties
+     * */
     open fun setupLayoutParams() {
 
-        logIfError {
+        windowParams!!.apply {
+            width = WindowManager.LayoutParams.WRAP_CONTENT
+            height = WindowManager.LayoutParams.WRAP_CONTENT
 
-            windowParams!!.apply {
-                width = WindowManager.LayoutParams.WRAP_CONTENT
-                height = WindowManager.LayoutParams.WRAP_CONTENT
+            gravity = Gravity.CENTER
+            format = PixelFormat.TRANSLUCENT
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
 
-                gravity = Gravity.CENTER
-                format = PixelFormat.TRANSLUCENT
-                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-
-                type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                } else {
-                    // for android version lower than 8
-                    WindowManager.LayoutParams.TYPE_PHONE
-                }
+            type = if (Build.VERSION.SDK_INT >= AndroidVersions.`8`) {
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            } else {
+                WindowManager.LayoutParams.TYPE_PHONE
             }
-
+            windowAnimations = R.style.default_bubble_style
         }
+
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources.getSystem
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.util.Size
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
@@ -27,8 +28,8 @@ fun View.getXYPointOnScreen(): Point {
     return Point(arr[0], arr[1])
 }
 
-val Int.toDp: Int get() = (this / getSystem().displayMetrics.density).toInt()
-val Int.toPx: Int get() = (this * getSystem().displayMetrics.density).toInt()
+internal val Int.toDp: Int get() = (this / getSystem().displayMetrics.density).toInt()
+internal val Int.toPx: Int get() = (this * getSystem().displayMetrics.density).toInt()
 
 inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -43,3 +44,6 @@ inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
         }
     })
 }
+
+internal fun Size.isZero() = width == 0 && height == 0
+internal fun Size.notZero() = width != 0 && height != 0

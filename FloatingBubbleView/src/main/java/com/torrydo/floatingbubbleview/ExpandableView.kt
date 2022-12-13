@@ -6,7 +6,7 @@ import android.view.View
 import android.view.WindowManager
 
 class ExpandableView(
-    private val builder: ExpandableView.Builder
+    private val builder: Builder,
 ) : BaseFloatingView(builder.context) {
 
     init {
@@ -16,12 +16,9 @@ class ExpandableView(
     // interface -----------------------------------------------------------------------------------
 
     interface Action {
-
         fun popToBubble() {}
-
         fun onOpenExpandableView() {}
         fun onCloseExpandableView() {}
-
     }
 
     // public --------------------------------------------------------------------------------------
@@ -53,7 +50,6 @@ class ExpandableView(
                 flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
                 dimAmount = builder.dim         // default = 0.5f
                 softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-//            windowAnimations = R.style.TransViewStyle
             }
 
         }
@@ -62,53 +58,32 @@ class ExpandableView(
 
     // builder class -------------------------------------------------------------------------------
 
-    class Builder : IExpandableViewBuilder {
+    class Builder(internal val context: Context) {
 
-        lateinit var context: Context
-
-        var rootView: View? = null
-        var listener = object : ExpandableView.Action {}
+        internal var rootView: View? = null
+        internal var listener = object : Action {}
 
         var dim = 0.5f
 
-        override fun with(context: Context): Builder {
-            this.context = context
-            return this
-        }
-
-        override fun setExpandableView(view: View): Builder {
+        fun setExpandableView(view: View): Builder {
             this.rootView = view
             return this
         }
 
-        override fun addExpandableViewListener(action: ExpandableView.Action): Builder {
+        fun addExpandableViewListener(action: Action): Builder {
             this.listener = action
             return this
         }
 
-        override fun setDimAmount(dimAmount: Float): Builder {
+        fun setDimAmount(dimAmount: Float): Builder {
             this.dim = dimAmount
             return this
         }
 
 
-        override fun build(): ExpandableView {
+        fun build(): ExpandableView {
             return ExpandableView(this)
         }
 
     }
-}
-
-private interface IExpandableViewBuilder {
-
-    fun with(context: Context): IExpandableViewBuilder
-
-    fun setExpandableView(view: View): IExpandableViewBuilder
-
-    fun addExpandableViewListener(action: ExpandableView.Action): IExpandableViewBuilder
-
-    fun setDimAmount(dimAmount: Float): IExpandableViewBuilder
-
-    fun build(): ExpandableView
-
 }
