@@ -19,6 +19,7 @@ open class BaseFloatingView(
     init {
         windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
         windowParams = WindowManager.LayoutParams()
+
     }
 
     // public --------------------------------------------------------------------------------------
@@ -46,7 +47,7 @@ open class BaseFloatingView(
     /**
      * it's required to call `super.setupLayoutParams()` before override windowParams properties
      * */
-    open fun setupLayoutParams() {
+    protected open fun setupLayoutParams() {
 
         windowParams!!.apply {
             width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -62,7 +63,7 @@ open class BaseFloatingView(
             } else {
                 WindowManager.LayoutParams.TYPE_PHONE
             }
-            windowAnimations = R.style.default_bubble_style
+
         }
 
     }

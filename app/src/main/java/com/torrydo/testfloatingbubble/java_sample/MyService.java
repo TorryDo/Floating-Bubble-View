@@ -1,13 +1,11 @@
 package com.torrydo.testfloatingbubble.java_sample;
 
-import android.app.Notification;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.torrydo.floatingbubbleview.ExpandableView;
 import com.torrydo.floatingbubbleview.FloatingBubble;
@@ -23,18 +21,18 @@ public class MyService extends FloatingBubbleService {
     }
 
     // for android 8 and above
-    @NonNull
-    @Override
-    public Notification setupNotificationBuilder(@NonNull String channelId) {
-        return new NotificationCompat.Builder(this, channelId)
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-                .setContentTitle("bubble is running")
-                .setContentText("click to do nothing")
-                .setPriority(NotificationCompat.PRIORITY_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build();
-    }
+//    @NonNull
+//    @Override
+//    public Notification setupNotificationBuilder(@NonNull String channelId) {
+//        return new NotificationCompat.Builder(this, channelId)
+//                .setOngoing(true)
+//                .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+//                .setContentTitle("bubble is running")
+//                .setContentText("click to do nothing")
+//                .setPriority(NotificationCompat.PRIORITY_MIN)
+//                .setCategory(Notification.CATEGORY_SERVICE)
+//                .build();
+//    }
 
 
     @NonNull
@@ -42,9 +40,12 @@ public class MyService extends FloatingBubbleService {
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
 
         return new FloatingBubble.Builder(this)
-                .setIcon(R.drawable.ic_rounded_blue_diamond)
-                .setCloseIcon(R.drawable.ic_remove_icon)
+                .setBubble(R.drawable.ic_rounded_blue_diamond)
+                .setCloseBubble(R.drawable.ic_remove_icon)
                 .setBubbleSizeDp(60, 60)
+//                .setBubbleStyle(null)
+//                .setCloseBubbleStyle(R.style.default_close_bubble_style)
+//                .setCloseBubbleSizeDp(40,40)
                 .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
                     @Override
                     public void onDestroy() {
@@ -72,7 +73,7 @@ public class MyService extends FloatingBubbleService {
                     }
                 })
 
-                .setStartPoint(-200, 0)
+                .setStartPoint(540, 1170) // half-screen-width, half-screen-height
                 .setAlpha(1f)
 //                .enableAnimateToEdge(false)
 //                .enableCloseIcon(false)
@@ -95,6 +96,7 @@ public class MyService extends FloatingBubbleService {
         return new ExpandableView.Builder(this)
                 .setExpandableView(layout)
                 .setDimAmount(0.8f)
+//                .setExpandableViewStyle(null)
                 .addExpandableViewListener(new ExpandableView.Action() {
                     @Override
                     public void popToBubble() {

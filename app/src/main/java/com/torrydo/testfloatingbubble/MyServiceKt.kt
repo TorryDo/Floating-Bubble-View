@@ -24,9 +24,9 @@ class MyServiceKt : FloatingBubbleService() {
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
         return FloatingBubble.Builder(this)
-            .setIcon(R.drawable.ic_rounded_blue_diamond)
+            .setBubble(R.drawable.ic_rounded_blue_diamond)
             .setBubbleSizeDp(60, 60)
-            .setCloseIcon(R.drawable.ic_remove_icon)
+            .setCloseBubble(R.drawable.ic_remove_icon)
             .addFloatingBubbleTouchListener(object : FloatingBubble.TouchEvent {
                 override fun onDestroy() {
                     println("on Destroy")

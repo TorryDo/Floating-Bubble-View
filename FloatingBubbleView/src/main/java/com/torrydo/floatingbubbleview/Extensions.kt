@@ -11,17 +11,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import java.lang.ref.WeakReference
 
-fun Int.toBitmap(context: Context): Bitmap? {
-
+internal fun Int.toBitmap(context: Context): Bitmap? {
     return WeakReference(context).get()?.let { weakContext ->
         ContextCompat.getDrawable(weakContext, this)!!.toBitmap()
     }
 }
 
 /**
- * return: -x | x
+ * @return Point( -x .. x, -y .. y )
  * */
-fun View.getXYPointOnScreen(): Point {
+internal fun View.getXYPointOnScreen(): Point {
     val arr = IntArray(2)
     this.getLocationOnScreen(arr)
 
@@ -33,17 +32,15 @@ internal val Int.toPx: Int get() = (this * getSystem().displayMetrics.density).t
 
 inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-
         override fun onGlobalLayout() {
-
             if (measuredWidth > 0 && measuredHeight > 0) {
                 viewTreeObserver.removeOnGlobalLayoutListener(this)
                 afterMeasuredWork()
             }
-
         }
     })
 }
 
 internal fun Size.isZero() = width == 0 && height == 0
 internal fun Size.notZero() = width != 0 && height != 0
+internal fun Size.largerThanZero() = width > 0 && height > 0

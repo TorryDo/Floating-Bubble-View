@@ -6,11 +6,11 @@ import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.CloseIconBinding
 
 internal class FloatingCloseBubbleIcon(
-    private val bubbleBuilder: FloatingBubble.Builder,
-) : BaseFloatingView(bubbleBuilder.context), Logger by LoggerImpl() {
-
-    private var _binding: CloseIconBinding? = null
-    val binding get() = _binding!!
+    private val builder: FloatingBubble.Builder,
+) : BaseFloatingViewBinding<CloseIconBinding>(
+    context = builder.context,
+    initializer = CloseIconBinding.inflate(LayoutInflater.from(builder.context)),
+), Logger by LoggerImpl() {
 
     companion object {
         internal var widthPx = 0
@@ -20,12 +20,9 @@ internal class FloatingCloseBubbleIcon(
     }
 
     init {
-        _binding = CloseIconBinding.inflate(LayoutInflater.from(bubbleBuilder.context))
-
         setupLayoutParams()
         setupRemoveBubbleProperties()
     }
-
 
     override fun setupLayoutParams() {
         super.setupLayoutParams()
@@ -38,47 +35,38 @@ internal class FloatingCloseBubbleIcon(
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                         WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
 
-//                windowAnimations = R.style.default_close_icon_style
+                builder.closeBubbleStyle?.let {
+                    windowAnimations = it
+                }
             }
         }
 
-
-    }
-
-    // public --------------------------------------------------------------------------------------
-
-    fun show() = logIfError {
-        d("show close-bubble")
-        super.show(binding.root)
-    }
-
-    fun remove() = logIfError {
-        d("remove close-bubble")
-        super.remove(binding.root)
-    }
-
-    override fun destroy() {
-        _binding = null
-        super.destroy()
     }
 
     // private -------------------------------------------------------------------------------------
 
     private fun setupRemoveBubbleProperties() {
-        val icBitmap = bubbleBuilder.iconRemoveBitmap ?: R.drawable.ic_close_icon.toBitmap(
-            bubbleBuilder.context
+        val icBitmap = builder.closeIconBitmap ?: R.drawable.ic_close_icon.toBitmap(
+            builder.context
         )
-        binding.homeLauncherMainBinIcon.apply {
+        binding.closeBubbleLayout.apply {
+            setPadding(0, 20, 0, ScreenInfo.softNavBarHeightPx.let {
+                if(it < 50) return@let 50
+                it
+            } + 10)
+        }
+        binding.closeBubbleImg.apply {
             setImageBitmap(icBitmap)
 
-            if (bubbleBuilder.bubbleSizePx.notZero()) {
+            if (builder.bubbleSizePx.notZero()) {
                 layoutParams.width = widthPx
                 layoutParams.height = heightPx
             }
 
-            elevation = bubbleBuilder.elevation.toFloat()
+            elevation = builder.elevation.toFloat()
 
-            alpha = bubbleBuilder.alphaF
+            alpha = builder.alphaF
+
         }
     }
 
