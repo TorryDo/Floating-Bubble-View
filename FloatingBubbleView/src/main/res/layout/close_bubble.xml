@@ -1,26 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     android:id="@+id/closeBubbleLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-
-    android:background="@drawable/close_icon_gradient_background"
-    android:paddingBottom="50dp"
-    android:paddingTop="12dp"
     >
 
     <ImageView
         android:id="@+id/closeBubbleImg"
         android:layout_width="65dp"
         android:layout_height="65dp"
-
-        android:layout_gravity="center"
-
         android:background="@drawable/circle_shape"
-        android:alpha="0.6"
         />
 
-
-</FrameLayout>
+</LinearLayout>

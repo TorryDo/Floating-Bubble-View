@@ -13,33 +13,34 @@ open class BaseFloatingView(
     context: Context,
 ) {
 
-    protected var windowManager: WindowManager? = null
-    protected var windowParams: WindowManager.LayoutParams? = null
+    private var _windowManager: WindowManager? = null
+    private var _windowParams: WindowManager.LayoutParams? = null
+
+    protected val params get() = _windowParams!!
 
     init {
-        windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
-        windowParams = WindowManager.LayoutParams()
-
+        _windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
+        _windowParams = WindowManager.LayoutParams()
     }
 
     // public --------------------------------------------------------------------------------------
 
     protected fun show(view: View) {
-        windowManager!!.addView(view, windowParams)
+        _windowManager!!.addView(view, _windowParams)
     }
 
     protected fun remove(view: View) {
         if(view.windowToken == null) return
-        windowManager!!.removeView(view)
+        _windowManager!!.removeView(view)
     }
 
-    protected fun update(view: View) {
-        windowManager!!.updateViewLayout(view, windowParams)
+    protected open fun update(view: View) {
+        _windowManager!!.updateViewLayout(view, _windowParams)
     }
 
     protected open fun destroy() {
-        windowManager = null
-        windowParams = null
+        _windowManager = null
+        _windowParams = null
     }
 
 
@@ -49,7 +50,7 @@ open class BaseFloatingView(
      * */
     protected open fun setupLayoutParams() {
 
-        windowParams!!.apply {
+        _windowParams!!.apply {
             width = WindowManager.LayoutParams.WRAP_CONTENT
             height = WindowManager.LayoutParams.WRAP_CONTENT
 

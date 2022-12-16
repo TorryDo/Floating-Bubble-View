@@ -45,7 +45,7 @@ class ExpandableView(
 
         logIfError {
 
-            windowParams!!.apply {
+            params.apply {
                 width = WindowManager.LayoutParams.MATCH_PARENT
                 gravity = Gravity.TOP
                 flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND

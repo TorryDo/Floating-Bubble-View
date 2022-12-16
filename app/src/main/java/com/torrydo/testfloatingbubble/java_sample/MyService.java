@@ -45,7 +45,7 @@ public class MyService extends FloatingBubbleService {
                 .setBubbleSizeDp(60, 60)
 //                .setBubbleStyle(null)
 //                .setCloseBubbleStyle(R.style.default_close_bubble_style)
-//                .setCloseBubbleSizeDp(40,40)
+                .setCloseBubbleSizeDp(70,70)
                 .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
                     @Override
                     public void onDestroy() {

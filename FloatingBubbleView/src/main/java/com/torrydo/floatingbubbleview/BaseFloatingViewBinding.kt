@@ -1,6 +1,8 @@
 package com.torrydo.floatingbubbleview
 
 import android.content.Context
+import android.view.View
+import androidx.annotation.Discouraged
 import androidx.viewbinding.ViewBinding
 
 internal open class BaseFloatingViewBinding<T : ViewBinding>(
@@ -14,10 +16,11 @@ internal open class BaseFloatingViewBinding<T : ViewBinding>(
     init {
         _binding = initializer
     }
+
     /**
      * must be root view
      * */
-    open fun show() = logIfError{
+    open fun show() = logIfError {
         super.show(binding.root)
     }
 
@@ -31,6 +34,16 @@ internal open class BaseFloatingViewBinding<T : ViewBinding>(
     override fun destroy() {
         _binding = null
         super.destroy()
+    }
+
+    @Discouraged(message = "use `update()` with no parameter instead")
+    override fun update(view: View) {
+        super.update(view)
+    }
+
+    open fun update() {
+        if(binding.root.windowToken == null) return
+        super.update(binding.root)
     }
 
 }

@@ -43,8 +43,8 @@ internal constructor(
                         widthPx = it.width
                         heightPx = it.height
                     } else {
-                        widthPx = FloatingBubbleIcon.widthPx + DEFAULT_LARGER_PX
-                        heightPx = FloatingBubbleIcon.heightPx + DEFAULT_LARGER_PX
+                        widthPx = FloatingBubbleIcon.widthPx
+                        heightPx = FloatingBubbleIcon.heightPx
                     }
                 }
             }
@@ -108,17 +108,23 @@ internal constructor(
         private var isBubbleMoving = false
 
         override fun onMove(x: Int, y: Int) {
-            if (isBubbleMoving) return
+            if (isBubbleMoving) {
+                floatingCloseIcon.animateCloseIconByBubble(x, y)
+                return
+            }
             if (builder.isCloseIconEnabled.not()) return
 
             showCloseIcon()
-            isBubbleMoving = true
+
+            if(isBubbleMoving.not()){
+                isBubbleMoving = true
+            }
 
         }
 
         override fun onUp(x: Int, y: Int) {
-            removeCloseIcon()
             isBubbleMoving = false
+            removeCloseIcon()
 
             if (isBubbleInsideCloseIcon()) {
                 builder.listener?.onDestroy()
@@ -134,9 +140,7 @@ internal constructor(
         builder.addFloatingBubbleTouchListener(CustomBubbleTouchListener())
     )
 
-    private var floatingCloseIcon: FloatingCloseBubbleIcon = FloatingCloseBubbleIcon(
-        builder
-    )
+    private var floatingCloseIcon: FloatingCloseBubbleIcon = FloatingCloseBubbleIcon(builder)
 
     private fun isBubbleInsideCloseIcon(): Boolean {
         val closeXY = floatingCloseIcon.binding.closeBubbleImg.getXYPointOnScreen()

@@ -8,13 +8,13 @@ import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.WindowManager
-import com.torrydo.floatingbubbleview.databinding.IconMainBinding
+import com.torrydo.floatingbubbleview.databinding.BubbleBinding
 
 internal class FloatingBubbleIcon(
     private val builder: FloatingBubble.Builder,
-) : BaseFloatingViewBinding<IconMainBinding>(
+) : BaseFloatingViewBinding<BubbleBinding>(
     context = builder.context,
-    initializer = IconMainBinding.inflate(LayoutInflater.from(builder.context))
+    initializer = BubbleBinding.inflate(LayoutInflater.from(builder.context))
 ),
     Logger by LoggerImpl() {
 
@@ -35,7 +35,7 @@ internal class FloatingBubbleIcon(
 
     init {
         setupLayoutParams()
-        setupIconProperties()
+        setupBubbleProperties()
         customTouch()
     }
 
@@ -66,12 +66,12 @@ internal class FloatingBubbleIcon(
                 animationListener = object : AnimHelper.Event {
                     override fun onUpdate(float: Float) {
                         tryOnly {
-                            windowParams!!.x = -(float.toInt())
-                            windowManager?.updateViewLayout(binding.root, windowParams)
+                            params.x = -(float.toInt())
+                            update()
                         }
                     }
 
-                    override fun onFinish() {
+                    override fun onEnd() {
                         isAnimatingToEdge = false
                         onFinished?.invoke()
                     }
@@ -91,12 +91,12 @@ internal class FloatingBubbleIcon(
                 animationListener = object : AnimHelper.Event {
                     override fun onUpdate(float: Float) {
                         tryOnly {
-                            windowParams!!.x = float.toInt()
-                            windowManager?.updateViewLayout(binding.root, windowParams)
+                            params.x = float.toInt()
+                            update()
                         }
                     }
 
-                    override fun onFinish() {
+                    override fun onEnd() {
                         isAnimatingToEdge = false
                         onFinished?.invoke()
                     }
@@ -108,7 +108,7 @@ internal class FloatingBubbleIcon(
 
     // private func --------------------------------------------------------------------------------
 
-    private fun setupIconProperties() {
+    private fun setupBubbleProperties() {
 
         val iconBitmap = builder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
             builder.context
@@ -124,7 +124,7 @@ internal class FloatingBubbleIcon(
             alpha = builder.alphaF
         }
 
-        windowParams?.apply {
+        params.apply {
             x = builder.startingPoint.x - halfScreenWidth + widthPx / 2
             y = builder.startingPoint.y - halfScreenHeight + heightPx / 2
         }
@@ -138,8 +138,8 @@ internal class FloatingBubbleIcon(
         // actions ---------------------------------------------------------------------------------
 
         fun onActionDown(motionEvent: MotionEvent) {
-            prevPoint.x = windowParams!!.x
-            prevPoint.y = windowParams!!.y
+            prevPoint.x = params.x
+            prevPoint.y = params.y
 
             pointF.x = motionEvent.rawX
             pointF.y = motionEvent.rawY
@@ -155,19 +155,22 @@ internal class FloatingBubbleIcon(
             newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // eg: -Y .. Y  |> (-1xxx .. 1xxx)
 
             // prevent bubble's Y coordinate moving outside the screen
-            val safeTopY = -halfScreenHeight + SAFE_TOP_AREA_PX + heightPx/2
-            val safeBottomY = halfScreenHeight - SAFE_BOTTOM_AREA_PX - heightPx/2
-            fun isAboveStatusBar() = newPoint.y < safeTopY
-            fun isUnderSoftNavBar() = newPoint.y > safeBottomY
-            if (isAboveStatusBar()) {
+            val safeTopY = -halfScreenHeight + SAFE_TOP_AREA_PX + heightPx / 2
+            val safeBottomY = halfScreenHeight - SAFE_BOTTOM_AREA_PX - heightPx / 2
+            val isAboveStatusBar = newPoint.y < safeTopY
+            val isUnderSoftNavBar = newPoint.y > safeBottomY
+            if (isAboveStatusBar) {
                 newPoint.y = safeTopY
-            } else if (isUnderSoftNavBar()) {
+            } else if (isUnderSoftNavBar) {
                 newPoint.y = safeBottomY
             }
 
-            windowParams!!.x = newPoint.x
-            windowParams!!.y = newPoint.y
-            update(binding.root)
+            params.x = newPoint.x
+            params.y = newPoint.y
+            update()
+
+//            fun newPointXFromZero() = newPoint.x + halfScreenWidth - widthPx/2
+//            fun newPointYFromZero() = newPoint.y + halfScreenHeight - heightPx/2
 
             builder.listener?.onMove(newPoint.x, newPoint.y)
         }
@@ -216,7 +219,7 @@ internal class FloatingBubbleIcon(
 
         logIfError {
 
-            windowParams!!.apply {
+            params.apply {
 
                 flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
