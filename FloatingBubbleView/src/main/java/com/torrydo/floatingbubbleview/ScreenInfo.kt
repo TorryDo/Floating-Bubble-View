@@ -13,6 +13,15 @@ import java.lang.ref.WeakReference
 
 internal object ScreenInfo {
 
+    // static variables ----------------------------------------------------------------------------
+    internal var widthPx = 0
+    internal var heightPx = 0
+
+    internal var statusBarHeightPx = 0
+    internal var softNavBarHeightPx = 0
+
+    // functions -----------------------------------------------------------------------------------
+
     private val api: Api =
         when {
             // android 4 to 5
@@ -24,9 +33,26 @@ internal object ScreenInfo {
         }
 
     /**
+     * @return pixel
+     * */
+    internal fun getStatusBarHeight(context: Context): Int{
+        val statusBarHeightId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+        return context.resources.getDimensionPixelSize(statusBarHeightId)
+    }
+
+    fun getSoftNavigationBarSize(context: Context): Int {
+        var result = 0
+        val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = context.resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
+    /**
      * Returns screen size in pixels.
      */
-    fun getScreenSize(context: Context): Size {
+    internal fun getScreenSize(context: Context): Size {
         return WeakReference(context).get()?.let {
 
             api.getScreenSize(it)

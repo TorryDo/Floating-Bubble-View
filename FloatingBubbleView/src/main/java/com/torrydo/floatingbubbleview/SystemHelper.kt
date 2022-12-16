@@ -5,15 +5,13 @@ import android.graphics.Rect
 import android.os.Build
 import android.provider.Settings
 import android.view.View
-import com.torrydo.floatingbubbleview.Const.ANDROID_10
 
 
 // exclude view gesture on home screen -------------------------------------------------------------
 private var exclusionRects: MutableList<Rect> = ArrayList()
 
 internal fun View.updateGestureExclusion(context: Context) {
-    if (Build.VERSION.SDK_INT < ANDROID_10) return
-
+    if (Build.VERSION.SDK_INT < AndroidVersions.`10`) return
 
     val screenSize = ScreenInfo.getScreenSize(context.applicationContext)
 
@@ -36,7 +34,7 @@ internal fun View.updateGestureExclusion(context: Context) {
  * */
 fun Context.isDrawOverlaysPermissionGranted(): Boolean {
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+    if (Build.VERSION.SDK_INT < AndroidVersions.`6`) {
         return true
     }
 

@@ -3,8 +3,6 @@ package com.torrydo.floatingbubbleview
 import android.util.Log
 
 
-fun String?.addPrefix() = "<> $this"
-
 sealed class ActionState {
     object ActionComplete : ActionState()
     class ActionError(val e: Exception) : ActionState()
@@ -18,7 +16,7 @@ sealed class ActionState {
 inline fun tryOnly(crossinline mayErrorWork: () -> Unit) {
     try {
         mayErrorWork()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
     }
 }
 
@@ -44,7 +42,7 @@ inline fun <T : Any> T.logIfError(
     try {
         mayErrorWork()
     } catch (e: Exception) {
-        Log.e(tag.addPrefix(), e.stackTraceToString())
+        Log.e("<> $tag", e.stackTraceToString())
         return ActionState.ActionError(e)
     }
 

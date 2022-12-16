@@ -3,16 +3,55 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.util.Size
+import android.view.View
+import androidx.annotation.DrawableRes
+import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 
-class FloatingBubble(
-    private val bubbleBuilder: FloatingBubble.Builder
-) {
+class FloatingBubble
+internal constructor(
+    private val builder: Builder
+) : Logger by LoggerImpl() {
 
-    private val REMOVE_BIN_ICON_SIZE = 150  // check later
-    private var DEFAULT_HALF_ICON_SIZE_PX = 68  // should replace this
+    init {
+        ScreenInfo.getScreenSize(builder.context).also {
+            ScreenInfo.widthPx = it.width
+            ScreenInfo.heightPx = it.height
+        }
+        ScreenInfo.statusBarHeightPx = ScreenInfo.getStatusBarHeight(builder.context)
+        ScreenInfo.softNavBarHeightPx = ScreenInfo.getSoftNavigationBarSize(builder.context)
 
+        d("status = ${ScreenInfo.statusBarHeightPx} | softNav = ${ScreenInfo.softNavBarHeightPx}")
+
+        builder.iconBitmap?.let {
+
+            FloatingBubbleIcon.apply {
+                if (builder.bubbleSizePx.notZero()) {
+                    widthPx = builder.bubbleSizePx.width
+                    heightPx = builder.bubbleSizePx.height
+                } else {
+                    widthPx = it.width
+                    heightPx = it.height
+                }
+            }
+
+            FloatingCloseBubbleIcon.apply {
+                builder.closeBubbleSizePx.also {
+                    if (it.largerThanZero()) {
+                        widthPx = it.width
+                        heightPx = it.height
+                    } else {
+                        widthPx = FloatingBubbleIcon.widthPx
+                        heightPx = FloatingBubbleIcon.heightPx
+                    }
+                }
+            }
+
+        }
+
+    }
 
     // listener ------------------------------------------------------------------------------------
 
@@ -43,19 +82,22 @@ class FloatingBubble(
     // public func ---------------------------------------------------------------------------------
 
     fun showIcon() {
-        floatingIcon.show()
+        floatingIcon.show().onError {
+            e("force destroy because not show")
+            builder.listener?.onDestroy()
+        }
     }
 
     fun removeIcon() {
         floatingIcon.remove()
     }
 
-    fun showRemoveIcon() {
-        floatingRemoveIcon.show()
+    fun showCloseIcon() {
+        floatingCloseIcon.show()
     }
 
-    fun removeRemoveIcon() {
-        floatingRemoveIcon.remove()
+    fun removeCloseIcon() {
+        floatingCloseIcon.remove()
     }
 
 
@@ -66,108 +108,138 @@ class FloatingBubble(
         private var isBubbleMoving = false
 
         override fun onMove(x: Int, y: Int) {
-            if (isBubbleMoving) return
-            showRemoveIcon()
-            isBubbleMoving = true
+            if (isBubbleMoving) {
+                floatingCloseIcon.animateCloseIconByBubble(x, y)
+                return
+            }
+            if (builder.isCloseIconEnabled.not()) return
+
+            showCloseIcon()
+
+            if(isBubbleMoving.not()){
+                isBubbleMoving = true
+            }
+
         }
 
         override fun onUp(x: Int, y: Int) {
-            removeRemoveIcon()
             isBubbleMoving = false
+            removeCloseIcon()
 
-            stopServiceIfSuitableCondition()
-
+            if (isBubbleInsideCloseIcon()) {
+                builder.listener?.onDestroy()
+            } else {
+                if (builder.isAnimateToEdgeEnabled) {
+                    floatingIcon.animateIconToEdge()
+                }
+            }
         }
     }
 
     private var floatingIcon: FloatingBubbleIcon = FloatingBubbleIcon(
-        bubbleBuilder.addFloatingBubbleTouchListener(CustomBubbleTouchListener()),
-        ScreenInfo.getScreenSize(bubbleBuilder.context!!)
+        builder.addFloatingBubbleTouchListener(CustomBubbleTouchListener())
     )
 
-    private var floatingRemoveIcon: FloatingRemoveBubbleIcon = FloatingRemoveBubbleIcon(
-        bubbleBuilder,
-        ScreenInfo.getScreenSize(bubbleBuilder.context!!)
-    )
+    private var floatingCloseIcon: FloatingCloseBubbleIcon = FloatingCloseBubbleIcon(builder)
 
-    private fun stopServiceIfSuitableCondition(): Boolean {
-        // get X and Y of binIcon
-        val arrBin = floatingRemoveIcon.binding.homeLauncherMainBinIcon.getXYPointOnScreen()
+    private fun isBubbleInsideCloseIcon(): Boolean {
+        val closeXY = floatingCloseIcon.binding.closeBubbleImg.getXYPointOnScreen()
 
-        val binXmin = arrBin.x - REMOVE_BIN_ICON_SIZE
-        val binXmax = arrBin.x + REMOVE_BIN_ICON_SIZE
+        val closeXmin = closeXY.x - FloatingCloseBubbleIcon.widthPx
+        val closeXmax = closeXY.x + FloatingCloseBubbleIcon.widthPx
 
-        val binYmin = arrBin.y - REMOVE_BIN_ICON_SIZE
-        val binYmax = arrBin.y + REMOVE_BIN_ICON_SIZE
+        val closeYmin = closeXY.y - FloatingCloseBubbleIcon.heightPx
+        val closeYmax = closeXY.y + FloatingCloseBubbleIcon.heightPx
 
-        // get X and Y of Main Icon
-        val iconArr = floatingIcon.binding.homeLauncherMainIcon.getXYPointOnScreen()
+        val bubbleXY = floatingIcon.binding.bubbleView.getXYPointOnScreen()
 
-        val currentIconX = iconArr.x
-        val currentIconY = iconArr.y
+        fun isBubbleXInsideCloseWidth() = (closeXmin < bubbleXY.x) && (bubbleXY.x < closeXmax)
+        fun isBubbleYInsideCloseHeight() = (closeYmin < bubbleXY.y) && (bubbleXY.y < closeYmax)
 
-        fun isIconWidthInsideRemoveIcon() = binXmin < currentIconX && currentIconX < binXmax
-        fun isIconHeightInsideRemoveIcon() = binYmin < currentIconY && currentIconY < binYmax
-
-        if (isIconWidthInsideRemoveIcon() && isIconHeightInsideRemoveIcon()) {
-            bubbleBuilder.listener?.onDestroy()
-            return true
-        }
-
-        floatingIcon.animateIconToEdge(DEFAULT_HALF_ICON_SIZE_PX) {}
-
-        return false
+        return isBubbleXInsideCloseWidth() && isBubbleYInsideCloseHeight()
     }
 
-    // builder class -------------------------------------------------------------------------------
+    // builder -------------------------------------------------------------------------------------
 
-    class Builder : IFloatingBubbleBuilder {
+    class Builder(internal val context: Context) {
 
-        var context: Context? = null
+        internal var iconView: View? = null
+        internal var iconBitmap: Bitmap? = null
+        internal var closeIconBitmap: Bitmap? = null
 
-        var iconBitmap: Bitmap? = null
-        var iconRemoveBitmap: Bitmap? = null
+        internal var bubbleStyle: Int? = R.style.default_bubble_style
+        internal var closeBubbleStyle: Int? = R.style.default_close_bubble_style
 
-        var listener: FloatingBubble.TouchEvent? = null
+        internal var listener: TouchEvent? = null
 
-        var bubbleSizePx = 100
-        var movable = true
-        var startingPoint = Point(0, 0)
-        var elevation = 0
-        var alphaF = 1f
+        internal var bubbleSizePx: Size = Size(0, 0)
+        internal var closeBubbleSizePx: Size = Size(0, 0)
 
-        // required
-        override fun with(context: Context): Builder {
-            this.context = context
+        internal var startingPoint = Point(0, 0)
+        internal var elevation = 0
+        internal var alphaF = 1f
+        internal var isCloseIconEnabled = true
+        internal var isAnimateToEdgeEnabled = true
 
+        fun enableAnimateToEdge(enabled: Boolean): Builder {
+            isAnimateToEdgeEnabled = enabled
             return this
         }
 
-        override fun setIcon(resource: Int): Builder {
-            iconBitmap = ContextCompat.getDrawable(context!!, resource)!!.toBitmap()
+        fun enableCloseIcon(enabled: Boolean): Builder {
+            isCloseIconEnabled = enabled
             return this
         }
 
-        override fun setIcon(bitmap: Bitmap): Builder {
+        fun setBubble(view: View): Builder {
+            iconView = view
+            return this
+        }
+
+        fun setBubble(@DrawableRes drawable: Int): Builder {
+            iconBitmap = ContextCompat.getDrawable(context, drawable)!!.toBitmap()
+            return this
+        }
+
+        fun setBubble(bitmap: Bitmap): Builder {
             iconBitmap = bitmap
             return this
         }
 
-        override fun setRemoveIcon(resource: Int): Builder {
-            iconRemoveBitmap = ContextCompat.getDrawable(context!!, resource)!!.toBitmap()
+        fun setBubbleStyle(@StyleRes style: Int?): Builder{
+            this.bubbleStyle = style
             return this
         }
 
-        override fun setRemoveIcon(bitmap: Bitmap): Builder {
-            iconRemoveBitmap = bitmap
+        fun setCloseBubble(@DrawableRes drawable: Int): Builder {
+            closeIconBitmap = ContextCompat.getDrawable(context, drawable)!!.toBitmap()
             return this
         }
 
-//        @Deprecated("this function is not stable yet, it may cause laggy or even memory leaks if you override multiple times")
-        override fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): Builder {
+        fun setCloseBubble(bitmap: Bitmap): Builder {
+            closeIconBitmap = bitmap
+            return this
+        }
+
+        fun setCloseBubbleStyle(@StyleRes style: Int?): Builder{
+            this.closeBubbleStyle = style
+            return this
+        }
+
+        fun setBubbleSizeDp(width: Int, height: Int): Builder {
+            bubbleSizePx = Size(width.toPx, height.toPx)
+            return this
+        }
+
+        fun setCloseBubbleSizeDp(width: Int, height: Int): Builder {
+            closeBubbleSizePx = Size(width.toPx, height.toPx)
+            return this
+        }
+
+        fun addFloatingBubbleTouchListener(event: TouchEvent): Builder {
 
             val tempListener = this.listener
-            this.listener = object : FloatingBubble.TouchEvent {
+            this.listener = object : TouchEvent {
 
                 override fun onClick() {
                     tempListener?.onClick()
@@ -195,62 +267,36 @@ class FloatingBubble(
                 }
 
             }
-//        tempListener = null
             return this
         }
 
-        override fun setBubbleSizeDp(dp: Int): Builder {
-            bubbleSizePx = dp.toPx
-            return this
-        }
-
-        override fun isMovable(boolean: Boolean): Builder {
-            movable = boolean
-            return this
-        }
-
-        override fun setStartPoint(x: Int, y: Int): Builder {
+        /**
+         * examples: x=0, y=0 show bubble on the top-left corner of the screen.
+         *
+         * you can set x/y as negative value, but the bubble will be outside the screen.
+         *
+         * @param x 0 ... screenWidth (px).
+         * @param y 0 ... screenHeight (px).
+         * */
+        fun setStartPoint(x: Int, y: Int): Builder {
             startingPoint.x = x
             startingPoint.y = y
             return this
         }
 
-        override fun setElevation(dp: Int): Builder {
+        fun setElevation(dp: Int): Builder {
             elevation = dp
             return this
         }
 
-        override fun setAlpha(alpha: Float): Builder {
+        fun setAlpha(alpha: Float): Builder {
             this.alphaF = alpha
             return this
         }
 
-        override fun build(): FloatingBubble {
+        internal fun build(): FloatingBubble {
             return FloatingBubble(this)
         }
     }
-
-}
-
-private interface IFloatingBubbleBuilder {
-
-    fun with(context: Context): IFloatingBubbleBuilder
-
-    fun setIcon(resource: Int): IFloatingBubbleBuilder
-    fun setIcon(bitmap: Bitmap): IFloatingBubbleBuilder
-
-    fun setRemoveIcon(resource: Int): IFloatingBubbleBuilder
-    fun setRemoveIcon(bitmap: Bitmap): IFloatingBubbleBuilder
-
-    fun addFloatingBubbleTouchListener(event: FloatingBubble.TouchEvent): IFloatingBubbleBuilder
-
-    fun setBubbleSizeDp(dp: Int): IFloatingBubbleBuilder
-
-    fun isMovable(boolean: Boolean): IFloatingBubbleBuilder
-    fun setStartPoint(x: Int, y: Int): IFloatingBubbleBuilder
-    fun setElevation(dp: Int): IFloatingBubbleBuilder
-    fun setAlpha(alpha: Float): IFloatingBubbleBuilder
-
-    fun build(): FloatingBubble
 
 }

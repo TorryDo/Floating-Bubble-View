@@ -10,62 +10,63 @@ import android.view.WindowManager
 
 
 open class BaseFloatingView(
-    context: Context
-) : Logger by LoggerImpl() {
+    context: Context,
+) {
 
-    var windowManager: WindowManager? = null
-    var windowParams: WindowManager.LayoutParams? = null
+    private var _windowManager: WindowManager? = null
+    private var _windowParams: WindowManager.LayoutParams? = null
+
+    protected val params get() = _windowParams!!
 
     init {
-        windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
-        windowParams = WindowManager.LayoutParams()
+        _windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
+        _windowParams = WindowManager.LayoutParams()
     }
 
     // public --------------------------------------------------------------------------------------
 
     protected fun show(view: View) {
-        logIfError {
-            windowManager!!.addView(view, windowParams)
-        }
+        _windowManager!!.addView(view, _windowParams)
     }
 
     protected fun remove(view: View) {
-        tryOnly {
-            windowManager!!.removeView(view)
-        }
+        if(view.windowToken == null) return
+        _windowManager!!.removeView(view)
     }
 
-    protected fun update(view: View) {
-        logIfError {
-            windowManager!!.updateViewLayout(view, windowParams)
-        }
+    protected open fun update(view: View) {
+        _windowManager!!.updateViewLayout(view, _windowParams)
+    }
+
+    protected open fun destroy() {
+        _windowManager = null
+        _windowParams = null
     }
 
 
     // override ------------------------------------------------------------------------------------
+    /**
+     * it's required to call `super.setupLayoutParams()` before override windowParams properties
+     * */
+    protected open fun setupLayoutParams() {
 
-    open fun setupLayoutParams() {
+        _windowParams!!.apply {
+            width = WindowManager.LayoutParams.WRAP_CONTENT
+            height = WindowManager.LayoutParams.WRAP_CONTENT
 
-        logIfError {
+            gravity = Gravity.CENTER
+            format = PixelFormat.TRANSLUCENT
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
 
-            windowParams!!.apply {
-                width = WindowManager.LayoutParams.WRAP_CONTENT
-                height = WindowManager.LayoutParams.WRAP_CONTENT
-
-                gravity = Gravity.CENTER
-                format = PixelFormat.TRANSLUCENT
-                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-
-                type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                } else {
-                    // for android version lower than 8
-                    WindowManager.LayoutParams.TYPE_PHONE
-                }
+            type = if (Build.VERSION.SDK_INT >= AndroidVersions.`8`) {
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            } else {
+                WindowManager.LayoutParams.TYPE_PHONE
             }
 
         }
+
     }
 
 }

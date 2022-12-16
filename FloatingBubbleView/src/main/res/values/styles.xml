@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <style name="default_bubble_style">
+        <item name="android:windowEnterAnimation">@anim/enter_fade_out</item>
+        <item name="android:windowExitAnimation">@anim/exit_fade_in</item>
+    </style>
+
+
+    <style name="default_close_bubble_style">
+        <item name="android:windowEnterAnimation">@anim/enter_fade_out_fly_up</item>
+        <item name="android:windowExitAnimation">@anim/exit_fade_in_fly_down</item>
+    </style>
+
+
+</resources>

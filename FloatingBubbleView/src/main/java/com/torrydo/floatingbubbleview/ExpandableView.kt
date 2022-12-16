@@ -4,9 +4,10 @@ import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import androidx.annotation.StyleRes
 
 class ExpandableView(
-    private val builder: ExpandableView.Builder
+    private val builder: Builder,
 ) : BaseFloatingView(builder.context) {
 
     init {
@@ -16,25 +17,22 @@ class ExpandableView(
     // interface -----------------------------------------------------------------------------------
 
     interface Action {
-
         fun popToBubble() {}
-
         fun onOpenExpandableView() {}
         fun onCloseExpandableView() {}
-
     }
 
     // public --------------------------------------------------------------------------------------
 
     fun show() = logIfError {
-        super.show(builder.rootView!!)
+        super.show(builder.view!!)
     }.onComplete {
         builder.listener.onOpenExpandableView()
     }
 
 
     fun remove() = logIfError {
-        super.remove(builder.rootView!!)
+        super.remove(builder.view!!)
     }.onComplete {
         builder.listener.onCloseExpandableView()
     }
@@ -47,13 +45,17 @@ class ExpandableView(
 
         logIfError {
 
-            windowParams!!.apply {
+            params.apply {
                 width = WindowManager.LayoutParams.MATCH_PARENT
                 gravity = Gravity.TOP
                 flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
                 dimAmount = builder.dim         // default = 0.5f
                 softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-//            windowAnimations = R.style.TransViewStyle
+
+                builder.viewStyle?.let {
+                    windowAnimations = it
+                }
+
             }
 
         }
@@ -62,53 +64,39 @@ class ExpandableView(
 
     // builder class -------------------------------------------------------------------------------
 
-    class Builder : IExpandableViewBuilder {
+    class Builder(internal val context: Context) {
 
-        lateinit var context: Context
+        internal var view: View? = null
+        internal var viewStyle: Int? = R.style.default_bubble_style
 
-        var rootView: View? = null
-        var listener = object : ExpandableView.Action {}
+        internal var listener = object : Action {}
 
         var dim = 0.5f
 
-        override fun with(context: Context): Builder {
-            this.context = context
+        fun setExpandableView(view: View): Builder {
+            this.view = view
             return this
         }
 
-        override fun setExpandableView(view: View): Builder {
-            this.rootView = view
-            return this
-        }
-
-        override fun addExpandableViewListener(action: ExpandableView.Action): Builder {
+        fun addExpandableViewListener(action: Action): Builder {
             this.listener = action
             return this
         }
 
-        override fun setDimAmount(dimAmount: Float): Builder {
+        fun setExpandableViewStyle(@StyleRes style: Int?): Builder{
+            viewStyle = style
+            return this
+        }
+
+        fun setDimAmount(dimAmount: Float): Builder {
             this.dim = dimAmount
             return this
         }
 
 
-        override fun build(): ExpandableView {
+        fun build(): ExpandableView {
             return ExpandableView(this)
         }
 
     }
-}
-
-private interface IExpandableViewBuilder {
-
-    fun with(context: Context): IExpandableViewBuilder
-
-    fun setExpandableView(view: View): IExpandableViewBuilder
-
-    fun addExpandableViewListener(action: ExpandableView.Action): IExpandableViewBuilder
-
-    fun setDimAmount(dimAmount: Float): IExpandableViewBuilder
-
-    fun build(): ExpandableView
-
 }

@@ -7,9 +7,9 @@
     >
 
     <ImageView
-        android:id="@+id/homeLauncherMainIcon"
-        android:layout_width="@dimen/icon_main_size"
-        android:layout_height="@dimen/icon_main_size"
+        android:id="@+id/bubbleView"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
 
         android:background="@drawable/circle_shape"
         android:src="@drawable/ic_rounded_blue_diamond"

@@ -23,10 +23,10 @@ class MyServiceKt : FloatingBubbleService() {
     }
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
-        return FloatingBubble.Builder()
-            .with(this)
-            .setIcon(R.drawable.ic_rounded_blue_diamond)
-            .setRemoveIcon(R.drawable.ic_remove_icon)
+        return FloatingBubble.Builder(this)
+            .setBubble(R.drawable.ic_rounded_blue_diamond)
+            .setBubbleSizeDp(60, 60)
+            .setCloseBubble(R.drawable.ic_remove_icon)
             .addFloatingBubbleTouchListener(object : FloatingBubble.TouchEvent {
                 override fun onDestroy() {
                     println("on Destroy")
@@ -48,9 +48,11 @@ class MyServiceKt : FloatingBubbleService() {
                     println("onDown")
                 }
             })
-            .setBubbleSizeDp(60)
+
             .setStartPoint(-200, 0)
             .setAlpha(1f)
+            .enableCloseIcon(false)
+
     }
 
     override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder {
@@ -62,8 +64,7 @@ class MyServiceKt : FloatingBubbleService() {
             Toast.makeText(this, "hello from card view from kotlin", Toast.LENGTH_SHORT).show();
             action.popToBubble()
         }
-        return ExpandableView.Builder()
-            .with(this)
+        return ExpandableView.Builder(this)
             .setExpandableView(layout)
             .setDimAmount(0.8f)
     }

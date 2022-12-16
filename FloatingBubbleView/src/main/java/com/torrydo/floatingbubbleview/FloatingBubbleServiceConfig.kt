@@ -64,7 +64,6 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
 
     private fun tryNavigateToExpandableView() {
-
         tryShowExpandableView()
             .onComplete {
                 tryRemoveBubbles()
@@ -75,13 +74,11 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
 
     private fun tryStopService() {
-
         tryRemoveAllView()
         stopSelf()
     }
 
     private fun tryRemoveAllView() {
-
         tryRemoveExpandableView()
         tryRemoveBubbles()
     }
@@ -102,7 +99,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
     private fun tryRemoveBubbles() = logIfError {
         floatingBubble!!.removeIcon()
-        floatingBubble!!.removeRemoveIcon()
+        floatingBubble!!.removeCloseIcon()
     }
 
 

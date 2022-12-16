@@ -3,26 +3,34 @@ package com.torrydo.floatingbubbleview
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
+import android.util.Log.d
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
+import androidx.core.content.ContextCompat.getSystemService
 
 
 abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by LoggerImpl() {
 
+
     companion object {
 
+        private const val REQUEST_CODE_STOP_PENDING_INTENT = 1
+
         private var isRunning = false
+
         /**
          * this function works as expected if only one bubble showed at a time, multiple bubbles may cause unexpected results
          * */
-        @JvmStatic fun isRunning() = isRunning
+        @JvmStatic
+        fun isRunning() = isRunning
 
     }
 
@@ -34,7 +42,7 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Const.IS_LOGGER_ENABLED = setLoggerEnabled()
+        Logger.isLoggerEnabled = enableLogger()
 
         if (isDrawOverlaysPermissionGranted()) {
 
@@ -76,20 +84,19 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
         startForeground(notificationId(), notification)
     }
 
+
     open fun setupNotificationBuilder(channelId: String): Notification {
         return NotificationCompat.Builder(this, channelId)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
             .setContentTitle("bubble is running")
-//            .setContentText("click to do nothing")
             .setPriority(PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
     }
 
 
-    @Deprecated("this function may not work properly", ReplaceWith("true"))
-    open fun setLoggerEnabled(): Boolean = true
+    open fun enableLogger(): Boolean = false
 
     // helper --------------------------------------------------------------------------------------
 
@@ -110,6 +117,6 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
     }
 
     @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
-    private fun isHigherThanAndroid8() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    private fun isHigherThanAndroid8() = Build.VERSION.SDK_INT >= AndroidVersions.`8`
 
 }
