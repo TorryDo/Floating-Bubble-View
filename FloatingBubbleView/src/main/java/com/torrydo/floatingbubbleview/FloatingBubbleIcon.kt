@@ -33,6 +33,8 @@ internal class FloatingBubbleIcon(
     private val halfScreenWidth = ScreenInfo.widthPx / 2
     private val halfScreenHeight = ScreenInfo.heightPx / 2
 
+    private val halfIconWidthPx by lazy { widthPx / 2 }
+
     init {
         setupLayoutParams()
         setupBubbleProperties()
@@ -48,62 +50,36 @@ internal class FloatingBubbleIcon(
         isAnimatingToEdge = true
         d("---------------------------------------------------------------------------------------")
         val iconX = binding.root.getXYPointOnScreen().x // 0..X
-        val halfIconWidthPx = if (widthPx == 0) 0 else widthPx / 2
 
-        d("iconX = $iconX | halfIconWidth = $halfIconWidthPx | screenHalfWidth = $halfScreenWidth")
+        d("iconX = $iconX | halfIconWidth = $halfIconWidthPx")
 
-        // animate icon to the LEFT side
-        if (iconX + halfIconWidthPx < halfScreenWidth) {
-
-            val startX = halfScreenWidth - iconX - halfIconWidthPx
-            val endX = halfScreenWidth - halfIconWidthPx
-
-            d("startX = $startX | endX = $endX ")
-
-            animHelper.startSpringX(
-                startValue = startX.toFloat(),
-                finalPosition = endX.toFloat(),
-                animationListener = object : AnimHelper.Event {
-                    override fun onUpdate(float: Float) {
-                        tryOnly {
-                            params.x = -(float.toInt())
-                            update()
-                        }
-                    }
-
-                    override fun onEnd() {
-                        isAnimatingToEdge = false
-                        onFinished?.invoke()
-                    }
-                }
-            )
-
-            // animate icon to the RIGHT side
+        val isOnTheLeftSide = iconX + halfIconWidthPx < halfScreenWidth
+        val startX: Int
+        val endX: Int
+        if (isOnTheLeftSide) {
+            startX = iconX
+            endX = 0
         } else {
-            val startX = iconX - halfScreenWidth + halfIconWidthPx
-            val endX = halfScreenWidth - halfIconWidthPx
-
-            d("startX = $startX | endX = $endX ")
-
-            animHelper.startSpringX(
-                startValue = startX.toFloat(),
-                finalPosition = endX.toFloat(),
-                animationListener = object : AnimHelper.Event {
-                    override fun onUpdate(float: Float) {
-                        tryOnly {
-                            params.x = float.toInt()
-                            update()
-                        }
-                    }
-
-                    override fun onEnd() {
-                        isAnimatingToEdge = false
-                        onFinished?.invoke()
+            startX = iconX
+            endX = ScreenInfo.widthPx - widthPx
+        }
+        animHelper.startSpringX(
+            startValue = startX.toFloat(),
+            finalPosition = endX.toFloat(),
+            animationListener = object : AnimHelper.Event {
+                override fun onUpdate(float: Float) {
+                    tryOnly {
+                        params.x = float.toInt()
+                        update()
                     }
                 }
-            )
 
-        }
+                override fun onEnd() {
+                    isAnimatingToEdge = false
+                    onFinished?.invoke()
+                }
+            }
+        )
     }
 
     // private func --------------------------------------------------------------------------------
@@ -125,8 +101,8 @@ internal class FloatingBubbleIcon(
         }
 
         params.apply {
-            x = builder.startingPoint.x - halfScreenWidth + widthPx / 2
-            y = builder.startingPoint.y - halfScreenHeight + heightPx / 2
+            x = builder.startingPoint.x
+            y = builder.startingPoint.y
         }
 
     }
@@ -151,12 +127,13 @@ internal class FloatingBubbleIcon(
             val mIconDeltaX = motionEvent.rawX - pointF.x
             val mIconDeltaY = motionEvent.rawY - pointF.y
 
-            newPoint.x = prevPoint.x + mIconDeltaX.toInt()  // eg: -X .. X  |> (-540 .. 540)
-            newPoint.y = prevPoint.y + mIconDeltaY.toInt()  // eg: -Y .. Y  |> (-1xxx .. 1xxx)
+            newPoint.x = prevPoint.x + mIconDeltaX.toInt()
+            newPoint.y = prevPoint.y + mIconDeltaY.toInt()
 
             // prevent bubble's Y coordinate moving outside the screen
-            val safeTopY = -halfScreenHeight + SAFE_TOP_AREA_PX + heightPx / 2
-            val safeBottomY = halfScreenHeight - SAFE_BOTTOM_AREA_PX - heightPx / 2
+            val safeTopY = 0
+            val safeBottomY =
+                ScreenInfo.heightPx - ScreenInfo.softNavBarHeightPx - ScreenInfo.statusBarHeightPx - heightPx
             val isAboveStatusBar = newPoint.y < safeTopY
             val isUnderSoftNavBar = newPoint.y > safeBottomY
             if (isAboveStatusBar) {
@@ -168,9 +145,6 @@ internal class FloatingBubbleIcon(
             params.x = newPoint.x
             params.y = newPoint.y
             update()
-
-//            fun newPointXFromZero() = newPoint.x + halfScreenWidth - widthPx/2
-//            fun newPointYFromZero() = newPoint.y + halfScreenHeight - heightPx/2
 
             builder.listener?.onMove(newPoint.x, newPoint.y)
         }
@@ -220,14 +194,14 @@ internal class FloatingBubbleIcon(
         logIfError {
 
             params.apply {
-
+//                gravity = Gravity.BOTTOM
                 flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
-                builder.bubbleStyle?.let {
-                    windowAnimations = it
-                }
+//                builder.bubbleStyle?.let {
+//                    windowAnimations = it
+//                }
 
             }
 

@@ -45,7 +45,7 @@ public class MyService extends FloatingBubbleService {
                 .setBubbleSizeDp(60, 60)
 //                .setBubbleStyle(null)
 //                .setCloseBubbleStyle(R.style.default_close_bubble_style)
-                .setCloseBubbleSizeDp(70,70)
+                .setCloseBubbleSizeDp(80,80)
                 .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
                     @Override
                     public void onDestroy() {
@@ -73,7 +73,7 @@ public class MyService extends FloatingBubbleService {
                     }
                 })
 
-                .setStartPoint(540, 1170) // half-screen-width, half-screen-height
+                .setStartPoint(0, 0) // half-screen-width, half-screen-height
                 .setAlpha(1f)
 //                .enableAnimateToEdge(false)
 //                .enableCloseIcon(false)
