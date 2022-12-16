@@ -3,7 +3,6 @@ package com.torrydo.floatingbubbleview
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.CloseBubbleBinding
-import kotlin.math.abs
 
 internal class FloatingCloseBubbleIcon(
     private val builder: FloatingBubble.Builder,
@@ -16,10 +15,11 @@ internal class FloatingCloseBubbleIcon(
         internal var widthPx = 0
         internal var heightPx = 0
 
-        private const val DEFAULT_PADDING_BOTTOM_PX = 50
-        private const val LIMIT_FLY_HEIGHT = 100
-
+        private const val DEFAULT_PADDING_BOTTOM_PX = 30
     }
+
+
+    private val LIMIT_FLY_HEIGHT by lazy { ScreenInfo.heightPx / 15 }
 
 
     private val halfScreenWidth by lazy { ScreenInfo.widthPx / 2 }
@@ -28,9 +28,21 @@ internal class FloatingCloseBubbleIcon(
     private val halfWidthPx by lazy { widthPx / 2 }
     private val halfHeightPx by lazy { heightPx / 2 }
 
-    private val baseX = 0
-    private val baseY by lazy { halfScreenHeight - ScreenInfo.softNavBarHeightPx * 2 - DEFAULT_PADDING_BOTTOM_PX }
+    private val baseX = halfScreenWidth - halfWidthPx
+    private val baseY by lazy {
+        ScreenInfo.heightPx -
+                heightPx -
+                ScreenInfo.softNavBarHeightPx -
+                ScreenInfo.statusBarHeightPx -
+                DEFAULT_PADDING_BOTTOM_PX
+    }
 
+    private val middleX by lazy {
+        params.x + halfWidthPx
+    }
+    private val middleY by lazy {
+        params.y + halfHeightPx
+    }
 
     init {
         setupLayoutParams()
@@ -42,8 +54,6 @@ internal class FloatingCloseBubbleIcon(
 
         logIfError {
             params.apply {
-//                width = WindowManager.LayoutParams.MATCH_PARENT
-//                gravity = Gravity.BOTTOM or Gravity.CENTER
                 flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                         WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
@@ -67,10 +77,9 @@ internal class FloatingCloseBubbleIcon(
         binding.closeBubbleImg.apply {
             setImageBitmap(icBitmap)
 
-            if (builder.closeBubbleSizePx.notZero()) {
-                layoutParams.width = widthPx
-                layoutParams.height = heightPx
-            }
+            layoutParams.width = widthPx
+            layoutParams.height = heightPx
+
 
             elevation = builder.elevation.toFloat()
 
@@ -79,12 +88,12 @@ internal class FloatingCloseBubbleIcon(
         }
 
         params.apply {
-            this.x = 0
+            this.x = baseX
             this.y = baseY
         }
     }
 
-    private val limit_catch = 100
+    private val limit_catch = LIMIT_FLY_HEIGHT
     fun animateCloseIconByBubble(x: Int, y: Int) {
 
         val distanceToBubble = MathHelper.distance(
@@ -98,30 +107,39 @@ internal class FloatingCloseBubbleIcon(
             if (it > 1) return@let 0
             return@let 1 - it
         }.toFloat()
-        d("distanceRatio = ${distanceRatio}")
+//        d("distanceRatio = ${distanceRatio}")
         if (distanceRatio == 0.0f) {
-            stickToBubble(x,y)
+            stickToBubble(x, y)
         } else {
-            val isUpperHalf = y < 0
-            params.x = ((x * distanceRatio) / 4).toInt()
-            params.y = baseY - if (isUpperHalf) {
-                ((halfScreenHeight + abs(y)) * distanceRatio) / 5
+
+            val isXOnTheLeft = x < halfScreenWidth
+
+            params.x = if (isXOnTheLeft) {
+                baseX - ((halfScreenWidth - x) * distanceRatio) / 5
             } else {
-                ((halfScreenHeight - y) * distanceRatio) / 5
-            }.toInt().let {
-                if(it > LIMIT_FLY_HEIGHT){
-                    return@let LIMIT_FLY_HEIGHT
-                }else{
-                    return@let it
+                baseX + (x - halfScreenWidth) * distanceRatio / 5
+            }.toInt()
+
+            params.y = baseY - (((ScreenInfo.heightPx - y) * distanceRatio) / 10)
+                .toInt().let {
+                    return@let if (it > LIMIT_FLY_HEIGHT) {
+                        LIMIT_FLY_HEIGHT
+                    } else {
+                        it
+                    }
                 }
-            }
             update()
         }
     }
 
     private fun stickToBubble(x: Int, y: Int) {
-        params.x = x
-        params.y = y - FloatingBubbleIcon.heightPx/2
+
+        val middleBubbleX = x + FloatingBubbleIcon.widthPx / 2
+        val middleBubbleY = y + FloatingBubbleIcon.heightPx / 2
+
+        params.x = middleBubbleX - halfWidthPx
+        params.y = middleBubbleY - halfHeightPx
+
         update()
     }
 

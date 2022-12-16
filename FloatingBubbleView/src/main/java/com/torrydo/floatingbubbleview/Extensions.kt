@@ -18,7 +18,7 @@ internal fun Int.toBitmap(context: Context): Bitmap? {
 }
 
 /**
- * @return Point( -x .. x, -y .. y )
+ * @return Point( 0 .. x, 0 .. y )
  * */
 internal fun View.getXYPointOnScreen(): Point {
     val arr = IntArray(2)

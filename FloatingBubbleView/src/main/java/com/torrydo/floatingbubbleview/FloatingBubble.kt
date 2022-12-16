@@ -3,6 +3,7 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.util.Log.e
 import android.util.Size
 import android.view.View
 import androidx.annotation.DrawableRes
@@ -23,23 +24,23 @@ internal constructor(
         ScreenInfo.statusBarHeightPx = ScreenInfo.getStatusBarHeight(builder.context)
         ScreenInfo.softNavBarHeightPx = ScreenInfo.getSoftNavigationBarSize(builder.context)
 
+        d("screenW = ${ScreenInfo.widthPx} | screenH = ${ScreenInfo.heightPx}")
         d("status = ${ScreenInfo.statusBarHeightPx} | softNav = ${ScreenInfo.softNavBarHeightPx}")
 
         builder.iconBitmap?.let {
 
             FloatingBubbleIcon.apply {
-                if (builder.bubbleSizePx.notZero()) {
-                    widthPx = builder.bubbleSizePx.width
-                    heightPx = builder.bubbleSizePx.height
-                } else {
-                    widthPx = it.width
-                    heightPx = it.height
+                builder.bubbleSizePx.also {
+                    if(it.notZero()) {
+                        widthPx = it.width
+                        heightPx = it.height
+                    }
                 }
             }
 
             FloatingCloseBubbleIcon.apply {
                 builder.closeBubbleSizePx.also {
-                    if (it.largerThanZero()) {
+                    if (it.notZero()) {
                         widthPx = it.width
                         heightPx = it.height
                     } else {
@@ -48,6 +49,8 @@ internal constructor(
                     }
                 }
             }
+
+            d("bubble = ${FloatingBubbleIcon.widthPx}, close = ${FloatingCloseBubbleIcon.widthPx}")
 
         }
 
@@ -163,6 +166,8 @@ internal constructor(
 
     class Builder(internal val context: Context) {
 
+        private val DEFAULT_BUBBLE_SIZE_PX = 160
+
         internal var iconView: View? = null
         internal var iconBitmap: Bitmap? = null
         internal var closeIconBitmap: Bitmap? = null
@@ -172,8 +177,8 @@ internal constructor(
 
         internal var listener: TouchEvent? = null
 
-        internal var bubbleSizePx: Size = Size(0, 0)
-        internal var closeBubbleSizePx: Size = Size(0, 0)
+        internal var bubbleSizePx: Size = Size(DEFAULT_BUBBLE_SIZE_PX, DEFAULT_BUBBLE_SIZE_PX)
+        internal var closeBubbleSizePx: Size = Size(DEFAULT_BUBBLE_SIZE_PX, DEFAULT_BUBBLE_SIZE_PX)
 
         internal var startingPoint = Point(0, 0)
         internal var elevation = 0

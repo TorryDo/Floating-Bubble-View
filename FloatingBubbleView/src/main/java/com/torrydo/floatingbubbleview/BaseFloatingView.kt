@@ -54,7 +54,7 @@ open class BaseFloatingView(
             width = WindowManager.LayoutParams.WRAP_CONTENT
             height = WindowManager.LayoutParams.WRAP_CONTENT
 
-            gravity = Gravity.CENTER
+            gravity = Gravity.TOP or Gravity.LEFT
             format = PixelFormat.TRANSLUCENT
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
