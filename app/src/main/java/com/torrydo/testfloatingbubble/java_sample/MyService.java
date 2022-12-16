@@ -40,13 +40,13 @@ public class MyService extends FloatingBubbleService {
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
 
         return new FloatingBubble.Builder(this)
-                .setBubble(R.drawable.ic_rounded_blue_diamond)
-                .setCloseBubble(R.drawable.ic_remove_icon)
-                .setBubbleSizeDp(60, 60)
-//                .setBubbleStyle(null)
-//                .setCloseBubbleStyle(R.style.default_close_bubble_style)
-                .setCloseBubbleSizeDp(80,80)
-                .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
+                .setBubble(R.drawable.ic_rounded_blue_diamond) //
+                .setCloseBubble(R.drawable.ic_remove_icon) //
+                .setBubbleSizeDp(60, 60) //
+                .setBubbleStyle(null) //
+                .setCloseBubbleStyle(R.style.default_close_bubble_style) //
+                .setCloseBubbleSizeDp(80,80) //
+                .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() { //
                     @Override
                     public void onDestroy() {
                         System.out.println("on Destroy");
@@ -54,7 +54,7 @@ public class MyService extends FloatingBubbleService {
 
                     @Override
                     public void onClick() {
-                        action.navigateToExpandableView();
+//                        action.navigateToExpandableView();
                     }
 
                     @Override
@@ -74,10 +74,10 @@ public class MyService extends FloatingBubbleService {
                 })
 
                 .setStartPoint(540, 1170) // half-screen-width, half-screen-height
-                .setAlpha(1f)
-//                .bottomBackground(true)
-//                .enableAnimateToEdge(false)
-//                .enableCloseIcon(false)
+                .setAlpha(1f) //
+                .bottomBackground(true) //
+                .enableAnimateToEdge(false) //
+                .enableCloseIcon(false)
                 ;
     }
 
@@ -113,6 +113,9 @@ public class MyService extends FloatingBubbleService {
                     public void onCloseExpandableView() {
                         Log.d("<>", "onCloseFloatingView: ");
                     }
-                });
+                }).setExpandableViewStyle(null)
+
+
+                ;
     }
 }

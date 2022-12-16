@@ -67,6 +67,19 @@ class MyServiceKt : FloatingBubbleService() {
         return ExpandableView.Builder(this)
             .setExpandableView(layout)
             .setDimAmount(0.8f)
+            .addExpandableViewListener(object : ExpandableView.Action {
+                override fun popToBubble() {
+                    action.popToBubble()
+                }
+
+                override fun onOpenExpandableView() {
+                    super.onOpenExpandableView()
+                }
+
+                override fun onCloseExpandableView() {
+                    super.onCloseExpandableView()
+                }
+            })
     }
 
 }
