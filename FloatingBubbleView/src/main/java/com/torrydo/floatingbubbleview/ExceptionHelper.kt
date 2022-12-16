@@ -5,7 +5,7 @@ import android.util.Log
 
 sealed class ActionState {
     object ActionComplete : ActionState()
-    class ActionError(val e: Exception) : ActionState()
+    class ActionError(val e: Exception?) : ActionState()
 }
 
 // use ---------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ inline fun ActionState.onComplete(crossinline onIfComplete: () -> Unit): ActionS
     return this
 }
 
-inline fun ActionState.onError(crossinline onIfError: (e: Exception) -> Unit): ActionState {
+inline fun ActionState.onError(crossinline onIfError: (e: Exception?) -> Unit): ActionState {
 
     if (this is ActionState.ActionError) {
         onIfError(this.e)

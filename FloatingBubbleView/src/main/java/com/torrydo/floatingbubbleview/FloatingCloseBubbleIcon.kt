@@ -37,13 +37,6 @@ internal class FloatingCloseBubbleIcon(
                 DEFAULT_PADDING_BOTTOM_PX
     }
 
-    private val middleX by lazy {
-        params.x + halfWidthPx
-    }
-    private val middleY by lazy {
-        params.y + halfHeightPx
-    }
-
     init {
         setupLayoutParams()
         setupCloseBubbleProperties()
@@ -80,7 +73,6 @@ internal class FloatingCloseBubbleIcon(
             layoutParams.width = widthPx
             layoutParams.height = heightPx
 
-
             elevation = builder.elevation.toFloat()
 
             alpha = builder.alphaF
@@ -93,21 +85,29 @@ internal class FloatingCloseBubbleIcon(
         }
     }
 
-    private val limit_catch = LIMIT_FLY_HEIGHT
-    fun animateCloseIconByBubble(x: Int, y: Int) {
-
+    /**
+     * @return x=0.0 means inside close area, 0.0 < x < 1.0 means outside
+     * */
+    fun distanceRatioToCloseBubble(x: Int, y: Int): Float {
         val distanceToBubble = MathHelper.distance(
             x1 = baseX.toDouble(),
             y1 = baseY.toDouble(),
             x2 = x.toDouble(),
             y2 = y.toDouble()
         )
-
         val distanceRatio = (limit_catch.toDouble() / distanceToBubble).let {
             if (it > 1) return@let 0
             return@let 1 - it
         }.toFloat()
-//        d("distanceRatio = ${distanceRatio}")
+
+        return distanceRatio
+    }
+
+    private val limit_catch = LIMIT_FLY_HEIGHT
+    fun animateCloseIconByBubble(x: Int, y: Int) {
+
+        val distanceRatio = distanceRatioToCloseBubble(x, y)
+
         if (distanceRatio == 0.0f) {
             stickToBubble(x, y)
         } else {
@@ -117,7 +117,7 @@ internal class FloatingCloseBubbleIcon(
             params.x = if (isXOnTheLeft) {
                 baseX - ((halfScreenWidth - x) * distanceRatio) / 5
             } else {
-                baseX + (x - halfScreenWidth) * distanceRatio / 5
+                baseX + ((x - halfScreenWidth) * distanceRatio) / 5
             }.toInt()
 
             params.y = baseY - (((ScreenInfo.heightPx - y) * distanceRatio) / 10)

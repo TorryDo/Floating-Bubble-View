@@ -20,15 +20,20 @@ internal open class BaseFloatingViewBinding<T : ViewBinding>(
     /**
      * must be root view
      * */
-    open fun show() = logIfError {
-        super.show(binding.root)
+    open fun show() {
+        logIfError {
+            if(binding.root.windowToken != null) return@logIfError
+            super.show(binding.root)
+        }
     }
 
     /**
      * must be root view
      * */
-    open fun remove() = logIfError {
-        super.remove(binding.root)
+    open fun remove() {
+        logIfError {
+            super.remove(binding.root)
+        }
     }
 
     override fun destroy() {

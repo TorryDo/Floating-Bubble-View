@@ -26,6 +26,9 @@ internal class FloatingBubbleIcon(
         private val SAFE_BOTTOM_AREA_PX get() = ScreenInfo.softNavBarHeightPx
     }
 
+    internal val x get() = params.x
+    internal val y get() = params.y
+
     private val prevPoint = Point(0, 0)
     private val pointF = PointF(0f, 0f)
     private val newPoint = Point(0, 0)
@@ -48,10 +51,7 @@ internal class FloatingBubbleIcon(
         if (isAnimatingToEdge) return
 
         isAnimatingToEdge = true
-        d("---------------------------------------------------------------------------------------")
         val iconX = binding.root.getXYPointOnScreen().x // 0..X
-
-        d("iconX = $iconX | halfIconWidth = $halfIconWidthPx")
 
         val isOnTheLeftSide = iconX + halfIconWidthPx < halfScreenWidth
         val startX: Int
@@ -199,9 +199,9 @@ internal class FloatingBubbleIcon(
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
-//                builder.bubbleStyle?.let {
-//                    windowAnimations = it
-//                }
+                builder.bubbleStyle?.let {
+                    windowAnimations = it
+                }
 
             }
 
