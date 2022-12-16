@@ -99,7 +99,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
     private fun tryRemoveBubbles() = logIfError {
         floatingBubble!!.removeIcon()
-        floatingBubble!!.removeCloseIcon()
+        floatingBubble!!.removeCloseIconAndBackground()
     }
 
 

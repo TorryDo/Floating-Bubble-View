@@ -73,8 +73,9 @@ public class MyService extends FloatingBubbleService {
                     }
                 })
 
-                .setStartPoint(0, 0) // half-screen-width, half-screen-height
+                .setStartPoint(540, 1170) // half-screen-width, half-screen-height
                 .setAlpha(1f)
+//                .bottomBackground(true)
 //                .enableAnimateToEdge(false)
 //                .enableCloseIcon(false)
                 ;

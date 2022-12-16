@@ -3,7 +3,6 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
-import android.util.Log.e
 import android.util.Size
 import android.view.View
 import androidx.annotation.DrawableRes
@@ -16,6 +15,8 @@ internal constructor(
     private val builder: Builder
 ) : Logger by LoggerImpl() {
 
+    private var floatingBottomBackground: FloatingBottomBackground? = null
+
     init {
         ScreenInfo.getScreenSize(builder.context).also {
             ScreenInfo.widthPx = it.width
@@ -24,14 +25,11 @@ internal constructor(
         ScreenInfo.statusBarHeightPx = ScreenInfo.getStatusBarHeight(builder.context)
         ScreenInfo.softNavBarHeightPx = ScreenInfo.getSoftNavigationBarSize(builder.context)
 
-        d("screenW = ${ScreenInfo.widthPx} | screenH = ${ScreenInfo.heightPx}")
-        d("status = ${ScreenInfo.statusBarHeightPx} | softNav = ${ScreenInfo.softNavBarHeightPx}")
-
         builder.iconBitmap?.let {
 
             FloatingBubbleIcon.apply {
                 builder.bubbleSizePx.also {
-                    if(it.notZero()) {
+                    if (it.notZero()) {
                         widthPx = it.width
                         heightPx = it.height
                     }
@@ -50,8 +48,10 @@ internal constructor(
                 }
             }
 
-            d("bubble = ${FloatingBubbleIcon.widthPx}, close = ${FloatingCloseBubbleIcon.widthPx}")
+        }
 
+        if(builder.isBottomBackgroundEnabled){
+            floatingBottomBackground = FloatingBottomBackground(builder)
         }
 
     }
@@ -85,21 +85,21 @@ internal constructor(
     // public func ---------------------------------------------------------------------------------
 
     fun showIcon() {
-        floatingIcon.show().onError {
-            e("force destroy because not show")
-            builder.listener?.onDestroy()
-        }
+        floatingIcon.show()
     }
 
     fun removeIcon() {
         floatingIcon.remove()
     }
 
-    fun showCloseIcon() {
+    fun showCloseIconAndBackground() {
+        floatingBottomBackground?.show()
         floatingCloseIcon.show()
+
     }
 
-    fun removeCloseIcon() {
+    fun removeCloseIconAndBackground() {
+        floatingBottomBackground?.remove()
         floatingCloseIcon.remove()
     }
 
@@ -117,9 +117,9 @@ internal constructor(
             }
             if (builder.isCloseIconEnabled.not()) return
 
-            showCloseIcon()
+            showCloseIconAndBackground()
 
-            if(isBubbleMoving.not()){
+            if (isBubbleMoving.not()) {
                 isBubbleMoving = true
             }
 
@@ -127,7 +127,7 @@ internal constructor(
 
         override fun onUp(x: Int, y: Int) {
             isBubbleMoving = false
-            removeCloseIcon()
+            removeCloseIconAndBackground()
 
             if (isBubbleInsideCloseIcon()) {
                 builder.listener?.onDestroy()
@@ -139,27 +139,17 @@ internal constructor(
         }
     }
 
-    private var floatingIcon: FloatingBubbleIcon = FloatingBubbleIcon(
+    private val floatingIcon: FloatingBubbleIcon = FloatingBubbleIcon(
         builder.addFloatingBubbleTouchListener(CustomBubbleTouchListener())
     )
 
-    private var floatingCloseIcon: FloatingCloseBubbleIcon = FloatingCloseBubbleIcon(builder)
+    private val floatingCloseIcon: FloatingCloseBubbleIcon = FloatingCloseBubbleIcon(builder)
 
     private fun isBubbleInsideCloseIcon(): Boolean {
-        val closeXY = floatingCloseIcon.binding.closeBubbleImg.getXYPointOnScreen()
-
-        val closeXmin = closeXY.x - FloatingCloseBubbleIcon.widthPx
-        val closeXmax = closeXY.x + FloatingCloseBubbleIcon.widthPx
-
-        val closeYmin = closeXY.y - FloatingCloseBubbleIcon.heightPx
-        val closeYmax = closeXY.y + FloatingCloseBubbleIcon.heightPx
-
-        val bubbleXY = floatingIcon.binding.bubbleView.getXYPointOnScreen()
-
-        fun isBubbleXInsideCloseWidth() = (closeXmin < bubbleXY.x) && (bubbleXY.x < closeXmax)
-        fun isBubbleYInsideCloseHeight() = (closeYmin < bubbleXY.y) && (bubbleXY.y < closeYmax)
-
-        return isBubbleXInsideCloseWidth() && isBubbleYInsideCloseHeight()
+        return floatingCloseIcon.distanceRatioToCloseBubble(
+            x = floatingIcon.x,
+            y = floatingIcon.y
+        ) == 0.0f
     }
 
     // builder -------------------------------------------------------------------------------------
@@ -185,6 +175,12 @@ internal constructor(
         internal var alphaF = 1f
         internal var isCloseIconEnabled = true
         internal var isAnimateToEdgeEnabled = true
+        internal var isBottomBackgroundEnabled = false
+
+        fun bottomBackground(enabled: Boolean): Builder {
+            this.isBottomBackgroundEnabled = enabled
+            return this
+        }
 
         fun enableAnimateToEdge(enabled: Boolean): Builder {
             isAnimateToEdgeEnabled = enabled
@@ -211,7 +207,7 @@ internal constructor(
             return this
         }
 
-        fun setBubbleStyle(@StyleRes style: Int?): Builder{
+        fun setBubbleStyle(@StyleRes style: Int?): Builder {
             this.bubbleStyle = style
             return this
         }
@@ -226,7 +222,7 @@ internal constructor(
             return this
         }
 
-        fun setCloseBubbleStyle(@StyleRes style: Int?): Builder{
+        fun setCloseBubbleStyle(@StyleRes style: Int?): Builder {
             this.closeBubbleStyle = style
             return this
         }
