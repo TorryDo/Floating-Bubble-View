@@ -24,7 +24,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
     protected fun setupViewAppearance() {
 
         floatingBubble = setupBubble(customFloatingBubbleAction)
-            .addFloatingBubbleTouchListener(customFloatingBubbleTouchEvent)
+            .addFloatingBubbleListener(customFloatingBubbleListener)
             .build()
 
         expandableView = setupExpandableView(customExpandableViewListener)
@@ -47,7 +47,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
         }
     }
 
-    private val customFloatingBubbleTouchEvent = object : FloatingBubble.TouchEvent {
+    private val customFloatingBubbleListener = object : FloatingBubble.Listener {
 
         override fun onDestroy() {
             tryStopService()
@@ -99,7 +99,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
     private fun tryRemoveBubbles() = logIfError {
         floatingBubble!!.removeIcon()
-        floatingBubble!!.removeCloseIconAndBackground()
+        floatingBubble!!.tryRemoveCloseBubbleAndBackground()
     }
 
 

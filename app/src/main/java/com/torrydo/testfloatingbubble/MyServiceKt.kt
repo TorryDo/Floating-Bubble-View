@@ -24,10 +24,9 @@ class MyServiceKt : FloatingBubbleService() {
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
         return FloatingBubble.Builder(this)
-            .setBubble(R.drawable.ic_rounded_blue_diamond)
-            .setBubbleSizeDp(60, 60)
-            .setCloseBubble(R.drawable.ic_remove_icon)
-            .addFloatingBubbleTouchListener(object : FloatingBubble.TouchEvent {
+            .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
+            .closeBubble(R.drawable.ic_remove_icon)
+            .addFloatingBubbleListener(object : FloatingBubble.Listener {
                 override fun onDestroy() {
                     println("on Destroy")
                 }
@@ -49,9 +48,9 @@ class MyServiceKt : FloatingBubbleService() {
                 }
             })
 
-            .setStartPoint(-200, 0)
-            .setAlpha(1f)
-            .enableCloseIcon(false)
+            .startLocation(-200, 0)
+            .opacity(1f)
+            .enableCloseBubble(false)
 
     }
 
@@ -65,12 +64,9 @@ class MyServiceKt : FloatingBubbleService() {
             action.popToBubble()
         }
         return ExpandableView.Builder(this)
-            .setExpandableView(layout)
-            .setDimAmount(0.8f)
-            .addExpandableViewListener(object : ExpandableView.Action {
-                override fun popToBubble() {
-                    action.popToBubble()
-                }
+            .expandableView(layout)
+            .dimAmount(0.8f)
+            .addExpandableViewListener(object : ExpandableView.Listener {
 
                 override fun onOpenExpandableView() {
                     super.onOpenExpandableView()

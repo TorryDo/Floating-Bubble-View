@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.CloseBubbleBinding
 
-internal class FloatingCloseBubbleIcon(
+internal class FloatingCloseBubbleView(
     private val builder: FloatingBubble.Builder,
 ) : BaseFloatingViewBinding<CloseBubbleBinding>(
     context = builder.context,
@@ -67,15 +67,17 @@ internal class FloatingCloseBubbleIcon(
             builder.context
         )
 
+//        binding.root.apply {
+//            elevation = builder.elevation.toFloat() - 10
+//        }
+
         binding.closeBubbleImg.apply {
             setImageBitmap(icBitmap)
 
             layoutParams.width = widthPx
             layoutParams.height = heightPx
 
-            elevation = builder.elevation.toFloat()
-
-            alpha = builder.alphaF
+            alpha = builder.opacity
 
         }
 
@@ -134,8 +136,8 @@ internal class FloatingCloseBubbleIcon(
 
     private fun stickToBubble(x: Int, y: Int) {
 
-        val middleBubbleX = x + FloatingBubbleIcon.widthPx / 2
-        val middleBubbleY = y + FloatingBubbleIcon.heightPx / 2
+        val middleBubbleX = x + FloatingBubbleView.widthPx / 2
+        val middleBubbleY = y + FloatingBubbleView.heightPx / 2
 
         params.x = middleBubbleX - halfWidthPx
         params.y = middleBubbleY - halfHeightPx

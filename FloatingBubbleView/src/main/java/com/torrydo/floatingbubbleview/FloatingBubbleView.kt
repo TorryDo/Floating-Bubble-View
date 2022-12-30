@@ -10,7 +10,7 @@ import android.view.MotionEvent
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.BubbleBinding
 
-internal class FloatingBubbleIcon(
+internal class FloatingBubbleView(
     private val builder: FloatingBubble.Builder,
 ) : BaseFloatingViewBinding<BubbleBinding>(
     context = builder.context,
@@ -90,19 +90,21 @@ internal class FloatingBubbleIcon(
             builder.context
         )
 
+//        binding.root.apply {
+//            elevation = builder.elevation.toFloat()
+//        }
+
         binding.bubbleView.apply {
             setImageBitmap(iconBitmap)
             layoutParams.width = widthPx
             layoutParams.height = heightPx
 
-            elevation = builder.elevation.toFloat()
-
-            alpha = builder.alphaF
+            alpha = builder.opacity
         }
 
         params.apply {
-            x = builder.startingPoint.x
-            y = builder.startingPoint.y
+            x = builder.startPoint.x
+            y = builder.startPoint.y
         }
 
     }

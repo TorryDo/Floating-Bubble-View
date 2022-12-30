@@ -40,13 +40,12 @@ public class MyService extends FloatingBubbleService {
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
 
         return new FloatingBubble.Builder(this)
-                .setBubble(R.drawable.ic_rounded_blue_diamond) //
-                .setCloseBubble(R.drawable.ic_remove_icon) //
-                .setBubbleSizeDp(60, 60) //
-                .setBubbleStyle(null) //
-                .setCloseBubbleStyle(R.style.default_close_bubble_style) //
-                .setCloseBubbleSizeDp(80,80) //
-                .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() { //
+                .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60) //
+                .closeBubble(R.drawable.ic_remove_icon) //
+                .bubbleStyle(null) //
+                .closeBubbleStyle(R.style.default_close_bubble_style) //
+//                .setCloseBubbleSizeDp(80,80) //
+                .addFloatingBubbleListener(new FloatingBubble.Listener() { //
                     @Override
                     public void onDestroy() {
                         System.out.println("on Destroy");
@@ -54,7 +53,7 @@ public class MyService extends FloatingBubbleService {
 
                     @Override
                     public void onClick() {
-//                        action.navigateToExpandableView();
+                        action.navigateToExpandableView();
                     }
 
                     @Override
@@ -72,12 +71,12 @@ public class MyService extends FloatingBubbleService {
                         System.out.println("onDown");
                     }
                 })
-
-                .setStartPoint(540, 1170) // half-screen-width, half-screen-height
-                .setAlpha(1f) //
-                .bottomBackground(true) //
-                .enableAnimateToEdge(false) //
-                .enableCloseIcon(false)
+//                .elevation(100)
+                .startLocation(540, 1170) // half-screen-width, half-screen-height
+                .opacity(1f) //
+                .bottomBackground(false)
+//                .enableAnimateToEdge(false)
+//                .enableCloseBubble(false)
                 ;
     }
 
@@ -93,16 +92,11 @@ public class MyService extends FloatingBubbleService {
             action.popToBubble();
         });
 
-
         return new ExpandableView.Builder(this)
-                .setExpandableView(layout)
-                .setDimAmount(0.8f)
+                .expandableView(layout)
+                .dimAmount(0.8f)
 //                .setExpandableViewStyle(null)
-                .addExpandableViewListener(new ExpandableView.Action() {
-                    @Override
-                    public void popToBubble() {
-                        this.popToBubble();
-                    }
+                .addExpandableViewListener(new ExpandableView.Listener() {
 
                     @Override
                     public void onOpenExpandableView() {
@@ -113,7 +107,7 @@ public class MyService extends FloatingBubbleService {
                     public void onCloseExpandableView() {
                         Log.d("<>", "onCloseFloatingView: ");
                     }
-                }).setExpandableViewStyle(null)
+                }).expandableViewStyle(null)
 
 
                 ;

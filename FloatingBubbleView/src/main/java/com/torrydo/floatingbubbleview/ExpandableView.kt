@@ -18,6 +18,10 @@ class ExpandableView(
 
     interface Action {
         fun popToBubble() {}
+
+    }
+
+    interface Listener{
         fun onOpenExpandableView() {}
         fun onCloseExpandableView() {}
     }
@@ -69,26 +73,29 @@ class ExpandableView(
         internal var view: View? = null
         internal var viewStyle: Int? = R.style.default_bubble_style
 
-        internal var listener = object : Action {}
+        internal var listener = object : Listener {}
 
-        var dim = 0.5f
+        internal var dim = 0.5f
 
-        fun setExpandableView(view: View): Builder {
+        fun expandableView(view: View): Builder {
             this.view = view
             return this
         }
 
-        fun addExpandableViewListener(action: Action): Builder {
-            this.listener = action
+        fun addExpandableViewListener(listener: Listener): Builder {
+            this.listener = listener
             return this
         }
 
-        fun setExpandableViewStyle(@StyleRes style: Int?): Builder{
+        fun expandableViewStyle(@StyleRes style: Int?): Builder{
             viewStyle = style
             return this
         }
 
-        fun setDimAmount(dimAmount: Float): Builder {
+        /**
+         * @param dimAmount background opacity below the expandable-view
+         * */
+        fun dimAmount(dimAmount: Float): Builder {
             this.dim = dimAmount
             return this
         }
