@@ -18,16 +18,8 @@ internal class FloatingBubbleView(
 ),
     Logger by LoggerImpl() {
 
-    companion object {
-        internal var widthPx = 0
-        internal var heightPx = 0
-
-        private val SAFE_TOP_AREA_PX get() = ScreenInfo.statusBarHeightPx
-        private val SAFE_BOTTOM_AREA_PX get() = ScreenInfo.softNavBarHeightPx
-    }
-
-    internal val x get() = params.x
-    internal val y get() = params.y
+    internal val x get() = windowParams.x
+    internal val y get() = windowParams.y
 
     private val prevPoint = Point(0, 0)
     private val pointF = PointF(0f, 0f)
@@ -36,9 +28,19 @@ internal class FloatingBubbleView(
     private val halfScreenWidth = ScreenInfo.widthPx / 2
     private val halfScreenHeight = ScreenInfo.heightPx / 2
 
-    private val halfIconWidthPx by lazy { widthPx / 2 }
+    private val halfIconWidthPx: Int
 
     init {
+
+        builder.bubbleSizePx.also {
+            if (it.notZero()) {
+                width = it.width
+                height = it.height
+            }
+        }
+
+        halfIconWidthPx = width/2
+
         setupLayoutParams()
         setupBubbleProperties()
         customTouch()
@@ -61,7 +63,7 @@ internal class FloatingBubbleView(
             endX = 0
         } else {
             startX = iconX
-            endX = ScreenInfo.widthPx - widthPx
+            endX = ScreenInfo.widthPx - width
         }
         animHelper.startSpringX(
             startValue = startX.toFloat(),
@@ -69,7 +71,7 @@ internal class FloatingBubbleView(
             animationListener = object : AnimHelper.Event {
                 override fun onUpdate(float: Float) {
                     tryOnly {
-                        params.x = float.toInt()
+                        windowParams.x = float.toInt()
                         update()
                     }
                 }
@@ -90,19 +92,15 @@ internal class FloatingBubbleView(
             builder.context
         )
 
-//        binding.root.apply {
-//            elevation = builder.elevation.toFloat()
-//        }
-
         binding.bubbleView.apply {
             setImageBitmap(iconBitmap)
-            layoutParams.width = widthPx
-            layoutParams.height = heightPx
+            layoutParams.width = this@FloatingBubbleView.width
+            layoutParams.height = this@FloatingBubbleView.height
 
             alpha = builder.opacity
         }
 
-        params.apply {
+        windowParams.apply {
             x = builder.startPoint.x
             y = builder.startPoint.y
         }
@@ -116,8 +114,8 @@ internal class FloatingBubbleView(
         // actions ---------------------------------------------------------------------------------
 
         fun onActionDown(motionEvent: MotionEvent) {
-            prevPoint.x = params.x
-            prevPoint.y = params.y
+            prevPoint.x = windowParams.x
+            prevPoint.y = windowParams.y
 
             pointF.x = motionEvent.rawX
             pointF.y = motionEvent.rawY
@@ -135,7 +133,7 @@ internal class FloatingBubbleView(
             // prevent bubble's Y coordinate moving outside the screen
             val safeTopY = 0
             val safeBottomY =
-                ScreenInfo.heightPx - ScreenInfo.softNavBarHeightPx - ScreenInfo.statusBarHeightPx - heightPx
+                ScreenInfo.heightPx - ScreenInfo.softNavBarHeightPx - ScreenInfo.statusBarHeightPx - height
             val isAboveStatusBar = newPoint.y < safeTopY
             val isUnderSoftNavBar = newPoint.y > safeBottomY
             if (isAboveStatusBar) {
@@ -144,8 +142,8 @@ internal class FloatingBubbleView(
                 newPoint.y = safeBottomY
             }
 
-            params.x = newPoint.x
-            params.y = newPoint.y
+            windowParams.x = newPoint.x
+            windowParams.y = newPoint.y
             update()
 
             builder.listener?.onMove(newPoint.x, newPoint.y)
@@ -195,8 +193,7 @@ internal class FloatingBubbleView(
 
         logIfError {
 
-            params.apply {
-//                gravity = Gravity.BOTTOM
+            windowParams.apply {
                 flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS

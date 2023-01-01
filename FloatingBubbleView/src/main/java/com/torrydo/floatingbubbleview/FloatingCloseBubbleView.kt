@@ -12,51 +12,57 @@ internal class FloatingCloseBubbleView(
 ), Logger by LoggerImpl() {
 
     companion object {
-        internal var widthPx = 0
-        internal var heightPx = 0
-
-        private const val DEFAULT_PADDING_BOTTOM_PX = 30
+        internal const val DEFAULT_PADDING_BOTTOM_PX = 30
     }
 
+    private val LIMIT_FLY_HEIGHT: Int
 
-    private val LIMIT_FLY_HEIGHT by lazy { ScreenInfo.heightPx / 15 }
+    private val halfWidthPx: Int
+    private val halfHeightPx: Int
 
+    private val halfScreenWidth: Int
+    private val baseX: Int
+    private val baseY: Int
 
-    private val halfScreenWidth by lazy { ScreenInfo.widthPx / 2 }
-    private val halfScreenHeight by lazy { ScreenInfo.heightPx / 2 }
+    init {
 
-    private val halfWidthPx by lazy { widthPx / 2 }
-    private val halfHeightPx by lazy { heightPx / 2 }
+        builder.closeBubbleSizePx.also {
+            if (it.notZero()) {
+                width = it.width
+                height = it.height
+            } else {
+                width = builder.bubbleSizePx.width
+                height = builder.bubbleSizePx.height
+            }
+        }
 
-    private val baseX = halfScreenWidth - halfWidthPx
-    private val baseY by lazy {
-        ScreenInfo.heightPx -
-                heightPx -
+        LIMIT_FLY_HEIGHT = ScreenInfo.heightPx / 15
+
+        halfScreenWidth = ScreenInfo.widthPx / 2
+        halfWidthPx = width / 2
+        halfHeightPx = height / 2
+        baseX = halfScreenWidth - halfWidthPx
+        baseY = ScreenInfo.heightPx -
+                height -
                 ScreenInfo.softNavBarHeightPx -
                 ScreenInfo.statusBarHeightPx -
                 DEFAULT_PADDING_BOTTOM_PX
-    }
 
-    init {
         setupLayoutParams()
         setupCloseBubbleProperties()
     }
+
 
     override fun setupLayoutParams() {
         super.setupLayoutParams()
 
         logIfError {
-            params.apply {
+            windowParams.apply {
                 flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                         WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-
-//                builder.closeBubbleStyle?.let {
-//                    windowAnimations = R.style.default_bubble_style
-//                }
             }
         }
-
     }
 
     // private -------------------------------------------------------------------------------------
@@ -67,21 +73,17 @@ internal class FloatingCloseBubbleView(
             builder.context
         )
 
-//        binding.root.apply {
-//            elevation = builder.elevation.toFloat() - 10
-//        }
-
         binding.closeBubbleImg.apply {
             setImageBitmap(icBitmap)
 
-            layoutParams.width = widthPx
-            layoutParams.height = heightPx
+            layoutParams.width = this@FloatingCloseBubbleView.width
+            layoutParams.height = this@FloatingCloseBubbleView.height
 
             alpha = builder.opacity
 
         }
 
-        params.apply {
+        windowParams.apply {
             this.x = baseX
             this.y = baseY
         }
@@ -116,13 +118,13 @@ internal class FloatingCloseBubbleView(
 
             val isXOnTheLeft = x < halfScreenWidth
 
-            params.x = if (isXOnTheLeft) {
+            windowParams.x = if (isXOnTheLeft) {
                 baseX - ((halfScreenWidth - x) * distanceRatio) / 5
             } else {
                 baseX + ((x - halfScreenWidth) * distanceRatio) / 5
             }.toInt()
 
-            params.y = baseY - (((ScreenInfo.heightPx - y) * distanceRatio) / 10)
+            windowParams.y = baseY - (((ScreenInfo.heightPx - y) * distanceRatio) / 10)
                 .toInt().let {
                     return@let if (it > LIMIT_FLY_HEIGHT) {
                         LIMIT_FLY_HEIGHT
@@ -136,11 +138,11 @@ internal class FloatingCloseBubbleView(
 
     private fun stickToBubble(x: Int, y: Int) {
 
-        val middleBubbleX = x + FloatingBubbleView.widthPx / 2
-        val middleBubbleY = y + FloatingBubbleView.heightPx / 2
+        val middleBubbleX = x + builder.bubbleSizePx.width / 2
+        val middleBubbleY = y + builder.bubbleSizePx.height / 2
 
-        params.x = middleBubbleX - halfWidthPx
-        params.y = middleBubbleY - halfHeightPx
+        windowParams.x = middleBubbleX - halfWidthPx
+        windowParams.y = middleBubbleY - halfHeightPx
 
         update()
     }

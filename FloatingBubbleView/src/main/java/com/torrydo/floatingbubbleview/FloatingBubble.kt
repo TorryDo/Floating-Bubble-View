@@ -27,28 +27,6 @@ internal constructor(
         ScreenInfo.statusBarHeightPx = ScreenInfo.getStatusBarHeight(builder.context)
         ScreenInfo.softNavBarHeightPx = ScreenInfo.getSoftNavigationBarSize(builder.context)
 
-        builder.iconBitmap?.let {
-
-            builder.bubbleSizePx.also {
-                if (it.notZero()) {
-                    FloatingBubbleView.widthPx = it.width
-                    FloatingBubbleView.heightPx = it.height
-                }
-            }
-            FloatingCloseBubbleView.apply {
-                builder.closeBubbleSizePx.also {
-                    if (it.notZero()) {
-                        widthPx = it.width
-                        heightPx = it.height
-                    } else {
-                        widthPx = FloatingBubbleView.widthPx
-                        heightPx = FloatingBubbleView.heightPx
-                    }
-                }
-            }
-
-        }
-
         bubbleView = FloatingBubbleView(
             builder.addFloatingBubbleListener(CustomBubbleListener())
         )

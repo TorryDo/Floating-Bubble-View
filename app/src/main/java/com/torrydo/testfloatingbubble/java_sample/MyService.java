@@ -41,7 +41,7 @@ public class MyService extends FloatingBubbleService {
 
         return new FloatingBubble.Builder(this)
                 .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60) //
-                .closeBubble(R.drawable.ic_remove_icon) //
+                .closeBubble(R.drawable.ic_remove_icon, 80, 80) //
                 .bubbleStyle(null) //
                 .closeBubbleStyle(R.style.default_close_bubble_style) //
 //                .setCloseBubbleSizeDp(80,80) //
