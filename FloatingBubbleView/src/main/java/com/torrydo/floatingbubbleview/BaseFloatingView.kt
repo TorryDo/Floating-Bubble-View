@@ -16,11 +16,29 @@ open class BaseFloatingView(
     private var _windowManager: WindowManager? = null
     private var _windowParams: WindowManager.LayoutParams? = null
 
-    protected val params get() = _windowParams!!
+    protected val windowParams get() = _windowParams!!
 
     init {
         _windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
         _windowParams = WindowManager.LayoutParams()
+    }
+
+    /**
+     * pixel unit
+     * */
+    var width = _windowParams!!.width
+    set(value) {
+        _windowParams!!.width = value
+        field = value
+    }
+
+    /**
+     * pixel unit
+     * */
+    var height = _windowParams!!.height
+    set(value) {
+        _windowParams!!.height = value
+        field = value
     }
 
     // public --------------------------------------------------------------------------------------
