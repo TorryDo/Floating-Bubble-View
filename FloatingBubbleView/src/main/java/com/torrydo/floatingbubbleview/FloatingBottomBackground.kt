@@ -43,7 +43,7 @@ internal class FloatingBottomBackground(
         super.setupLayoutParams()
 
         logIfError {
-            params.apply {
+            windowParams.apply {
                 width = WindowManager.LayoutParams.MATCH_PARENT
                 height = ScreenInfo.heightPx/5
                 gravity = Gravity.BOTTOM or Gravity.CENTER

@@ -8,14 +8,6 @@ plugins {
 
 android {
 
-    publishing {
-        singleVariant("release") {
-            // if you don't want sources/javadoc, remove these lines
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
-
     compileSdk 33
 
     defaultConfig {
@@ -28,7 +20,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -48,8 +40,8 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("androidx.core:core-ktx:1.6.0")
+    implementation("androidx.appcompat:appcompat:1.4.0")
 
     implementation("androidx.dynamicanimation:dynamicanimation:1.0.0")
 
