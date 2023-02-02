@@ -189,7 +189,7 @@ Declare the dependencies in the module-level `build.gradle` file
 ```java
 class MyServiceKt : FloatingBubbleService() {
 
-    // Optional. If not override. show default notification
+    // for android 8 and up
     override fun setupNotificationBuilder(channelId: String): Notification {
         return NotificationCompat.Builder(this, channelId)
             .setOngoing(true)
@@ -201,73 +201,58 @@ class MyServiceKt : FloatingBubbleService() {
             .build()
     }
 
-    override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
 
+    override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
         return FloatingBubble.Builder(this)
 
-                // set bubble icon, currently accept only drawable and bitmap
-                .setBubble(R.drawable.ic_rounded_blue_diamond)
-                // set bubble's width/height
-                .setBubbleSizeDp(60, 60)
-                // set style for bubble, by default bubble use fade animation
-                .setBubbleStyle(null)
-                // set start point of bubble, (x=0, y=0) is top-left
-                .setStartPoint(0, 0)
-                // enable auto animate bubble to the left/right side when release, true by default
-                .enableAnimateToEdge(true)
+            // set bubble icon attributes, currently only drawable and bitmap are supported
+            .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
+            // set style for bubble, by default bubble use fade animation
+            .bubbleStyle(null)
+            // set start location of bubble, (x=0, y=0) is top-left
+            .startLocation(0, 0)
+            // enable auto animate bubble to the left/right side when release, true by default
+            .enableAnimateToEdge(true)
 
-                // set close-bubble icon, currently accept only drawable and bitmap
-                .setCloseBubble(R.drawable.ic_remove_icon)
-                // set close-bubble's width/height
-                .setCloseBubbleSizeDp(60, 60)
-                // set style for close-bubble, null by default
-                .setCloseBubbleStyle(null)
-                // show close-bubble, true by default
-                .enableCloseIcon(true)
-                // enable bottom background, false by default
-                .bottomBackground(true)
+            // set close-bubble icon attributes, currently only drawable and bitmap are supported
+            .closeBubble(R.drawable.ic_remove_icon, 60, 60)
+            // set style for close-bubble, null by default
+            .closeBubbleStyle(null)
+            // show close-bubble, true by default
+            .enableCloseBubble(true)
+            // enable bottom background, false by default
+            .bottomBackground(false)
 
-                .addFloatingBubbleTouchListener(object : FloatingBubble.TouchEvent {
-                    override fun onDestroy() {...}
-
-                    override fun onClick() {
-                        action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
-                    }
-
-                    override fun onMove(x: Int, y: Int) {...}
-
-                    override fun onUp(x: Int, y: Int) {...}
-
-                    override fun onDown(x: Int, y: Int) {...}
-                })
-                .setAlpha(1f)
+            .addFloatingBubbleListener(object : FloatingBubble.Listener {
+                override fun onDestroy() {}
+                override fun onClick() {
+                    action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
+                }
+                override fun onMove(x: Int, y: Int) {}
+                override fun onUp(x: Int, y: Int) {}
+                override fun onDown(x: Int, y: Int) {}
+            })
+            .opacity(1f)
     }
 
-    override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder {
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
 
+        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val layout = inflater.inflate(R.layout.layout_view_test, null)
 
-        layout.findViewById<View>(R.id.card_view).setOnClickListener { view ->
-            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
+        layout.findViewById<View>(R.id.card_view).setOnClickListener { v: View? ->
+            Toast.makeText(this, "hello from card view from kotlin", Toast.LENGTH_SHORT).show();
             action.popToBubble()
         }
-        return ExpandableView.Builder()
-            .with(this)
-            .setExpandableView(layout)
-            .setDimAmount(0.8f)
-            // set style for expandable view, fade animation by default
-            .setExpandableViewStyle(null)
-            .addExpandableViewListener(object : ExpandableView.Action {
-
-                override fun popToBubble() {
-                    action.popToBubble()
-                }
-
-                override fun onOpenExpandableView() {...}
-
-                override fun onCloseExpandableView() {...}
+        
+        return ExpandableView.Builder(this)
+            .expandableView(layout)
+            .dimAmount(0.8f)
+            .addExpandableViewListener(object : ExpandableView.Listener {
+                override fun onOpenExpandableView() {}
+                override fun onCloseExpandableView() {}
             })
+            .expandableViewStyle(null)
     }
 
 
@@ -301,32 +286,27 @@ public class MyService extends FloatingBubbleService {
 
         return new FloatingBubble.Builder(this)
 
-
-                // set bubble icon, currently accept only drawable and bitmap
-                .setBubble(R.drawable.ic_rounded_blue_diamond)
-                // set bubble's width/height
-                .setBubbleSizeDp(60, 60)
+                // set bubble icon attributes, currently only drawable and bitmap are supported
+                .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
                 // set style for bubble, by default bubble use fade animation
-                .setBubbleStyle(null)
-                // set start point of bubble, (x=0, y=0) is top-left
-                .setStartPoint(0, 0)
+                .bubbleStyle(null)
+                // set start location of bubble, (x=0, y=0) is top-left
+                .startLocation(0, 0)
                 // enable auto animate bubble to the left/right side when release, true by default
                 .enableAnimateToEdge(true)
 
-                // set close-bubble icon, currently accept only drawable and bitmap
-                .setCloseBubble(R.drawable.ic_remove_icon)
-                // set close-bubble's width/height
-                .setCloseBubbleSizeDp(60, 60)
+                // set close-bubble icon attributes, currently only drawable and bitmap are supported
+                .closeBubble(R.drawable.ic_remove_icon, 60, 60)
                 // set style for close-bubble, null by default
-                .setCloseBubbleStyle(null)
+                .closeBubbleStyle(null)
                 // show close-bubble, true by default
-                .enableCloseIcon(true)
+                .enableCloseBubble(true)
                 // enable bottom background, false by default
-                .bottomBackground(true)
+                .bottomBackground(false)
 
-                .addFloatingBubbleTouchListener(new FloatingBubble.TouchEvent() {
+                .addFloatingBubbleListener(new FloatingBubble.Listener() {
                     @Override
-                    public void onDestroy() {...}
+                    public void onDestroy() {}
 
                     @Override
                     public void onClick() {
@@ -334,50 +314,40 @@ public class MyService extends FloatingBubbleService {
                     }
 
                     @Override
-                    public void onMove(int x, int y) {...}
+                    public void onMove(int x, int y) {}
 
                     @Override
-                    public void onUp(int x, int y) {...}
+                    public void onUp(int x, int y) {}
 
                     @Override
-                    public void onDown(int x, int y) {...}
+                    public void onDown(int x, int y) {}
                 })
-                
-
-                .setAlpha(1f);
+                .opacity(1f);
     }
 
     @Nullable
     @Override
     public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
-
 
         layout.findViewById(R.id.card_view).setOnClickListener(v -> {
             Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
             action.popToBubble();
         });
 
-
         return new ExpandableView.Builder(this)
-                .setExpandableView(layout)
-                .setDimAmount(0.8f)
-                .addExpandableViewListener(new ExpandableView.Action() {
+                .expandableView(layout)
+                .dimAmount(0.8f)
+                .addExpandableViewListener(new ExpandableView.Listener() {
                     @Override
-                    public void popToBubble() {
-                        this.popToBubble();
-                    }
+                    public void onOpenExpandableView() {}
 
                     @Override
-                    public void onOpenExpandableView() {...}
-
-                    @Override
-                    public void onCloseExpandableView() {...}
+                    public void onCloseExpandableView() {}
                 })
-                // set style for expandable view, fade animation by default
-                .setExpandableViewStyle(null)
-                ;
+                .expandableViewStyle(null);
     }
 }
 ```

@@ -1,11 +1,13 @@
 package com.torrydo.testfloatingbubble.java_sample;
 
+import android.app.Notification;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.torrydo.floatingbubbleview.ExpandableView;
 import com.torrydo.floatingbubbleview.FloatingBubble;
@@ -20,19 +22,19 @@ public class MyService extends FloatingBubbleService {
         return true;
     }
 
-    // for android 8 and above
-//    @NonNull
-//    @Override
-//    public Notification setupNotificationBuilder(@NonNull String channelId) {
-//        return new NotificationCompat.Builder(this, channelId)
-//                .setOngoing(true)
-//                .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-//                .setContentTitle("bubble is running")
-//                .setContentText("click to do nothing")
-//                .setPriority(NotificationCompat.PRIORITY_MIN)
-//                .setCategory(Notification.CATEGORY_SERVICE)
-//                .build();
-//    }
+    // for android 8 and up
+    @NonNull
+    @Override
+    public Notification setupNotificationBuilder(@NonNull String channelId) {
+        return new NotificationCompat.Builder(this, channelId)
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+                .setContentTitle("bubble is running")
+                .setContentText("click to do nothing")
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build();
+    }
 
 
     @NonNull
@@ -40,44 +42,43 @@ public class MyService extends FloatingBubbleService {
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
 
         return new FloatingBubble.Builder(this)
-                .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60) //
-                .closeBubble(R.drawable.ic_remove_icon, 80, 80) //
-                .bubbleStyle(null) //
-                .closeBubbleStyle(R.style.default_close_bubble_style) //
-//                .setCloseBubbleSizeDp(80,80) //
-                .addFloatingBubbleListener(new FloatingBubble.Listener() { //
+                // set bubble icon attributes, currently only drawable and bitmap are supported
+                .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
+                // set style for bubble, by default bubble use fade animation
+                .bubbleStyle(null)
+                // set start location of bubble, (x=0, y=0) is top-left
+                .startLocation(0, 0)
+                // enable auto animate bubble to the left/right side when release, true by default
+                .enableAnimateToEdge(true)
+
+                // set close-bubble icon attributes, currently only drawable and bitmap are supported
+                .closeBubble(R.drawable.ic_remove_icon, 60, 60)
+                // set style for close-bubble, null by default
+                .closeBubbleStyle(null)
+                // show close-bubble, true by default
+                .enableCloseBubble(true)
+                // enable bottom background, false by default
+                .bottomBackground(false)
+
+                .addFloatingBubbleListener(new FloatingBubble.Listener() {
                     @Override
-                    public void onDestroy() {
-                        System.out.println("on Destroy");
-                    }
+                    public void onDestroy() {}
 
                     @Override
                     public void onClick() {
-                        action.navigateToExpandableView();
+                        action.navigateToExpandableView(); // must override `setupExpandableView`, otherwise throw an exception
                     }
 
                     @Override
-                    public void onMove(int x, int y) {
-//                        System.out.println("onMove");
-                    }
+                    public void onMove(int x, int y) {}
 
                     @Override
-                    public void onUp(int x, int y) {
-                        System.out.println("onUp");
-                    }
+                    public void onUp(int x, int y) {}
 
                     @Override
-                    public void onDown(int x, int y) {
-                        System.out.println("onDown");
-                    }
+                    public void onDown(int x, int y) {}
                 })
-//                .elevation(100)
-                .startLocation(540, 1170) // half-screen-width, half-screen-height
-                .opacity(1f) //
-                .bottomBackground(true)
-//                .enableAnimateToEdge(false)
-//                .enableCloseBubble(false)
-                ;
+                .opacity(1f);
     }
 
     @Nullable
@@ -95,9 +96,7 @@ public class MyService extends FloatingBubbleService {
         return new ExpandableView.Builder(this)
                 .expandableView(layout)
                 .dimAmount(0.8f)
-//                .setExpandableViewStyle(null)
                 .addExpandableViewListener(new ExpandableView.Listener() {
-
                     @Override
                     public void onOpenExpandableView() {
                         Log.d("<>", "onOpenFloatingView: ");
@@ -108,8 +107,6 @@ public class MyService extends FloatingBubbleService {
                         Log.d("<>", "onCloseFloatingView: ");
                     }
                 }).expandableViewStyle(null)
-
-
                 ;
     }
 }
