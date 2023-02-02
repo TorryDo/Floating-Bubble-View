@@ -137,6 +137,10 @@ Declare the dependencies in the module-level `build.gradle` file
 ### Step 2 : add bubble-service to manifest file 2️⃣
 
 ```xml
+    <!-- these two permissions are added by default -->
+    <!-- <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/> -->
+    <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/> -->
+
     <application>
         ...
         <service android:name="<YOUR_PACKAGE>.MyService" />
@@ -244,7 +248,7 @@ class MyServiceKt : FloatingBubbleService() {
             Toast.makeText(this, "hello from card view from kotlin", Toast.LENGTH_SHORT).show();
             action.popToBubble()
         }
-        
+
         return ExpandableView.Builder(this)
             .expandableView(layout)
             .dimAmount(0.8f)
