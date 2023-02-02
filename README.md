@@ -19,8 +19,9 @@ https://user-images.githubusercontent.com/85553681/208131247-37a51e40-6b61-4cf7-
 1. [Getting started](#getting_started)  
 2. [Setup and Usage](#setup_usage) 
 3. [Sample](#sample)
-4. [Note](#note)
-5. [License](#license)
+4. [Migrate](#migrate)
+5. [Note](#note)
+6. [License](#license)
 
 
 ## I, Getting started 🍕🍔🍟 <a name="getting_started"/>
@@ -358,6 +359,9 @@ public class MyService extends FloatingBubbleService {
 </details>
 
 </br>
+
+## Migrate <a name="migrate">
+If you are using an older version, please follow these guides to migrate: [version 0.4.0](https://github.com/TorryDo/Floating-Bubble-View/releases/tag/0.4.0)
 
 ## Note <a name="note">
 This library is still under heavy development. There is still a lot of code cleanup to do, so expect breaking API changes over time.
