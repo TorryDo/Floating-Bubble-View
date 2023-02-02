@@ -74,7 +74,7 @@ public class MyService extends FloatingBubbleService {
 //                .elevation(100)
                 .startLocation(540, 1170) // half-screen-width, half-screen-height
                 .opacity(1f) //
-                .bottomBackground(false)
+                .bottomBackground(true)
 //                .enableAnimateToEdge(false)
 //                .enableCloseBubble(false)
                 ;
