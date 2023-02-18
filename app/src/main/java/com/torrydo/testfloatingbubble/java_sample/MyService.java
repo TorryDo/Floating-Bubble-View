@@ -1,6 +1,7 @@
 package com.torrydo.testfloatingbubble.java_sample;
 
 import android.app.Notification;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import com.torrydo.testfloatingbubble.R;
 
 
 public class MyService extends FloatingBubbleService {
+
+    String data = null;
 
     @Override
     public boolean enableLogger() {
@@ -36,10 +39,25 @@ public class MyService extends FloatingBubbleService {
                 .build();
     }
 
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+
+        assert intent != null;
+        this.data = intent.getStringExtra("key1");
+
+        if (this.data != null) {
+            showExpandableView();
+            return START_STICKY;
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     @NonNull
     @Override
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
+
+        Log.d("<>", "data = " + data);
 
         return new FloatingBubble.Builder(this)
                 // set bubble icon attributes, currently only drawable and bitmap are supported
@@ -62,7 +80,8 @@ public class MyService extends FloatingBubbleService {
 
                 .addFloatingBubbleListener(new FloatingBubble.Listener() {
                     @Override
-                    public void onDestroy() {}
+                    public void onDestroy() {
+                    }
 
                     @Override
                     public void onClick() {
@@ -70,13 +89,16 @@ public class MyService extends FloatingBubbleService {
                     }
 
                     @Override
-                    public void onMove(int x, int y) {}
+                    public void onMove(int x, int y) {
+                    }
 
                     @Override
-                    public void onUp(int x, int y) {}
+                    public void onUp(int x, int y) {
+                    }
 
                     @Override
-                    public void onDown(int x, int y) {}
+                    public void onDown(int x, int y) {
+                    }
                 })
                 .opacity(1f);
     }
