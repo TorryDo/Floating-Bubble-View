@@ -3,18 +3,15 @@ package com.torrydo.floatingbubbleview
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
-import android.util.Log.d
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
-import androidx.core.content.ContextCompat.getSystemService
 
 
 abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by LoggerImpl() {
@@ -42,18 +39,7 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Logger.isLoggerEnabled = enableLogger()
-
-        if (isDrawOverlaysPermissionGranted()) {
-
-            setupViewAppearance()
-
-            if (isHigherThanAndroid8()) {
-                startBubbleForeground()
-            }
-
-        } else throw PermissionDeniedException()
-
+        showBubble()
         return START_STICKY
     }
 
@@ -70,12 +56,12 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
 
     open fun notificationId() = 101
 
-    open fun startBubbleForeground() {
+    private fun showNotification() {
 
         val channelId = if (isHigherThanAndroid8()) {
             createNotificationChannel(channelId(), channelName())
         } else {
-            // In earlier version, channel ID is not used
+            // In earlier version, channel ID is not necessary
             // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
             ""
         }
@@ -95,7 +81,37 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
             .build()
     }
 
+    open fun showBubble() {
+        Logger.isLoggerEnabled = enableLogger()
 
+        if (isDrawOverlaysPermissionGranted()) {
+
+            setupViewAppearance(BUBBLE)
+
+            if (isHigherThanAndroid8()) {
+                showNotification()
+            }
+
+        } else throw PermissionDeniedException()
+    }
+
+    fun showExpandableView() {
+        Logger.isLoggerEnabled = enableLogger()
+
+        if (isDrawOverlaysPermissionGranted()) {
+
+            setupViewAppearance(EXPANDABLE_VIEW)
+
+            if (isHigherThanAndroid8()) {
+                showNotification()
+            }
+
+        } else throw PermissionDeniedException()
+    }
+
+    /**
+     * This function is intended for developer use only.
+     * */
     open fun enableLogger(): Boolean = false
 
     // helper --------------------------------------------------------------------------------------

@@ -1,8 +1,14 @@
 package com.torrydo.floatingbubbleview
 
 import android.app.Service
+import android.content.Intent
 
 abstract class FloatingBubbleServiceConfig : Service() {
+
+    companion object {
+        internal const val BUBBLE = 1
+        internal const val EXPANDABLE_VIEW = 2
+    }
 
     private var floatingBubble: FloatingBubble? = null
     private var expandableView: ExpandableView? = null
@@ -21,7 +27,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
     open fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? = null
 
     // public func ---------------------------------------------------------------------------------
-    protected fun setupViewAppearance() {
+    protected fun setupViewAppearance(defaultView: Int) {
 
         floatingBubble = setupBubble(customFloatingBubbleAction)
             .addFloatingBubbleListener(customFloatingBubbleListener)
@@ -32,7 +38,11 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
 
         onMainThread {
-            tryShowBubbles()
+            when(defaultView){
+                BUBBLE -> tryShowBubbles()
+                EXPANDABLE_VIEW -> tryShowExpandableView()
+            }
+
         }
     }
 
