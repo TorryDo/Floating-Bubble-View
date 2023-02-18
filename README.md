@@ -176,12 +176,36 @@ Declare the dependencies in the module-level `build.gradle` file
 
 </br>
 
-> ## API <a name="api"/>
+> ## Usage <a name="api"/>
 
 ### Check if bubble is running:
 
 ```java
     Boolean b = FloatingBubbleService.isRunning();
+```
+
+### Show expandable view first:
+
+```java
+// By default, the service will call showBubble() to display floating bubble on the screen and return START_STICKY.
+// If you don't want to show the bubble, you can override onStartCommand like the code below
+@Override
+public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+
+    // Assume that you are passing a string with key = "key" to this service.
+    String data = intent.getStringExtra("key");
+
+    if (data != null) {
+
+        showExpandableView();
+
+        return START_STICKY;
+    }
+
+    showBubble(); // or just let the default behavior take effect: "return super.onStartCommand(intent, flags, startId);"
+    return START_STICKY;
+    
+}
 ```
 
 </br>
