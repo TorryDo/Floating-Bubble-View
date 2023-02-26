@@ -73,7 +73,6 @@ internal class FloatingBubbleView(
                             windowParams.x = float.toInt()
                             update()
                         }catch (_: Exception){}
-
                 }
 
                 override fun onEnd() {

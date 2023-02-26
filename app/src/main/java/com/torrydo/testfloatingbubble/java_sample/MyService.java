@@ -65,7 +65,7 @@ public class MyService extends FloatingBubbleService {
                 .enableAnimateToEdge(true)
 
                 // set close-bubble icon attributes, currently only drawable and bitmap are supported
-                .closeBubble(R.drawable.ic_remove_icon, 60, 60)
+                .closeBubble(R.drawable.ic_remove_icon, 80, 80)
                 // set style for close-bubble, null by default
                 .closeBubbleStyle(null)
                 // show close-bubble, true by default
