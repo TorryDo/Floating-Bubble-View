@@ -14,7 +14,6 @@ internal class FloatingBottomBackground(
 
     internal var isShowing = false
 
-
     init {
         setupLayoutParams()
         setupBottomBackgroundProperties()
@@ -42,18 +41,16 @@ internal class FloatingBottomBackground(
     override fun setupLayoutParams() {
         super.setupLayoutParams()
 
-        logIfError {
-            windowParams.apply {
-                width = WindowManager.LayoutParams.MATCH_PARENT
-                height = ScreenInfo.heightPx/5
-                gravity = Gravity.BOTTOM or Gravity.CENTER
-                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
-                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+        windowParams.apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            height = ScreenInfo.heightPx / 5
+            gravity = Gravity.BOTTOM or Gravity.CENTER
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
 
 //                windowAnimations = R.style.default_close_bubble_style
 
-            }
         }
 
     }

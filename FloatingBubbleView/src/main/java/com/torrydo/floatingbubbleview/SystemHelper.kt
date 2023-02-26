@@ -32,7 +32,7 @@ internal fun View.updateGestureExclusion(context: Context) {
  * - some MIUI devices may not work properly
  *
  * */
-fun Context.isDrawOverlaysPermissionGranted(): Boolean {
+internal fun Context.isDrawOverlaysPermissionGranted(): Boolean {
 
     if (Build.VERSION.SDK_INT < AndroidVersions.`6`) {
         return true

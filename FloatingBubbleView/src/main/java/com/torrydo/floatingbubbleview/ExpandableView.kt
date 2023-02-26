@@ -21,23 +21,22 @@ class ExpandableView(
 
     }
 
-    interface Listener{
+    interface Listener {
         fun onOpenExpandableView() {}
         fun onCloseExpandableView() {}
     }
 
     // public --------------------------------------------------------------------------------------
 
-    fun show() = logIfError {
+    fun show() {
         super.show(builder.view!!)
-    }.onComplete {
+
         builder.listener.onOpenExpandableView()
     }
 
 
-    fun remove() = logIfError {
+    fun remove() {
         super.remove(builder.view!!)
-    }.onComplete {
         builder.listener.onCloseExpandableView()
     }
 
@@ -47,19 +46,15 @@ class ExpandableView(
     override fun setupLayoutParams() {
         super.setupLayoutParams()
 
-        logIfError {
+        windowParams.apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            gravity = Gravity.TOP
+            flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
+            dimAmount = builder.dim         // default = 0.5f
+            softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 
-            windowParams.apply {
-                width = WindowManager.LayoutParams.MATCH_PARENT
-                gravity = Gravity.TOP
-                flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
-                dimAmount = builder.dim         // default = 0.5f
-                softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-
-                builder.viewStyle?.let {
-                    windowAnimations = it
-                }
-
+            builder.viewStyle?.let {
+                windowAnimations = it
             }
 
         }
@@ -87,7 +82,7 @@ class ExpandableView(
             return this
         }
 
-        fun expandableViewStyle(@StyleRes style: Int?): Builder{
+        fun expandableViewStyle(@StyleRes style: Int?): Builder {
             viewStyle = style
             return this
         }

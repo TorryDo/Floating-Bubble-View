@@ -1,6 +1,7 @@
 package com.torrydo.floatingbubbleview
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.annotation.Discouraged
 import androidx.viewbinding.ViewBinding
@@ -21,9 +22,11 @@ internal open class BaseFloatingViewBinding<T : ViewBinding>(
      * must be root view
      * */
     open fun show() {
-        logIfError {
-            if(binding.root.windowToken != null) return@logIfError
+        try {
+            if(binding.root.windowToken != null) return
             super.show(binding.root)
+        }catch (e: Exception){
+            Log.d("<>", "show: ${e.stackTraceToString()}");
         }
     }
 
@@ -31,8 +34,10 @@ internal open class BaseFloatingViewBinding<T : ViewBinding>(
      * must be root view
      * */
     open fun remove() {
-        logIfError {
+        try {
             super.remove(binding.root)
+        }catch (e: Exception){
+            e.printStackTrace()
         }
     }
 

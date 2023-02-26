@@ -1,7 +1,6 @@
 package com.torrydo.floatingbubbleview
 
 import android.app.Service
-import android.content.Intent
 
 abstract class FloatingBubbleServiceConfig : Service() {
 
@@ -38,11 +37,10 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
 
         onMainThread {
-            when(defaultView){
+            when (defaultView) {
                 BUBBLE -> tryShowBubbles()
                 EXPANDABLE_VIEW -> tryShowExpandableView()
             }
-
         }
     }
 
@@ -50,7 +48,6 @@ abstract class FloatingBubbleServiceConfig : Service() {
     // private func --------------------------------------------------------------------------------
 
     private val customExpandableViewListener = object : ExpandableView.Action {
-
         override fun popToBubble() {
             tryRemoveExpandableView()
             tryShowBubbles()
@@ -58,15 +55,12 @@ abstract class FloatingBubbleServiceConfig : Service() {
     }
 
     private val customFloatingBubbleListener = object : FloatingBubble.Listener {
-
         override fun onDestroy() {
             tryStopService()
         }
-
     }
 
     private val customFloatingBubbleAction = object : FloatingBubble.Action {
-
         override fun navigateToExpandableView() {
             tryNavigateToExpandableView()
         }
@@ -75,11 +69,7 @@ abstract class FloatingBubbleServiceConfig : Service() {
 
     private fun tryNavigateToExpandableView() {
         tryShowExpandableView()
-            .onComplete {
-                tryRemoveBubbles()
-            }.onError {
-                throw NullViewException("you DID NOT override expandable view")
-            }
+        tryRemoveBubbles()
     }
 
 
@@ -93,23 +83,32 @@ abstract class FloatingBubbleServiceConfig : Service() {
         tryRemoveBubbles()
     }
 
-    // shorten -------------------------------------------------------------------------------------
+    // helper --------------------------------------------------------------------------------------
 
-    private fun tryRemoveExpandableView() = logIfError {
-        expandableView!!.remove()
+    private fun tryRemoveExpandableView() {
+        expandableView?.remove()
     }
 
-    private fun tryShowExpandableView() = logIfError {
+    private fun tryShowExpandableView() {
+
+        if (expandableView == null) {
+            throw NullViewException("you DID NOT override expandable view")
+        }
+
         expandableView!!.show()
+
     }
 
-    private fun tryShowBubbles() = logIfError {
+    private fun tryShowBubbles() {
+        if (floatingBubble == null) {
+            throw NullViewException("you DID NOT override bubble view")
+        }
         floatingBubble!!.showIcon()
     }
 
-    private fun tryRemoveBubbles() = logIfError {
-        floatingBubble!!.removeIcon()
-        floatingBubble!!.tryRemoveCloseBubbleAndBackground()
+    private fun tryRemoveBubbles() {
+        floatingBubble?.removeIcon()
+        floatingBubble?.tryRemoveCloseBubbleAndBackground()
     }
 
 
