@@ -12,9 +12,6 @@ import com.torrydo.floatingbubbleview.FloatingBubbleService
 
 class MyServiceKt : FloatingBubbleService() {
 
-    override fun enableLogger(): Boolean {
-        return true
-    }
 
     // for android 8 and up
     override fun setupNotificationBuilder(channelId: String): Notification {

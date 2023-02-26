@@ -15,8 +15,7 @@ internal class FloatingBubbleView(
 ) : BaseFloatingViewBinding<BubbleBinding>(
     context = builder.context,
     initializer = BubbleBinding.inflate(LayoutInflater.from(builder.context))
-),
-    Logger by LoggerImpl() {
+) {
 
     internal val x get() = windowParams.x
     internal val y get() = windowParams.y
@@ -39,7 +38,7 @@ internal class FloatingBubbleView(
             }
         }
 
-        halfIconWidthPx = width/2
+        halfIconWidthPx = width / 2
 
         setupLayoutParams()
         setupBubbleProperties()
@@ -70,10 +69,11 @@ internal class FloatingBubbleView(
             finalPosition = endX.toFloat(),
             animationListener = object : AnimHelper.Event {
                 override fun onUpdate(float: Float) {
-                    tryOnly {
-                        windowParams.x = float.toInt()
-                        update()
-                    }
+                        try {
+                            windowParams.x = float.toInt()
+                            update()
+                        }catch (_: Exception){}
+
                 }
 
                 override fun onEnd() {
@@ -191,17 +191,13 @@ internal class FloatingBubbleView(
     override fun setupLayoutParams() {
         super.setupLayoutParams()
 
-        logIfError {
+        windowParams.apply {
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
-            windowParams.apply {
-                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-
-                builder.bubbleStyle?.let {
-                    windowAnimations = it
-                }
-
+            builder.bubbleStyle?.let {
+                windowAnimations = it
             }
 
         }

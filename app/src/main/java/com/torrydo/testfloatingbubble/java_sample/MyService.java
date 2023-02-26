@@ -20,11 +20,6 @@ public class MyService extends FloatingBubbleService {
 
     String data = null;
 
-    @Override
-    public boolean enableLogger() {
-        return true;
-    }
-
     // for android 8 and up
     @NonNull
     @Override

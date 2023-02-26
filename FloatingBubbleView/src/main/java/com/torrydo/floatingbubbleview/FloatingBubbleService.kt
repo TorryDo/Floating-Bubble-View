@@ -12,9 +12,10 @@ import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
+import java.util.logging.Logger
 
 
-abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by LoggerImpl() {
+abstract class FloatingBubbleService : FloatingBubbleServiceConfig() {
 
 
     companion object {
@@ -82,7 +83,6 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
     }
 
     open fun showBubble() {
-        Logger.isLoggerEnabled = enableLogger()
 
         if (isDrawOverlaysPermissionGranted()) {
 
@@ -96,7 +96,6 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
     }
 
     fun showExpandableView() {
-        Logger.isLoggerEnabled = enableLogger()
 
         if (isDrawOverlaysPermissionGranted()) {
 
@@ -108,11 +107,6 @@ abstract class FloatingBubbleService : FloatingBubbleServiceConfig(), Logger by 
 
         } else throw PermissionDeniedException()
     }
-
-    /**
-     * This function is intended for developer use only.
-     * */
-    open fun enableLogger(): Boolean = false
 
     // helper --------------------------------------------------------------------------------------
 

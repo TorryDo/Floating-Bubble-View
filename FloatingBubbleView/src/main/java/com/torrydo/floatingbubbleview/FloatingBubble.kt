@@ -13,7 +13,7 @@ import androidx.core.graphics.drawable.toBitmap
 class FloatingBubble
 internal constructor(
     private val builder: Builder
-) : Logger by LoggerImpl() {
+) {
 
     private var bubbleView: FloatingBubbleView
     private var closeBubbleView: FloatingCloseBubbleView? = null

@@ -9,7 +9,7 @@ internal class FloatingCloseBubbleView(
 ) : BaseFloatingViewBinding<CloseBubbleBinding>(
     context = builder.context,
     initializer = CloseBubbleBinding.inflate(LayoutInflater.from(builder.context)),
-), Logger by LoggerImpl() {
+) {
 
     companion object {
         internal const val DEFAULT_PADDING_BOTTOM_PX = 30
@@ -56,12 +56,9 @@ internal class FloatingCloseBubbleView(
     override fun setupLayoutParams() {
         super.setupLayoutParams()
 
-        logIfError {
-            windowParams.apply {
-                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
-                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-            }
+        windowParams.apply {
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
         }
     }
 
@@ -69,7 +66,7 @@ internal class FloatingCloseBubbleView(
 
 
     private fun setupCloseBubbleProperties() {
-        val icBitmap = builder.closeIconBitmap ?: R.drawable.ic_close_icon.toBitmap(
+        val icBitmap = builder.closeIconBitmap ?: R.drawable.ic_close_bubble.toBitmap(
             builder.context
         )
 
