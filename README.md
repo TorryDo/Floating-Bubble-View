@@ -15,6 +15,11 @@ https://user-images.githubusercontent.com/85553681/208131247-37a51e40-6b61-4cf7-
 
 </br>
 
+## Variants
+- ### Flutter version
+
+     If you are looking for a Flutter version of this library, check [dash_bubble](https://github.com/moazelsawaf/dash_bubble), a Flutter plugin that allows you to create a floating bubble on the screen. by [Moaz El-sawaf](https://github.com/moazelsawaf).
+
 ## Table of Contents
 1. [Getting started](#getting_started)  
 2. [Setup and Usage](#setup_usage) 
