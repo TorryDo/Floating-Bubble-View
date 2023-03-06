@@ -94,14 +94,20 @@ internal class FloatingCloseBubbleView(
     }
 
     /**
-     * @return x=0.0 means inside closable area, 0.0 < x < 1.0 means outside
+     * @param x is the top left x axis of the bubble
+     * @param y is the top left y axis of the bubble
+     * @return x=0.0 means the bubble is inside the closable area, 0.0 < x < 1.0 means outside
      * */
     fun distanceRatioToCloseBubble(x: Int, y: Int): Float {
+
+        val centerBubbleX = x + builder.bubbleSizePx.width / 2
+        val centerBubbleY = y + builder.bubbleSizePx.height / 2
+
         val distanceToBubble = MathHelper.distance(
             x1 = centerCloseBubbleX.toDouble(),
             y1 = centerCloseBubbleY.toDouble(),
-            x2 = x.toDouble(),
-            y2 = y.toDouble()
+            x2 = centerBubbleX.toDouble(),
+            y2 = centerBubbleY.toDouble()
         )
         val distanceRatio = (limit_catch.toDouble() / distanceToBubble).let {
             if (it > 1) return@let 0
@@ -113,10 +119,8 @@ internal class FloatingCloseBubbleView(
 
     private val limit_catch = LIMIT_FLY_HEIGHT
     fun animateCloseIconByBubble(x: Int, y: Int) {
-        val centerBubbleX = x + builder.bubbleSizePx.width / 2
-        val centerBubbleY = y + builder.bubbleSizePx.height / 2
 
-        val distanceRatio = distanceRatioToCloseBubble(centerBubbleX, centerBubbleY)
+        val distanceRatio = distanceRatioToCloseBubble(x, y)
 
         if (distanceRatio == 0.0f) {
             stickToBubble(x, y)
