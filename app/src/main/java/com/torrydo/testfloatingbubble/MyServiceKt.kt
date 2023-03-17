@@ -37,7 +37,7 @@ class MyServiceKt : FloatingBubbleService() {
             // enable auto animate bubble to the left/right side when release, true by default
             .enableAnimateToEdge(true)
             // set close-bubble icon attributes, currently only drawable and bitmap are supported
-            .closeBubble(R.drawable.ic_remove_icon, 60, 60)
+            .closeBubble(R.drawable.ic_close_bubble, 60, 60)
             // set style for close-bubble, null by default
             .closeBubbleStyle(null)
             // show close-bubble, true by default
@@ -58,15 +58,22 @@ class MyServiceKt : FloatingBubbleService() {
 
     override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
 
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val layout = inflater.inflate(R.layout.layout_view_test, null)
-
-        layout.findViewById<View>(R.id.card_view).setOnClickListener { v: View? ->
-            Toast.makeText(this, "hello from card view from kotlin", Toast.LENGTH_SHORT).show();
-            action.popToBubble()
-        }
+//        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+//        val layout = inflater.inflate(R.layout.layout_view_test, null)
+//
+//        layout.findViewById<View>(R.id.card_view).setOnClickListener { v: View? ->
+//            Toast.makeText(this, "hello from card view from kotlin", Toast.LENGTH_SHORT).show();
+//            action.popToBubble()
+//        }
         return ExpandableView.Builder(this)
-            .expandableView(layout)
+//            .expandableView(layout)
+            .compose {
+                TestComposeView(
+                    popBack = {
+                        action.popToBubble()
+                    }
+                )
+            }
             .dimAmount(0.8f)
             .addExpandableViewListener(object : ExpandableView.Listener {
                 override fun onOpenExpandableView() {}
