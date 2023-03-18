@@ -118,7 +118,7 @@ class ExpandableView(
 
         internal var dim = 0.5f
 
-        fun expandableView(view: View): Builder {
+        fun view(view: View): Builder {
             if (composeView != null) {
                 throw IllegalStateException("Cannot pass view after setting composable")
             }

@@ -55,8 +55,14 @@ internal constructor(
 
     interface Listener {
 
+        /**
+         * the location of the finger on the screen
+         * */
         fun onDown(x: Float, y: Float) {}
 
+        /**
+         * the location of the finger on the screen
+         * */
         fun onUp(x: Float, y: Float) {}
 
         /**
