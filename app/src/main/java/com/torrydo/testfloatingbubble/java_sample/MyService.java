@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.torrydo.floatingbubbleview.BubbleBehavior;
 import com.torrydo.floatingbubbleview.ExpandableView;
 import com.torrydo.floatingbubbleview.FloatingBubble;
 import com.torrydo.floatingbubbleview.FloatingBubbleService;
@@ -20,7 +22,12 @@ public class MyService extends FloatingBubbleService {
 
     String data = null;
 
-    // for android 8 and up
+    /**
+     * Sets up a notification for Bubble on Android 8 and up.
+     *
+     * @param channelId The ID of the notification channel.
+     * @return The notification instance.
+     */
     @NonNull
     @Override
     public Notification setupNotificationBuilder(@NonNull String channelId) {
@@ -57,26 +64,40 @@ public class MyService extends FloatingBubbleService {
         return new FloatingBubble.Builder(this)
                 // set bubble icon attributes, currently only drawable and bitmap are supported
                 .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
-                // set style for bubble, by default bubble use fade animation
+
+                // set style for bubble, fade animation by default
                 .bubbleStyle(null)
-                // set start location of bubble, (x=0, y=0) is top-left
+
+                // set start location of bubble, (x=0, y=0) is the top-left
                 .startLocation(0, 0)
+
                 // enable auto animate bubble to the left/right side when release, true by default
                 .enableAnimateToEdge(true)
 
                 // set close-bubble icon attributes, currently only drawable and bitmap are supported
-                .closeBubble(R.drawable.ic_remove_icon, 80, 80)
+                .closeBubble(R.drawable.ic_close_bubble, 60, 60)
+
                 // set style for close-bubble, null by default
                 .closeBubbleStyle(null)
+
                 // show close-bubble, true by default
                 .enableCloseBubble(true)
+
+                // the more value (dp), the larger closeable-area
+                .closablePerimeter(100)
+
+                // choose behavior of the bubbles
+                // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
+                // FIXED_CLOSE_BUBBLE: bubble will automatically move to the close-bubble when it reaches the closable-area
+                .behavior(BubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
+
                 // enable bottom background, false by default
                 .bottomBackground(false)
 
+                // add listener for the bubble
                 .addFloatingBubbleListener(new FloatingBubble.Listener() {
                     @Override
-                    public void onDestroy() {
-                    }
+                    public void onDestroy() {}
 
                     @Override
                     public void onClick() {
@@ -84,46 +105,48 @@ public class MyService extends FloatingBubbleService {
                     }
 
                     @Override
-                    public void onMove(int x, int y) {
-                    }
+                    public void onMove(float x, float y) {} // The location of the finger on the screen which triggers the movement of the bubble.
 
                     @Override
-                    public void onUp(int x, int y) {
-                    }
+                    public void onUp(float x, float y) {} // ..., when finger release from bubble
 
                     @Override
-                    public void onDown(int x, int y) {
-                    }
+                    public void onDown(float x, float y) {} // ..., when finger tap the bubble
                 })
+
+                // set bubble's opacity
                 .opacity(1f);
     }
 
     @Nullable
     @Override
     public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.layout_view_test, null);
 
-
         layout.findViewById(R.id.card_view).setOnClickListener(v -> {
-//            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
             action.popToBubble();
         });
 
         return new ExpandableView.Builder(this)
-                .expandableView(layout)
+
+                // set view to expandable-view. Jetpack Compose is not available in Java
+                .view(layout)
+
+                // set the amount of dimming below the view.
                 .dimAmount(0.8f)
+
+                // apply style for the expandable-view
+                .expandableViewStyle(null)
+
                 .addExpandableViewListener(new ExpandableView.Listener() {
                     @Override
-                    public void onOpenExpandableView() {
-                        Log.d("<>", "onOpenFloatingView: ");
-                    }
+                    public void onOpenExpandableView() {}
 
                     @Override
-                    public void onCloseExpandableView() {
-                        Log.d("<>", "onCloseFloatingView: ");
-                    }
-                }).expandableViewStyle(null)
-                ;
+                    public void onCloseExpandableView() {}
+                });
     }
 }

@@ -17,15 +17,17 @@ internal class FloatingCloseBubbleView(
 
     private val LIMIT_FLY_HEIGHT: Int
 
-    private val halfWidthPx: Int
-    private val halfHeightPx: Int
+    val halfWidthPx: Int
+    val halfHeightPx: Int
 
     private val halfScreenWidth: Int
-    private val baseX: Int
-    private val baseY: Int
+    val baseX: Int
+    val baseY: Int
 
     private val centerCloseBubbleX: Int
     private val centerCloseBubbleY: Int
+
+    private val closablePerimeterPx: Int
 
     init {
 
@@ -39,7 +41,7 @@ internal class FloatingCloseBubbleView(
             }
         }
 
-        LIMIT_FLY_HEIGHT = ScreenInfo.heightPx / 15
+        LIMIT_FLY_HEIGHT = ScreenInfo.heightPx / 10
 
         halfScreenWidth = ScreenInfo.widthPx / 2
         halfWidthPx = width / 2
@@ -53,6 +55,8 @@ internal class FloatingCloseBubbleView(
 
         centerCloseBubbleX = baseX + halfWidthPx
         centerCloseBubbleY = baseY + halfHeightPx
+
+        closablePerimeterPx = builder.closablePerimeterDp.toPx
 
         setupLayoutParams()
         setupCloseBubbleProperties()
@@ -98,7 +102,7 @@ internal class FloatingCloseBubbleView(
      * @param y is the top left y axis of the bubble
      * @return x=0.0 means the bubble is inside the closable area, 0.0 < x < 1.0 means outside
      * */
-    fun distanceRatioToCloseBubble(x: Int, y: Int): Float {
+    fun distanceRatioFromBubbleToClosableArea(x: Int, y: Int): Float {
 
         val centerBubbleX = x + builder.bubbleSizePx.width / 2
         val centerBubbleY = y + builder.bubbleSizePx.height / 2
@@ -109,7 +113,7 @@ internal class FloatingCloseBubbleView(
             x2 = centerBubbleX.toDouble(),
             y2 = centerBubbleY.toDouble()
         )
-        val distanceRatio = (limit_catch.toDouble() / distanceToBubble).let {
+        val distanceRatio = (closablePerimeterPx.toDouble() / distanceToBubble).let {
             if (it > 1) return@let 0
             return@let 1 - it
         }.toFloat()
@@ -117,10 +121,24 @@ internal class FloatingCloseBubbleView(
         return distanceRatio
     }
 
-    private val limit_catch = LIMIT_FLY_HEIGHT
+    fun distanceRatioFromLocationToClosableArea(x: Float, y: Float): Float{
+        val distanceToLocation = MathHelper.distance(
+            x1 = centerCloseBubbleX.toDouble(),
+            y1 = centerCloseBubbleY.toDouble(),
+            x2 = x.toDouble(),
+            y2 = y.toDouble()
+        )
+        val distanceRatio = (closablePerimeterPx.toDouble() / distanceToLocation).let {
+            if (it > 1) return@let 0
+            return@let 1 - it
+        }.toFloat()
+
+        return distanceRatio
+
+    }
     fun animateCloseIconByBubble(x: Int, y: Int) {
 
-        val distanceRatio = distanceRatioToCloseBubble(x, y)
+        val distanceRatio = distanceRatioFromBubbleToClosableArea(x, y)
 
         if (distanceRatio == 0.0f) {
             stickToBubble(x, y)

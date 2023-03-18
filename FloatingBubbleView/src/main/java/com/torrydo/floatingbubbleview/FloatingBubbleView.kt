@@ -3,6 +3,7 @@ package com.torrydo.floatingbubbleview
 import android.annotation.SuppressLint
 import android.graphics.Point
 import android.graphics.PointF
+import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.LayoutInflater
@@ -17,17 +18,18 @@ internal class FloatingBubbleView(
     initializer = BubbleBinding.inflate(LayoutInflater.from(builder.context))
 ) {
 
-    internal val x get() = windowParams.x
-    internal val y get() = windowParams.y
-
+    /**
+     * store previous point for later usage, reset after finger down
+     * */
     private val prevPoint = Point(0, 0)
-    private val pointF = PointF(0f, 0f)
+    private val rawPointOnDown = PointF(0f, 0f)
     private val newPoint = Point(0, 0)
 
     private val halfScreenWidth = ScreenInfo.widthPx / 2
     private val halfScreenHeight = ScreenInfo.heightPx / 2
 
     private val halfIconWidthPx: Int
+    private val halfIconHeightPx: Int
 
     init {
 
@@ -39,6 +41,7 @@ internal class FloatingBubbleView(
         }
 
         halfIconWidthPx = width / 2
+        halfIconHeightPx = height /2
 
         setupLayoutParams()
         setupBubbleProperties()
@@ -46,7 +49,6 @@ internal class FloatingBubbleView(
     }
 
 
-    private val animHelper = AnimHelper()
     private var isAnimatingToEdge = false
     fun animateIconToEdge(onFinished: (() -> Unit)? = null) {
         if (isAnimatingToEdge) return
@@ -64,15 +66,16 @@ internal class FloatingBubbleView(
             startX = iconX
             endX = ScreenInfo.widthPx - width
         }
-        animHelper.startSpringX(
+        AnimHelper.startSpringX(
             startValue = startX.toFloat(),
             finalPosition = endX.toFloat(),
-            animationListener = object : AnimHelper.Event {
+            event = object : AnimHelper.Event {
                 override fun onUpdate(float: Float) {
-                        try {
-                            windowParams.x = float.toInt()
-                            update()
-                        }catch (_: Exception){}
+                    try {
+                        windowParams.x = float.toInt()
+                        update()
+                    } catch (_: Exception) {
+                    }
                 }
 
                 override fun onEnd() {
@@ -106,50 +109,84 @@ internal class FloatingBubbleView(
 
     }
 
+    fun updateLocation(x: Float, y: Float) {
+        val mIconDeltaX = x - rawPointOnDown.x
+        val mIconDeltaY = y - rawPointOnDown.y
+
+        newPoint.x = prevPoint.x + mIconDeltaX.toInt()
+        newPoint.y = prevPoint.y + mIconDeltaY.toInt()
+
+        //region prevent bubble Y point move outside the screen
+        val safeTopY = 0
+        val safeBottomY =
+            ScreenInfo.heightPx - ScreenInfo.softNavBarHeightPx - ScreenInfo.statusBarHeightPx - height
+        val isAboveStatusBar = newPoint.y < safeTopY
+        val isUnderSoftNavBar = newPoint.y > safeBottomY
+        if (isAboveStatusBar) {
+            newPoint.y = safeTopY
+        } else if (isUnderSoftNavBar) {
+            newPoint.y = safeBottomY
+        }
+        //endregion
+
+        windowParams.x = newPoint.x
+        windowParams.y = newPoint.y
+        update()
+    }
+
+    /**
+     * set location without updating UI
+     * */
+    fun setLocation(x: Float, y: Float){
+        newPoint.x = x.toInt()
+        newPoint.y = y.toInt()
+    }
+
+    fun rawLocationOnScreen(): Pair<Float, Float>{
+        return Pair(newPoint.x.toFloat(), newPoint.y.toFloat())
+    }
+
+    /**
+     * pass close bubble point
+     * */
+    fun animateTo(x: Float, y: Float) {
+        AnimHelper.animateSpringPath(
+            startX = newPoint.x.toFloat(),
+            startY = newPoint.y.toFloat(),
+            endX = x,
+            endY = y,
+            event = object : AnimHelper.Event {
+                override fun onUpdatePoint(x: Float, y: Float) {
+
+                    windowParams.x = x.toInt()
+                    windowParams.y = y.toInt()
+
+//                    builder.listener?.onMove(x.toFloat(), y.toFloat()) // don't call this line, it'll spam multiple MotionEvent.OnActionMove
+                    update()
+
+                }
+            }
+        )
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
-
-        // actions ---------------------------------------------------------------------------------
-
         fun onActionDown(motionEvent: MotionEvent) {
             prevPoint.x = windowParams.x
             prevPoint.y = windowParams.y
 
-            pointF.x = motionEvent.rawX
-            pointF.y = motionEvent.rawY
+            rawPointOnDown.x = motionEvent.rawX
+            rawPointOnDown.y = motionEvent.rawY
 
-            builder.listener?.onDown(prevPoint.x, prevPoint.y)
+            builder.listener?.onDown(motionEvent.rawX, motionEvent.rawY)
         }
 
-        fun onActionMove(motionEvent: MotionEvent) {
-            val mIconDeltaX = motionEvent.rawX - pointF.x
-            val mIconDeltaY = motionEvent.rawY - pointF.y
-
-            newPoint.x = prevPoint.x + mIconDeltaX.toInt()
-            newPoint.y = prevPoint.y + mIconDeltaY.toInt()
-
-            // prevent bubble's Y coordinate moving outside the screen
-            val safeTopY = 0
-            val safeBottomY =
-                ScreenInfo.heightPx - ScreenInfo.softNavBarHeightPx - ScreenInfo.statusBarHeightPx - height
-            val isAboveStatusBar = newPoint.y < safeTopY
-            val isUnderSoftNavBar = newPoint.y > safeBottomY
-            if (isAboveStatusBar) {
-                newPoint.y = safeTopY
-            } else if (isUnderSoftNavBar) {
-                newPoint.y = safeBottomY
-            }
-
-            windowParams.x = newPoint.x
-            windowParams.y = newPoint.y
-            update()
-
-            builder.listener?.onMove(newPoint.x, newPoint.y)
+        fun onActionMove(motionEvent: MotionEvent){
+            builder.listener?.onMove(motionEvent.rawX, motionEvent.rawY)
         }
 
-        fun onActionUp() {
-            builder.listener?.onUp(newPoint.x, newPoint.y)
+        fun onActionUp(motionEvent: MotionEvent) {
+            builder.listener?.onUp(motionEvent.rawX, motionEvent.rawY)
         }
 
         // listen actions --------------------------------------------------------------------------
@@ -171,7 +208,7 @@ internal class FloatingBubbleView(
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> onActionDown(motionEvent)
                     MotionEvent.ACTION_MOVE -> onActionMove(motionEvent)
-                    MotionEvent.ACTION_UP -> onActionUp()
+                    MotionEvent.ACTION_UP -> onActionUp(motionEvent)
                 }
 
                 return@setOnTouchListener true
