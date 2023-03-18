@@ -1,23 +1,19 @@
 package com.torrydo.floatingbubbleview
 
-import android.animation.ValueAnimator
-import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.core.animation.addListener
+import androidx.annotation.Discouraged
 import androidx.dynamicanimation.animation.FlingAnimation
 import androidx.dynamicanimation.animation.FloatValueHolder
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 
 
-internal class AnimHelper {
+internal object AnimHelper {
 
-    companion object {
-        /**
-         * default minimum value of the property to be animated
-         * */
-        private const val MIN_VALUE = 0f
-        private const val DEFAULT_FRICTION = 1.1f
-    }
+    /**
+     * default minimum value of the property to be animated
+     * */
+    private const val MIN_VALUE = 0f
+    private const val DEFAULT_FRICTION = 1.1f
 
     // event ---------------------------------------------------------------------------------------
 
@@ -34,76 +30,95 @@ internal class AnimHelper {
     fun startSpringX(
         startValue: Float,
         finalPosition: Float,
-        animationListener: Event
+        event: Event,
+        stiffness: Float = SpringForce.STIFFNESS_LOW,
+        dampingRatio: Float = SpringForce.DAMPING_RATIO_LOW_BOUNCY,
     ) {
-        SpringAnimation(FloatValueHolder()).apply {
+        val springAnim = SpringAnimation(FloatValueHolder())
 
-            spring = SpringForce().apply {
+        springAnim.spring = SpringForce().apply {
 
-                setStartValue(startValue)
-                setFinalPosition(finalPosition)
-                stiffness = SpringForce.STIFFNESS_LOW
-                dampingRatio = SpringForce.DAMPING_RATIO_LOW_BOUNCY
+            springAnim.setStartValue(startValue)
+            setFinalPosition(finalPosition)
+            this.stiffness = stiffness
+            this.dampingRatio = dampingRatio
 
-            }
+        }
+        springAnim.addUpdateListener { animation, value, velocity ->
+            event.onUpdate(value)
+        }
+        springAnim.addEndListener { animation, canceled, value, velocity ->
+            event.onEnd()
+        }
 
-            addUpdateListener { animation, value, velocity ->
-                animationListener.onUpdate(value)
-            }
-
-            addEndListener { animation, canceled, value, velocity ->
-                animationListener.onEnd()
-            }
-
-        }.start()
+        event.onStart()
+        springAnim.start()
     }
 
-    fun animateFlingPath(
+
+    fun animateSpringPath(
         startX: Float,
         startY: Float,
         endX: Float,
         endY: Float,
-        durationMillis: Long = 200,
-        event: Event
-    ) : ValueAnimator{
+        event: Event,
+        stiffness: Float = SpringForce.STIFFNESS_MEDIUM,
+        dampingRatio: Float = SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
+    ) {
+        val xDistance = endX - startX
+        val yDistance = endY - startY
 
-        val yRange = endY - startY
-        // startY + (endY - startY)*percentX
+        val springAnim = SpringAnimation(FloatValueHolder())
 
-        return ValueAnimator.ofFloat(startX, endX).apply {
-            duration = durationMillis
-            interpolator = AccelerateDecelerateInterpolator()
-            addUpdateListener {
-                val updatedX = it.animatedValue as Float
-                val percentX = updatedX / endX
-                event.onUpdatePoint(
-                    x = it.animatedValue as Float,
-                    y = startY + (yRange * percentX)
-                )
-            }
-            addListener(
-                onStart = {
-                    event.onStart()
-                },
-                onCancel = {
-                    event.onCancel()
-                },
-                onEnd = {
-                    event.onEnd()
-                },
-            )
+        val springForce = SpringForce().apply {
+            this.stiffness = stiffness
+            this.dampingRatio = dampingRatio
         }
 
+        if(yDistance>xDistance) {
+            springAnim.setStartValue(startY)
+            springForce.finalPosition = endY
+
+            springAnim.addUpdateListener { animation, value, velocity ->
+                val ratio = 1 - (endY - value) / yDistance
+                event.onUpdatePoint(
+                    x = startX + xDistance * ratio,
+                    y = value
+                )
+            }
+        }else{
+            springAnim.setStartValue(startX)
+            springForce.finalPosition = endX
+
+            springAnim.addUpdateListener { animation, value, velocity ->
+                val ratio = (value-startX) / xDistance
+                event.onUpdatePoint(
+                    x = value,
+                    y = startY + yDistance * ratio
+                )
+            }
+        }
+
+        springAnim.spring = springForce
+        springAnim.addEndListener { animation, canceled, value, velocity ->
+            event.onEnd()
+        }
+
+        event.onStart()
+        springAnim.start()
     }
 
+    @Discouraged("not finished yet")
     fun startFlingX(
         startVelocity: Float = 50f,
-        minValue: Float = MIN_VALUE,
+        startValue: Float,
+        minValue: Float,
         maxValue: Float,
         friction: Float = DEFAULT_FRICTION,
         animationListener: Event
     ) {
         FlingAnimation(FloatValueHolder()).apply {
+            setStartValue(startValue)
             setStartVelocity(startVelocity)
             setMinValue(minValue)
             setMaxValue(maxValue)

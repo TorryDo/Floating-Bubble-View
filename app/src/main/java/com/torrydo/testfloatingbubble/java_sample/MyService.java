@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -73,28 +74,28 @@ public class MyService extends FloatingBubbleService {
                 // enable bottom background, false by default
                 .bottomBackground(false)
 
-                .addFloatingBubbleListener(new FloatingBubble.Listener() {
-                    @Override
-                    public void onDestroy() {
-                    }
-
-                    @Override
-                    public void onClick() {
-                        action.navigateToExpandableView(); // must override `setupExpandableView`, otherwise throw an exception
-                    }
-
-                    @Override
-                    public void onMove(int x, int y) {
-                    }
-
-                    @Override
-                    public void onUp(int x, int y) {
-                    }
-
-                    @Override
-                    public void onDown(int x, int y) {
-                    }
-                })
+//                .addFloatingBubbleListener(new FloatingBubble.Listener() {
+//                    @Override
+//                    public void onDestroy() {
+//                    }
+//
+//                    @Override
+//                    public void onClick() {
+//                        action.navigateToExpandableView(); // must override `setupExpandableView`, otherwise throw an exception
+//                    }
+//
+//                    @Override
+//                    public void onMove(int x, int y) {
+//                    }
+//
+//                    @Override
+//                    public void onUp(int x, int y) {
+//                    }
+//
+//                    @Override
+//                    public void onDown(int x, int y) {
+//                    }
+//                })
                 .opacity(1f);
     }
 

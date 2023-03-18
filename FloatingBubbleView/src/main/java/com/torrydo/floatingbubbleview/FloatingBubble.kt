@@ -3,6 +3,7 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.util.Log
 import android.util.Size
 import android.view.View
 import androidx.annotation.DrawableRes
@@ -59,7 +60,10 @@ internal constructor(
 
         fun onUp(x: Int, y: Int) {}
 
-        fun onMove(x: Int, y: Int) {}
+        /**
+         * the location of the finger on the screen
+         * */
+        fun onMove(x: Float, y: Float) {}
 
         fun onClick() {}
 
@@ -91,28 +95,47 @@ internal constructor(
 
     private inner class CustomBubbleListener : Listener {
 
-        private var isBubbleMoving = false
+        private var isCloseBubbleVisible = false
+        private var isBubbleAnimated = false
 
-        override fun onMove(x: Int, y: Int) {
-            if (isBubbleMoving) {
-                closeBubbleView?.animateCloseIconByBubble(x, y)
-                return
+        override fun onMove(x: Float, y: Float) {
+            when (builder.behavior) {
+                BubbleBehavior.DYNAMIC_CLOSE_BUBBLE -> {
+                    bubbleView.updateLocation(x, y)
+                    val (bubbleX, bubbleY) = bubbleView.rawLocationOnScreen()
+                    closeBubbleView?.animateCloseIconByBubble(bubbleX.toInt(), bubbleY.toInt())
+                }
+                BubbleBehavior.FIXED_CLOSE_BUBBLE -> {
+                    if (isFingerInsideClosableArea(x, y)) {
+                        if (isBubbleAnimated.not()) {
+                            val xOffset = (closeBubbleView!!.width - builder.bubbleSizePx.width) / 2
+                            val yOffset = (closeBubbleView!!.height - builder.bubbleSizePx.height) / 2
+
+                            bubbleView.animateTo(
+                                closeBubbleView!!.baseX.toFloat() + xOffset,
+                                closeBubbleView!!.baseY.toFloat() + yOffset
+                            )
+                        }
+                        isBubbleAnimated = true
+
+                    } else {
+                        bubbleView.updateLocation(x, y)
+                        isBubbleAnimated = false
+                    }
+                }
             }
-            if (builder.isCloseBubbleEnabled.not()) return
 
-            tryShowCloseBubbleAndBackground()
-
-            if (isBubbleMoving.not()) {
-                isBubbleMoving = true
+            if (builder.isCloseBubbleEnabled && !isCloseBubbleVisible) {
+                tryShowCloseBubbleAndBackground()
+                isCloseBubbleVisible = true
             }
-
         }
 
         override fun onUp(x: Int, y: Int) {
-            isBubbleMoving = false
+            isCloseBubbleVisible = false
             tryRemoveCloseBubbleAndBackground()
 
-            if (isBubbleInsideCloseView()) {
+            if (isBubbleInsideClosableArea(x, y)) {
                 builder.listener?.onDestroy()
             } else {
                 if (builder.isAnimateToEdgeEnabled) {
@@ -122,10 +145,20 @@ internal constructor(
         }
     }
 
-    private fun isBubbleInsideCloseView(): Boolean {
-        return closeBubbleView?.distanceRatioToCloseBubble(
-            x = bubbleView.x,
-            y = bubbleView.y
+    /**
+     * pass bubble location
+     * */
+    private fun isBubbleInsideClosableArea(x: Int, y: Int): Boolean {
+        return closeBubbleView?.distanceRatioFromBubbleToClosableArea(
+            x = x,
+            y = y
+        ) == 0.0f
+    }
+
+    private fun isFingerInsideClosableArea(x: Float, y: Float): Boolean {
+        return closeBubbleView?.distanceRatioFromLocationToClosableArea(
+            x = x,
+            y = y
         ) == 0.0f
     }
 
@@ -155,7 +188,30 @@ internal constructor(
         internal var isAnimateToEdgeEnabled = true
         internal var isBottomBackgroundEnabled = false
 
+        internal var closablePerimeterDp = 100
+
         internal var listener: Listener? = null
+
+        internal var behavior: BubbleBehavior = BubbleBehavior.FIXED_CLOSE_BUBBLE
+
+
+        /**
+         * choose behavior for the bubbles
+         * */
+        fun behavior(behavior: BubbleBehavior): Builder {
+            this.behavior = behavior
+            return this
+        }
+
+        /**
+         * the more value, the larger closeable area
+         *
+         * @param dp distance between bubble and close-bubble
+         * */
+        fun closablePerimeter(dp: Int): Builder {
+            this.closablePerimeterDp = dp
+            return this
+        }
 
         /**
          * @param enabled show gradient dark background on the bottom of the screen
@@ -269,7 +325,7 @@ internal constructor(
          * add a listener, pass an instance of FloatingBubble.Action
          * @param FloatingBubble.Listener
          * */
-        fun addFloatingBubbleListener(listener: Listener): Builder {
+        internal fun addFloatingBubbleListener(listener: Listener): Builder {
 
             val tempListener = this.listener
             this.listener = object : Listener {
@@ -284,7 +340,7 @@ internal constructor(
                     listener.onDown(x, y)
                 }
 
-                override fun onMove(x: Int, y: Int) {
+                override fun onMove(x: Float, y: Float) {
                     tempListener?.onMove(x, y)
                     listener.onMove(x, y)
                 }

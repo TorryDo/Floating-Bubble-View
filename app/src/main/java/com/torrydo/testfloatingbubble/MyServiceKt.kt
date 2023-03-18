@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.torrydo.floatingbubbleview.BubbleBehavior
 import com.torrydo.floatingbubbleview.ExpandableView
 import com.torrydo.floatingbubbleview.FloatingBubble
 import com.torrydo.floatingbubbleview.FloatingBubbleService
@@ -37,22 +38,23 @@ class MyServiceKt : FloatingBubbleService() {
             // enable auto animate bubble to the left/right side when release, true by default
             .enableAnimateToEdge(true)
             // set close-bubble icon attributes, currently only drawable and bitmap are supported
-            .closeBubble(R.drawable.ic_close_bubble, 60, 60)
+            .closeBubble(R.drawable.ic_close_bubble, 70, 70)
             // set style for close-bubble, null by default
             .closeBubbleStyle(null)
             // show close-bubble, true by default
             .enableCloseBubble(true)
+//            .behavior(BubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
             // enable bottom background, false by default
             .bottomBackground(false)
-            .addFloatingBubbleListener(object : FloatingBubble.Listener {
-                override fun onDestroy() {}
-                override fun onClick() {
-                    action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
-                }
-                override fun onMove(x: Int, y: Int) {}
-                override fun onUp(x: Int, y: Int) {}
-                override fun onDown(x: Int, y: Int) {}
-            })
+//            .addFloatingBubbleListener(object : FloatingBubble.Listener {
+//                override fun onDestroy() {}
+//                override fun onClick() {
+//                    action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
+//                }
+//                override fun onMove(x: Int, y: Int) {}
+//                override fun onUp(x: Int, y: Int) {}
+//                override fun onDown(x: Int, y: Int) {}
+//            })
             .opacity(1f)
     }
 
