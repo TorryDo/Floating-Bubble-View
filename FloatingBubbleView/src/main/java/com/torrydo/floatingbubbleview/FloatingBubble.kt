@@ -55,9 +55,9 @@ internal constructor(
 
     interface Listener {
 
-        fun onDown(x: Int, y: Int) {}
+        fun onDown(x: Float, y: Float) {}
 
-        fun onUp(x: Int, y: Int) {}
+        fun onUp(x: Float, y: Float) {}
 
         /**
          * the location of the finger on the screen
@@ -133,11 +133,19 @@ internal constructor(
             }
         }
 
-        override fun onUp(x: Int, y: Int) {
+        override fun onUp(x: Float, y: Float) {
             isCloseBubbleVisible = false
             tryRemoveCloseBubbleAndBackground()
 
-            if (isBubbleInsideClosableArea(x, y)) {
+            val shouldDestroy = when(builder.behavior){
+                BubbleBehavior.FIXED_CLOSE_BUBBLE -> isFingerInsideClosableArea(x, y)
+                BubbleBehavior.DYNAMIC_CLOSE_BUBBLE -> {
+                    val (bubbleX, bubbleY) = bubbleView.rawLocationOnScreen()
+                    isBubbleInsideClosableArea(bubbleX.toInt(), bubbleY.toInt())
+                }
+            }
+
+            if (shouldDestroy) {
                 builder.listener?.onDestroy()
             } else {
                 if (builder.isAnimateToEdgeEnabled) {
@@ -337,7 +345,7 @@ internal constructor(
                     listener.onClick()
                 }
 
-                override fun onDown(x: Int, y: Int) {
+                override fun onDown(x: Float, y: Float) {
                     tempListener?.onDown(x, y)
                     listener.onDown(x, y)
                 }
@@ -347,7 +355,7 @@ internal constructor(
                     listener.onMove(x, y)
                 }
 
-                override fun onUp(x: Int, y: Int) {
+                override fun onUp(x: Float, y: Float) {
                     tempListener?.onUp(x, y)
                     listener.onUp(x, y)
                 }

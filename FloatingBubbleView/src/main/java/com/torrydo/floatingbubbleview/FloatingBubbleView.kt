@@ -29,6 +29,7 @@ internal class FloatingBubbleView(
     private val halfScreenHeight = ScreenInfo.heightPx / 2
 
     private val halfIconWidthPx: Int
+    private val halfIconHeightPx: Int
 
     init {
 
@@ -40,6 +41,7 @@ internal class FloatingBubbleView(
         }
 
         halfIconWidthPx = width / 2
+        halfIconHeightPx = height /2
 
         setupLayoutParams()
         setupBubbleProperties()
@@ -148,7 +150,6 @@ internal class FloatingBubbleView(
      * pass close bubble point
      * */
     fun animateTo(x: Float, y: Float) {
-//        Log.d("<>", "${newPoint.x} || ${newPoint.y} ===== $x || $y ");
         AnimHelper.animateSpringPath(
             startX = newPoint.x.toFloat(),
             startY = newPoint.y.toFloat(),
@@ -177,15 +178,15 @@ internal class FloatingBubbleView(
             rawPointOnDown.x = motionEvent.rawX
             rawPointOnDown.y = motionEvent.rawY
 
-            builder.listener?.onDown(prevPoint.x, prevPoint.y)
+            builder.listener?.onDown(motionEvent.rawX, motionEvent.rawY)
         }
 
         fun onActionMove(motionEvent: MotionEvent){
             builder.listener?.onMove(motionEvent.rawX, motionEvent.rawY)
         }
 
-        fun onActionUp() {
-            builder.listener?.onUp(newPoint.x, newPoint.y)
+        fun onActionUp(motionEvent: MotionEvent) {
+            builder.listener?.onUp(motionEvent.rawX, motionEvent.rawY)
         }
 
         // listen actions --------------------------------------------------------------------------
@@ -207,7 +208,7 @@ internal class FloatingBubbleView(
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> onActionDown(motionEvent)
                     MotionEvent.ACTION_MOVE -> onActionMove(motionEvent)
-                    MotionEvent.ACTION_UP -> onActionUp()
+                    MotionEvent.ACTION_UP -> onActionUp(motionEvent)
                 }
 
                 return@setOnTouchListener true
