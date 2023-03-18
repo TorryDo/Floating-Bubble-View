@@ -3,7 +3,6 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
-import android.util.Log
 import android.util.Size
 import android.view.View
 import androidx.annotation.DrawableRes
@@ -108,19 +107,22 @@ internal constructor(
                 BubbleBehavior.FIXED_CLOSE_BUBBLE -> {
                     if (isFingerInsideClosableArea(x, y)) {
                         if (isBubbleAnimated.not()) {
+
                             val xOffset = (closeBubbleView!!.width - builder.bubbleSizePx.width) / 2
                             val yOffset = (closeBubbleView!!.height - builder.bubbleSizePx.height) / 2
 
-                            bubbleView.animateTo(
-                                closeBubbleView!!.baseX.toFloat() + xOffset,
-                                closeBubbleView!!.baseY.toFloat() + yOffset
-                            )
+                            val xUpdated = closeBubbleView!!.baseX.toFloat() + xOffset
+                            val yUpdated = closeBubbleView!!.baseY.toFloat() + yOffset
+
+                            bubbleView.animateTo(xUpdated, yUpdated)
+                            bubbleView.setLocation(xUpdated, yUpdated)
+
+                            isBubbleAnimated = true
                         }
-                        isBubbleAnimated = true
 
                     } else {
-                        bubbleView.updateLocation(x, y)
                         isBubbleAnimated = false
+                        bubbleView.updateLocation(x, y)
                     }
                 }
             }

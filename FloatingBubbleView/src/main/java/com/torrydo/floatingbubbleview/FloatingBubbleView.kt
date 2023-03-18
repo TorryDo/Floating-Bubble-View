@@ -132,6 +132,14 @@ internal class FloatingBubbleView(
         update()
     }
 
+    /**
+     * set location without updating UI
+     * */
+    fun setLocation(x: Float, y: Float){
+        newPoint.x = x.toInt()
+        newPoint.y = y.toInt()
+    }
+
     fun rawLocationOnScreen(): Pair<Float, Float>{
         return Pair(newPoint.x.toFloat(), newPoint.y.toFloat())
     }
@@ -148,15 +156,13 @@ internal class FloatingBubbleView(
             endY = y,
             event = object : AnimHelper.Event {
                 override fun onUpdatePoint(x: Float, y: Float) {
-                    newPoint.x = x.toInt()
-                    newPoint.y = y.toInt()
 
                     windowParams.x = x.toInt()
                     windowParams.y = y.toInt()
 
 //                    builder.listener?.onMove(x.toFloat(), y.toFloat()) // don't call this line, it'll spam multiple MotionEvent.OnActionMove
                     update()
-//
+
                 }
             }
         )
