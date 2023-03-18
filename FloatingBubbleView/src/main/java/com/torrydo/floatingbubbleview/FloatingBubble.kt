@@ -327,7 +327,7 @@ internal constructor(
          * add a listener, pass an instance of FloatingBubble.Action
          * @param FloatingBubble.Listener
          * */
-        internal fun addFloatingBubbleListener(listener: Listener): Builder {
+        fun addFloatingBubbleListener(listener: Listener): Builder {
 
             val tempListener = this.listener
             this.listener = object : Listener {
