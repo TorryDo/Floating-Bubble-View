@@ -4,9 +4,14 @@ import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.window.OnBackInvokedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.OnBackPressedDispatcherOwner
+import androidx.activity.setViewTreeOnBackPressedDispatcherOwner
 import androidx.annotation.StyleRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
+import androidx.lifecycle.Lifecycle
 
 class ExpandableView(
     private val builder: Builder,
@@ -20,7 +25,6 @@ class ExpandableView(
 
     interface Action {
         fun popToBubble() {}
-
     }
 
     interface Listener {
@@ -69,18 +73,18 @@ class ExpandableView(
         }
 
         builder.composeView?.also {
-            super.remove(it)
             builder.composeLifecycleOwner?.onPause()
             builder.composeLifecycleOwner?.onStop()
-
+            builder.composeLifecycleOwner?.onDestroy()
+            super.remove(it)
         }
         builder.listener.onCloseExpandableView()
     }
 
     override fun destroy() {
-        super.destroy()
+        builder.composeLifecycleOwner?.onStop()
         builder.composeLifecycleOwner?.onDestroy()
-
+        super.destroy()
     }
 
 
@@ -135,6 +139,17 @@ class ExpandableView(
             }
             composeLifecycleOwner = ComposeLifecycleOwner()
             composeLifecycleOwner?.attachToDecorView(composeView!!)
+
+            composeView?.setViewTreeOnBackPressedDispatcherOwner(object :OnBackPressedDispatcherOwner{
+                override fun getLifecycle(): Lifecycle {
+                    TODO("Not yet implemented")
+                }
+
+                override fun getOnBackPressedDispatcher(): OnBackPressedDispatcher {
+                    TODO("Not yet implemented")
+                }
+
+            })
 
             return this
         }

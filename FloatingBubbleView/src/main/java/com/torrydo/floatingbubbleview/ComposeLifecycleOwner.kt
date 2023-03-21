@@ -50,6 +50,7 @@ class ComposeLifecycleOwner : LifecycleOwner, SavedStateRegistryOwner {
 
         ViewTreeLifecycleOwner.set(decorView, this)
         decorView.setViewTreeSavedStateRegistryOwner(this)
+
     }
 
     // LifecycleOwner methods
