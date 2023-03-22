@@ -4,14 +4,8 @@ import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import android.window.OnBackInvokedCallback
-import androidx.activity.OnBackPressedDispatcher
-import androidx.activity.OnBackPressedDispatcherOwner
-import androidx.activity.setViewTreeOnBackPressedDispatcherOwner
 import androidx.annotation.StyleRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.ComposeView
-import androidx.lifecycle.Lifecycle
 
 class ExpandableView(
     private val builder: Builder,
@@ -116,7 +110,7 @@ class ExpandableView(
         internal var viewStyle: Int? = R.style.default_bubble_style
 
         internal var composeLifecycleOwner: ComposeLifecycleOwner? = null
-        internal var composeView: ComposeView? = null
+        internal var composeView: FloatingComposeView? = null
 
         internal var listener = object : Listener {}
 
@@ -134,22 +128,11 @@ class ExpandableView(
             if (view != null) {
                 throw IllegalStateException("Cannot pass composable after setting view")
             }
-            composeView = ComposeView(context).apply {
+            composeView = FloatingComposeView(context).apply {
                 setContent { content() }
             }
             composeLifecycleOwner = ComposeLifecycleOwner()
             composeLifecycleOwner?.attachToDecorView(composeView!!)
-
-            composeView?.setViewTreeOnBackPressedDispatcherOwner(object :OnBackPressedDispatcherOwner{
-                override fun getLifecycle(): Lifecycle {
-                    TODO("Not yet implemented")
-                }
-
-                override fun getOnBackPressedDispatcher(): OnBackPressedDispatcher {
-                    TODO("Not yet implemented")
-                }
-
-            })
 
             return this
         }

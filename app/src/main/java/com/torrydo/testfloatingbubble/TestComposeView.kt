@@ -1,7 +1,8 @@
 package com.torrydo.testfloatingbubble
 
+import android.view.KeyEvent
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -13,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
+import com.torrydo.floatingbubbleview.overrideDispatchKeyEvent
 
 @Composable
 fun TestComposeView(
@@ -23,11 +24,13 @@ fun TestComposeView(
 
     var num by remember { mutableStateOf(0) }
 
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current
+
     val items = remember { mutableStateListOf<String>() }
 
     LaunchedEffect(Unit) {
         val temp = mutableListOf<String>()
-        for(i in 0..100){
+        for (i in 0..100) {
             temp.add(i.toString())
         }
         items.addAll(temp)
@@ -38,8 +41,7 @@ fun TestComposeView(
             .padding(horizontal = 10.dp)
             .fillMaxWidth()
             .height(500.dp)
-            .background(Color.LightGray)
-        ,
+            .background(Color.LightGray),
     ) {
         Button(onClick = { popBack() }) {
             Text(text = "pop back!")
@@ -60,4 +62,12 @@ fun TestComposeView(
             }
         }
     }
+
+    overrideDispatchKeyEvent { event ->
+        if (event?.keyCode == KeyEvent.KEYCODE_BACK) {
+            popBack()
+        }
+        null
+    }
+
 }

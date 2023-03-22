@@ -8,10 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.torrydo.floatingbubbleview.BubbleBehavior
-import com.torrydo.floatingbubbleview.ExpandableView
-import com.torrydo.floatingbubbleview.FloatingBubble
-import com.torrydo.floatingbubbleview.FloatingBubbleService
+import com.torrydo.floatingbubbleview.*
 
 
 class MyServiceKt : FloatingBubbleService() {

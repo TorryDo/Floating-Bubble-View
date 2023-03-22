@@ -26,7 +26,7 @@ internal open class BaseFloatingViewBinding<T : ViewBinding>(
             if(binding.root.windowToken != null) return
             super.show(binding.root)
         }catch (e: Exception){
-            Log.d("<>", "show: ${e.stackTraceToString()}");
+//            Log.d("<>", "show: ${e.stackTraceToString()}"); this line show error in some cases
         }
     }
 
