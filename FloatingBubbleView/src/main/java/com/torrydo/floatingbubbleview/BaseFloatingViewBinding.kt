@@ -37,7 +37,7 @@ internal open class BaseFloatingViewBinding<T : ViewBinding>(
         try {
             super.remove(binding.root)
         }catch (e: Exception){
-            e.printStackTrace()
+            Log.e("<>", e.stackTraceToString())
         }
     }
 

@@ -1,6 +1,8 @@
 package com.torrydo.testfloatingbubble
 
 import android.app.Notification
+import android.app.PendingIntent
+import android.content.Intent
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -13,22 +15,92 @@ import com.torrydo.floatingbubbleview.*
 
 class MyServiceKt : FloatingBubbleService() {
 
+    init {
+        FloatingBubbleReceiver.hide_bubble_function = {
+            if (FloatingBubbleReceiver.isEnabled) {
+                showBubbles()
+            } else {
+                removeAllViews()
+            }
+            updateNotification()
+        }
+        FloatingBubbleReceiver.stop_bubble_function = {
+            stopSelf()
+        }
+    }
+
+    override fun initialRoute(): Route {
+        return Route.Empty
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        val route = intent?.getStringExtra("route") ?: return START_STICKY
+
+        when(route){
+            Route.Bubble.name -> {
+                showBubbles()
+            }
+            Route.ExpandableView.name -> {
+                showExpandableView()
+            }
+            Route.Empty.name -> {
+                removeAllViews()
+            }
+        }
+        return START_STICKY
+    }
+
     /**
      * Sets up a notification for Bubble on Android 8 and up.
      * @param channelId The ID of the notification channel.
      * @return The notification instance.
      */
     override fun setupNotificationBuilder(channelId: String): Notification {
-        return NotificationCompat.Builder(this, channelId)
+
+        val builder = NotificationCompat.Builder(this, channelId)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
             .setContentTitle("bubble is running")
             .setContentText("click to do nothing")
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
-            .build()
-    }
 
+
+        // Create the hide action button
+        val actionHideIntent =
+            Intent(this, FloatingBubbleReceiver::class.java).apply { action = "ACTION_HIDE" }
+        val actionHidePendingIntent =
+            PendingIntent.getBroadcast(
+                this,
+                0,
+                actionHideIntent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+        // Create the second action button
+        val actionStopIntent = Intent(this, FloatingBubbleReceiver::class.java).apply {
+            action = "ACTION_STOP"
+        }
+        val actionStopPendingIntent =
+            PendingIntent.getBroadcast(
+                this,
+                0,
+                actionStopIntent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        val actionStop = NotificationCompat.Action.Builder(null, "Stop", actionStopPendingIntent)
+
+        val action1 = if (FloatingBubbleReceiver.isEnabled) {
+            NotificationCompat.Action.Builder(null, "Hide", actionHidePendingIntent).build()
+        } else {
+            NotificationCompat.Action.Builder(null, "Show", actionHidePendingIntent).build()
+        }
+        builder.addAction(action1)
+        builder.addAction(actionStop.build())
+
+        return builder.build()
+    }
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
         return FloatingBubble.Builder(this)
@@ -60,7 +132,7 @@ class MyServiceKt : FloatingBubbleService() {
             // choose behavior of the bubbles
             // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
             // FIXED_CLOSE_BUBBLE: bubble will automatically move to the close-bubble when it reaches the closable-area
-            .behavior(BubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
+            .behavior(BubbleBehavior.FIXED_CLOSE_BUBBLE)
 
             // enable bottom background, false by default
             .bottomBackground(false)

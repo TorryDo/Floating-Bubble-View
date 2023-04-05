@@ -1,14 +1,19 @@
 package com.torrydo.testfloatingbubble
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.torrydo.floatingbubbleview.FloatingBubbleService
+import com.torrydo.floatingbubbleview.Route
 
 class MainActivityKt : AppCompatActivity() {
+
+    companion object{
+        var isVisible = false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,29 +23,44 @@ class MainActivityKt : AppCompatActivity() {
 
         button.setOnClickListener {
 
-            val intent = Intent(this, MyServiceKt::class.java)
-
             if (FloatingBubbleService.isRunning()) {
-                stopMyService(intent)
+                stopMyService()
             } else {
-                startMyService(intent)
+                val intent = Intent(this, MyServiceKt::class.java)
+                ContextCompat.startForegroundService(this, intent)
+                isVisible = false
             }
 
         }
     }
 
-    private fun stopMyService(intent: Intent) {
-        stopService(intent)
-        Toast.makeText(this, "stop service", Toast.LENGTH_SHORT).show()
+    override fun onStop() {
+        super.onStop()
+        if(FloatingBubbleService.isRunning() && FloatingBubbleReceiver.isEnabled && isVisible.not()){
+            val intent = Intent(this, MyServiceKt::class.java)
+            intent.putExtra("route", Route.ExpandableView.name)
+            ContextCompat.startForegroundService(this, intent)
+        }
+
     }
 
-    private fun startMyService(intent: Intent) {
-        finish()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
+    override fun onStart() {
+        super.onStart()
+        if(FloatingBubbleService.isRunning()){
+            val intent = Intent(this, MyServiceKt::class.java)
+            intent.putExtra("route", Route.Empty.name)
+            ContextCompat.startForegroundService(this, intent)
+
+            isVisible = false
         }
+
+    }
+
+
+    private fun stopMyService() {
+        val intent = Intent(this, MyServiceKt::class.java)
+        stopService(intent)
+        Toast.makeText(this, "stop service", Toast.LENGTH_SHORT).show()
     }
 
 }

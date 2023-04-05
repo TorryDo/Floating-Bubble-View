@@ -17,6 +17,8 @@ import com.torrydo.floatingbubbleview.FloatingBubble;
 import com.torrydo.floatingbubbleview.FloatingBubbleService;
 import com.torrydo.testfloatingbubble.R;
 
+import kotlin.NotImplementedError;
+
 
 public class MyService extends FloatingBubbleService {
 
@@ -48,7 +50,13 @@ public class MyService extends FloatingBubbleService {
         this.data = intent.getStringExtra("key1");
 
         if (this.data != null) {
-            showExpandableView();
+            try {
+//                this.showExpandableView();
+                //TODO()
+
+            } catch (NotImplementedError e) {
+                throw new RuntimeException(e);
+            }
             return START_STICKY;
         }
 

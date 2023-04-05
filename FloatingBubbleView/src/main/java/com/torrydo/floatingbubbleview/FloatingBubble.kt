@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.util.Size
 import android.view.View
+import androidx.annotation.Discouraged
 import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
@@ -72,6 +73,7 @@ internal constructor(
 
         fun onClick() {}
 
+        @Discouraged("this function is intended for internal use only, you should override onDestroy of the service instead")
         fun onDestroy() {}
 
     }
@@ -92,8 +94,8 @@ internal constructor(
     }
 
     internal fun tryRemoveCloseBubbleAndBackground() {
-        bottomBackground?.remove()
         closeBubbleView?.remove()
+        bottomBackground?.remove()
     }
 
     // private func --------------------------------------------------------------------------------
