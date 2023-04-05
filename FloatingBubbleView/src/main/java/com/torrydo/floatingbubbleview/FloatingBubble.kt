@@ -73,9 +73,10 @@ internal constructor(
 
         fun onClick() {}
 
-        @Discouraged("this function is intended for internal use only, you should override onDestroy of the service instead")
-        fun onDestroy() {}
+    }
 
+    internal interface ServiceInteractor{
+        fun requestStop()
     }
 
     // internal func ---------------------------------------------------------------------------------
@@ -154,7 +155,7 @@ internal constructor(
             }
 
             if (shouldDestroy) {
-                builder.listener?.onDestroy()
+                builder.serviceInteractor?.requestStop()
             } else {
                 if (builder.isAnimateToEdgeEnabled) {
                     bubbleView.animateIconToEdge()
@@ -209,6 +210,7 @@ internal constructor(
         internal var closablePerimeterDp = 100
 
         internal var listener: Listener? = null
+        internal var serviceInteractor: ServiceInteractor? = null
 
         internal var behavior: BubbleBehavior = BubbleBehavior.FIXED_CLOSE_BUBBLE
 
@@ -368,12 +370,12 @@ internal constructor(
                     listener.onUp(x, y)
                 }
 
-                override fun onDestroy() {
-                    tempListener?.onDestroy()
-                    listener.onDestroy()
-                }
-
             }
+            return this
+        }
+
+        internal fun addServiceInteractor(interactor: ServiceInteractor): Builder{
+            this.serviceInteractor = interactor
             return this
         }
 

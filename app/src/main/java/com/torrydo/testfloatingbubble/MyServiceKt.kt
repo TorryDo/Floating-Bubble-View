@@ -139,7 +139,6 @@ class MyServiceKt : FloatingBubbleService() {
 
             // add listener for the bubble
             .addFloatingBubbleListener(object : FloatingBubble.Listener {
-                override fun onDestroy() {}
                 override fun onClick() {
                     action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
                 }

@@ -142,7 +142,7 @@ abstract class FloatingBubbleService : Service() {
 
     private fun initViewInstances() {
         floatingBubble = setupBubble(customFloatingBubbleAction)
-            .addFloatingBubbleListener(customFloatingBubbleListener)
+            .addServiceInteractor(customFloatingBubbleServiceInteractor)
             .build()
 
         expandableView = setupExpandableView(customExpandableViewListener)
@@ -159,8 +159,8 @@ abstract class FloatingBubbleService : Service() {
         }
     }
 
-    private val customFloatingBubbleListener = object : FloatingBubble.Listener {
-        override fun onDestroy() {
+    private val customFloatingBubbleServiceInteractor = object : FloatingBubble.ServiceInteractor {
+        override fun requestStop() {
             removeAllViews()
             stopSelf()
         }
