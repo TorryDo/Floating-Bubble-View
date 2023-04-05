@@ -15,6 +15,12 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import androidx.core.app.NotificationManagerCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 
 abstract class FloatingBubbleService : Service() {
@@ -28,12 +34,19 @@ abstract class FloatingBubbleService : Service() {
 
     companion object {
 
+        @Volatile
         private var isRunning = false
 
         /**
-         * this function works as expected if only one bubble service running at a time, multiple bubbles may cause unexpected results
+         * This function works as expected if only one bubble service running at a time,
+         * multiple bubbles may cause unexpected results
+         *
+         * Please note that the onDestroy() method in a Service is not guaranteed to be called in all situations,
+         * such as when the system kills the Service to free up resources.
+         * This means that the isRunning() method in this library may not always return the correct value and should be used with caution.
+         * Consider using an alternative approach to checking the running state of the Service.
          * */
-        @Discouraged("may cause race conditions and is likely to be changed or replaced in the future.")
+        @Discouraged("May not work properly and is likely to be changed or replaced in the future. Use with caution and consider alternative approaches.")
         @JvmStatic
         fun isRunning() = isRunning
 
@@ -67,61 +80,6 @@ abstract class FloatingBubbleService : Service() {
         isRunning = false
     }
 
-    // region Public Methods -----------------------------------------------------------------------
-
-    fun currentRoute() = currentRoute
-
-    fun showBubbles() {
-        floatingBubble!!.showIcon()
-    }
-
-    /**
-     * remove bubble and background if not null
-     * */
-    fun removeBubbles() {
-        floatingBubble?.removeIcon()
-        floatingBubble?.tryRemoveCloseBubbleAndBackground()
-    }
-
-    /**
-     * @return true means expandable-view showing successfully, false otherwise
-     * */
-    @Throws(NotImplementedError::class)
-    fun showExpandableView(): Boolean {
-        if (expandableView == null) {
-            throw NotImplementedError("you DID NOT override expandable view")
-        }
-        try {
-            expandableView!!.show()
-        } catch (e: Exception) {
-            Log.e("<>", "showExpandableView: ", e)
-            return false
-        }
-
-        return true
-    }
-
-    fun removeExpandableView() {
-        expandableView?.remove()
-    }
-
-    /**
-     * remove all views or init notification if first-time call
-     * */
-    fun removeAllViews() {
-
-        if (isNotificationInitialized.not()) {
-            initViewsAndNotification()
-            isNotificationInitialized = true
-            return
-        }
-
-        removeExpandableView()
-        removeBubbles()
-    }
-
-    //endregion
-
     /**
      * init view instances and notification
      * */
@@ -148,6 +106,65 @@ abstract class FloatingBubbleService : Service() {
         expandableView = setupExpandableView(customExpandableViewListener)
             ?.build()
     }
+
+    // region Public Methods -----------------------------------------------------------------------
+
+    fun currentRoute() = currentRoute
+
+    fun showBubbles() {
+        floatingBubble!!.showIcon()
+        currentRoute = Route.Bubble
+    }
+
+    /**
+     * remove bubble and background if not null
+     * */
+    fun removeBubbles() {
+        floatingBubble?.removeIcon()
+        floatingBubble?.tryRemoveCloseBubbleAndBackground()
+    }
+
+    /**
+     * @return true means expandable-view showing successfully, false otherwise
+     * */
+    @Throws(NotImplementedError::class)
+    fun showExpandableView(): Boolean {
+        if (expandableView == null) {
+            throw NotImplementedError("you DID NOT override expandable view")
+        }
+        try {
+            expandableView!!.show()
+            currentRoute = Route.ExpandableView
+        } catch (e: Exception) {
+            Log.e("<>", "showExpandableView: ", e)
+            return false
+        }
+
+        return true
+    }
+
+    fun removeExpandableView() {
+        expandableView?.remove()
+    }
+
+    /**
+     * remove all views or init notification if first-time call
+     * */
+    fun removeAllViews() {
+
+        if (isNotificationInitialized.not()) {
+            initViewsAndNotification()
+            isNotificationInitialized = true
+            return
+        }
+
+        removeExpandableView()
+        removeBubbles()
+
+        currentRoute = Route.Empty
+    }
+
+    //endregion
 
 
     //region Interface ----------------------------------------------------------------------------
