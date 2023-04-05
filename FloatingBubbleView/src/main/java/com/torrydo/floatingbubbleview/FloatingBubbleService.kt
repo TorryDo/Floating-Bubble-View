@@ -109,6 +109,9 @@ abstract class FloatingBubbleService : Service() {
 
     // region Public Methods -----------------------------------------------------------------------
 
+    /**
+     * get current route
+     * */
     fun currentRoute() = currentRoute
 
     fun showBubbles() {
@@ -117,7 +120,7 @@ abstract class FloatingBubbleService : Service() {
     }
 
     /**
-     * remove bubble and background if not null
+     * remove bubble and background
      * */
     fun removeBubbles() {
         floatingBubble?.removeIcon()
@@ -125,7 +128,7 @@ abstract class FloatingBubbleService : Service() {
     }
 
     /**
-     * @return true means expandable-view showing successfully, false otherwise
+     * @return True if the expandable view is showing successfully, False otherwise.
      * */
     @Throws(NotImplementedError::class)
     fun showExpandableView(): Boolean {
