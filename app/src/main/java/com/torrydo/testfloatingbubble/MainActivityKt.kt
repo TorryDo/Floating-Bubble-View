@@ -34,27 +34,27 @@ class MainActivityKt : AppCompatActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        if(FloatingBubbleService.isRunning() && FloatingBubbleReceiver.isEnabled && isVisible.not()){
-            val intent = Intent(this, MyServiceKt::class.java)
-            intent.putExtra("route", Route.ExpandableView.name)
-            ContextCompat.startForegroundService(this, intent)
-        }
+//    override fun onStop() {
+//        super.onStop()
+//        if(FloatingBubbleService.isRunning() && FloatingBubbleReceiver.isEnabled && isVisible.not()){
+//            val intent = Intent(this, MyServiceKt::class.java)
+//            intent.putExtra("route", Route.ExpandableView.name)
+//            ContextCompat.startForegroundService(this, intent)
+//        }
+//
+//    }
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if(FloatingBubbleService.isRunning()){
-            val intent = Intent(this, MyServiceKt::class.java)
-            intent.putExtra("route", Route.Empty.name)
-            ContextCompat.startForegroundService(this, intent)
-
-            isVisible = false
-        }
-
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        if(FloatingBubbleService.isRunning()){
+//            val intent = Intent(this, MyServiceKt::class.java)
+//            intent.putExtra("route", Route.Empty.name)
+//            ContextCompat.startForegroundService(this, intent)
+//
+//            isVisible = false
+//        }
+//
+//    }
 
 
     private fun stopMyService() {

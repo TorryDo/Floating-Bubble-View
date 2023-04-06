@@ -1,5 +1,5 @@
 # 🍀Floating Bubble View
-An Android library that adds floating bubbles to your home screen 🎨, supporting both XML 💘 Jetpack Compose
+An Android library that adds floating bubbles to your home screen 🎨, supporting both XML and 💘 Jetpack Compose
 
 &nbsp;
 
@@ -24,8 +24,8 @@ https://user-images.githubusercontent.com/85553681/223082521-789146d2-c8f7-4e54-
 1. [Getting started](#getting_started)  
 2. [Setup](#setup)
 3. [Usage](#usage)
-4. [Migrate](#migrate)
-5. [Note](#note)
+4. [Contribution guide](#contribution_guide)
+5. [WIP Note](#note) 🚧
 6. [License](#license)
 
 
@@ -82,18 +82,21 @@ android {
 
 </details>
 
-</br>
+<!-- <br> -->
 
-Declare the dependencies in the module-level `build.gradle` file
+<br>
+
+
+Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="https://img.shields.io/maven-central/v/io.github.torrydo/floating-bubble-view" valign="middle">
 
 ```gradle
     dependencies {
-        implementation("io.github.torrydo:floating-bubble-view:<LATEST_VERSION>")
+        implementation "io.github.torrydo:floating-bubble-view:<LATEST_VERSION>"
     }
 ```
-</br>
+<br>
 
-## II, Setup & Usage 🚀✈🛰 <a name="setup_usage"/>
+## II, Setup 🚀✈🛰 <a name="setup_usage"/>
 
 ### 1, extends `FloatingBubbleService` then implements `setupBubble()`  1️⃣ <a name="setup"/>
 
@@ -161,9 +164,11 @@ Declare the dependencies in the module-level `build.gradle` file
 
 ```java
     Intent intent = new Intent(context, MyService.class);
-
-    startService(intent);           // for android version lower than 8 (android O)
-    startForegroundService(intent); // for android 8 and higher
+    
+    ContextCompat.startForegroundService(this, intent);
+    // or
+    // startService(intent);           // for android version lower than 8.0 (android O)
+    // startForegroundService(intent); // for android 8.0 and higher
 ```
 </details>
 
@@ -171,9 +176,11 @@ Declare the dependencies in the module-level `build.gradle` file
 
 ```kotlin
     val intent = Intent(context, MyService::class.java)
-
-    startService(intent)           // for android version lower than 8 (android O)
-    startForegroundService(intent) // for android 8 and higher
+    
+    ContextCompat.startForegroundService(this, intent)
+    // or
+    // startService(intent)           // for android version lower than 8.0 (android O)
+    // startForegroundService(intent) // for android 8.0 and higher
 ```
 
 </details>
@@ -184,37 +191,16 @@ Declare the dependencies in the module-level `build.gradle` file
 
 ## III, Usage 🔥 <a name="usage"/>
 
-<details><summary><b>Java version</b></summary>
+### 1, Bubble and ExpandableView
+
+<details><summary>Java version</summary>
 
 ```java
 public class MyService extends FloatingBubbleService {
 
-    String data = null;
-
-    /**
-     * Sets up a notification for Bubble on Android 8 and up.
-     *
-     * @param channelId The ID of the notification channel.
-     * @return The notification instance.
-     */
-    @NonNull
-    @Override
-    public Notification setupNotificationBuilder(@NonNull String channelId) {
-        return new NotificationCompat.Builder(this, channelId)
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-                .setContentTitle("bubble is running")
-                .setContentText("click to do nothing")
-                .setPriority(NotificationCompat.PRIORITY_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build();
-    }
-
     @NonNull
     @Override
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
-
-        Log.d("<>", "data = " + data);
 
         return new FloatingBubble.Builder(this)
                 // set bubble icon attributes, currently only drawable and bitmap are supported
@@ -251,8 +237,6 @@ public class MyService extends FloatingBubbleService {
 
                 // add listener for the bubble
                 .addFloatingBubbleListener(new FloatingBubble.Listener() {
-                    @Override
-                    public void onDestroy() {}
 
                     @Override
                     public void onClick() {
@@ -309,27 +293,10 @@ public class MyService extends FloatingBubbleService {
 ```
 </details>
 
-<details open><summary><b>Kotlin version</b></summary>
+<details open><summary>Kotlin version</summary>
 
 ```kotlin
 class MyService : FloatingBubbleService() {
-
-    /**
-     * Sets up a notification for Bubble on Android 8 and up.
-     * @param channelId The ID of the notification channel.
-     * @return The notification instance.
-     */
-    override fun setupNotificationBuilder(channelId: String): Notification {
-        return NotificationCompat.Builder(this, channelId)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-            .setContentTitle("bubble is running")
-            .setContentText("click to do nothing")
-            .setPriority(NotificationCompat.PRIORITY_MIN)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .build()
-    }
-
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
         return FloatingBubble.Builder(this)
@@ -368,7 +335,6 @@ class MyService : FloatingBubbleService() {
 
             // add listener for the bubble
             .addFloatingBubbleListener(object : FloatingBubble.Listener {
-                override fun onDestroy() {}
                 override fun onClick() {
                     action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
                 }
@@ -384,7 +350,6 @@ class MyService : FloatingBubbleService() {
     override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
 
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
         val layout = inflater.inflate(R.layout.layout_view_test, null)
 
         layout.findViewById<View>(R.id.card_view).setOnClickListener { v: View? ->
@@ -425,34 +390,112 @@ class MyService : FloatingBubbleService() {
 
 </details>
 
-### Check if bubble is running:
+### 2, Notification
+<details><summary>Java version</summary>
+
+```java
+public class MyService extends FloatingBubbleService {
+    
+    ...
+
+    /**
+     * Sets up a notification for Bubble on Android 8 and up.
+     *
+     * @param channelId The ID of the notification channel.
+     * @return The notification instance.
+     */
+    @NonNull
+    @Override
+    public Notification setupNotificationBuilder(@NonNull String channelId) {
+        return new NotificationCompat.Builder(this, channelId)
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+                .setContentTitle("bubble is running")
+                .setContentText("click to do nothing")
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build();
+    }
+
+    @NonNull
+    @Override
+    public String channelId() {
+        return "you_channel_id";
+    }
+
+    @NonNull
+    @Override
+    public String channelName() {
+        return "your channel name";
+    }
+
+    @Override
+    public int notificationId() {
+        return 69;
+    }
+    ...
+}
+```
+
+</details>
+
+<details open><summary>Kotlin version</summary>
+
+```kotlin
+class MyService : FloatingBubbleService() {
+
+    /**
+     * Sets up a notification for Bubble on Android 8 and up.
+     * @param channelId The ID of the notification channel.
+     * @return The notification instance.
+     */
+    override fun setupNotificationBuilder(channelId: String): Notification {
+        return NotificationCompat.Builder(this, channelId)
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+            .setContentTitle("bubble is running")
+            .setContentText("click to do nothing")
+            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setCategory(Notification.CATEGORY_SERVICE)
+            .build()
+    }
+
+    override fun channelId() = "your_channel_id"
+    override fun channelName() = "your_channel_name"
+    override fun notificationId() = 69
+}
+```
+
+</details>
+
+### 3, Check if bubble is running
 
 ```java
     Boolean b = FloatingBubbleService.isRunning();
 ```
 
-### Show expandable view first:
+### 4, Choosing the Initial View for the Bubble Service
 
 ```java
-// By default, the service will call showBubble() to display floating bubble on the screen and return START_STICKY.
-// If you don't want to show the bubble, you can override onStartCommand like the code below
-@Override
-public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+public class MyService extends FloatingBubbleService {
+    ...
 
-    // Assume that you are passing a string with key = "key" to this service.
-    String data = intent.getStringExtra("key");
-
-    if (data != null) {
-        showExpandableView();
-        return START_STICKY;
+    @NonNull
+    @Override
+    public Route initialRoute() { // "Route.Bubble" by default
+        return Route.Empty;      
+        // Route.Empty: create the service without any view
+        // Route.Bubble: create the service with the bubble
+        // Route.ExpandableView: create the service with the expandable-view
     }
-
-    showBubble(); // or just let the default behavior take effect: "return super.onStartCommand(intent, flags, startId);"
-    return START_STICKY;
+    ...
 }
 ```
 
-### Detect back-press on expandable-view
+
+### 5, Detect key press on expandable-view
+<details><summary>XML version</summary>
+
 ```kotlin
     override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
         ...
@@ -471,24 +514,60 @@ public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
     }
 ```
 
+</details>
+<details open><summary>Jetpack Compose version</summary>
+
+```kotlin
+@Composable
+fun SomeComposable(){
+    ...
+    OverrideDispatchKeyEvent { event ->
+        if (event?.keyCode == KeyEvent.KEYCODE_BACK) {
+            // your code here
+        }
+        null
+    }
+}
+```
+</details>
+
+
+### 6, Methods in Bubble Service
+
+| Name | Description |
+| :- | :- |
+| `currentRoute()` | Returns the current route of the service (Empty, Bubble, ExpandableView) |
+| `showBubbles()` | Displays the the bubbles |
+| `removeBubbles()` | Removes the floating bubble |
+| `showExpandableView()` | Displays the expandable-view |
+| `removeExpandableView()` | Removes the expandable-view |
+| `removeAllViews()` | Removes all views |
+
+<!-- | `updateNotification()`| Updates the displayed notification by calling (again) `setupNotificationBuilder()` | -->
+
 </br>
 
-<!-- ## III, Sample class 📚  <a name="sample"/> -->
+## IV, Contribution Guide 👏  <a name="contribution_guide">
 
+Contributions are welcome! 🙌
 
+- If you come across a bug or have an idea for a new feature, please let us know by creating an [Issue](https://github.com/TorryDo/Floating-Bubble-View/issues) 🐛💡
+- If you've already fixed a bug or implemented a feature, feel free to submit a [Pull request](https://github.com/TorryDo/Floating-Bubble-View/pulls) 🚀
+- Having questions, ideas, or feedback? Don't worry, I gotchu. Simply open a [Discussion](https://github.com/TorryDo/Floating-Bubble-View/discussions) 🔊
+- Find this project useful? Don't forget to show some love by giving a star ⭐
 
-</br>
+Thank you! 💖
 
-## IV, Migrate 🚄 <a name="migrate">
+<br>
 
-If you are using a version prior to 0.5.0, please refer to the change documentation for instructions: [v0.5.0](https://github.com/TorryDo/Floating-Bubble-View/releases/tag/0.5.0)
-
-If you are using an older version then 0.4.0, please follow these guides to migrate: [v0.4.0](https://github.com/TorryDo/Floating-Bubble-View/releases/tag/0.4.0)
-
-## V, Note ✒ <a name="note">
+## V, Work in Progress 🚧 <a name="note">
 This library is still under heavy development. There is still a lot of code cleanup to do, so expect breaking API changes over time.
 
-Everything's gonna be ok! 🍀 ^^ 
+Please refer to the following page to check out the change-log: [Releases](https://github.com/TorryDo/Floating-Bubble-View/releases)
+
+Everything's gonna be ok! 🍀
+
+<br>
 
 ## VI, License <a name="license"/>
 

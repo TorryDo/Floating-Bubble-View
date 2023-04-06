@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.torrydo.floatingbubbleview.overrideDispatchKeyEvent
+import com.torrydo.floatingbubbleview.OverrideDispatchKeyEvent
 
 @Composable
 fun TestComposeView(
@@ -63,7 +63,7 @@ fun TestComposeView(
         }
     }
 
-    overrideDispatchKeyEvent { event ->
+    OverrideDispatchKeyEvent { event ->
         if (event?.keyCode == KeyEvent.KEYCODE_BACK) {
             popBack()
         }

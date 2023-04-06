@@ -27,10 +27,13 @@ class MyServiceKt : FloatingBubbleService() {
         FloatingBubbleReceiver.stop_bubble_function = {
             stopSelf()
         }
+
+
+
     }
 
     override fun initialRoute(): Route {
-        return Route.Empty
+        return Route.Bubble
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -101,6 +104,10 @@ class MyServiceKt : FloatingBubbleService() {
 
         return builder.build()
     }
+
+    override fun channelId() = "your_channel_id"
+    override fun channelName() = "your_channel_name"
+    override fun notificationId() = 69
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
         return FloatingBubble.Builder(this)
