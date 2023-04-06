@@ -10,12 +10,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.torrydo.floatingbubbleview.BubbleBehavior;
 import com.torrydo.floatingbubbleview.ExpandableView;
 import com.torrydo.floatingbubbleview.FloatingBubble;
 import com.torrydo.floatingbubbleview.FloatingBubbleService;
+import com.torrydo.floatingbubbleview.Route;
 import com.torrydo.testfloatingbubble.R;
+
+import kotlin.NotImplementedError;
 
 
 public class MyService extends FloatingBubbleService {
@@ -41,6 +45,29 @@ public class MyService extends FloatingBubbleService {
                 .build();
     }
 
+    @NonNull
+    @Override
+    public String channelId() {
+        return "you_channel_id";
+    }
+
+    @NonNull
+    @Override
+    public String channelName() {
+        return "your channel name";
+    }
+
+    @Override
+    public int notificationId() {
+        return super.notificationId();
+    }
+
+    @NonNull
+    @Override
+    public Route initialRoute() {
+        return Route.Empty;
+    }
+
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
 
@@ -48,7 +75,13 @@ public class MyService extends FloatingBubbleService {
         this.data = intent.getStringExtra("key1");
 
         if (this.data != null) {
-            showExpandableView();
+            try {
+//                this.showExpandableView();
+                //TODO()
+
+            } catch (NotImplementedError e) {
+                throw new RuntimeException(e);
+            }
             return START_STICKY;
         }
 
@@ -96,9 +129,6 @@ public class MyService extends FloatingBubbleService {
 
                 // add listener for the bubble
                 .addFloatingBubbleListener(new FloatingBubble.Listener() {
-                    @Override
-                    public void onDestroy() {}
-
                     @Override
                     public void onClick() {
                         action.navigateToExpandableView(); // must override `setupExpandableView`, otherwise throw an exception

@@ -6,11 +6,12 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.StyleRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.ComposeView
 
 class ExpandableView(
     private val builder: Builder,
 ) : BaseFloatingView(builder.context) {
+
+    private var isComposeInitialized = false
 
     init {
         setupLayoutParams()
@@ -20,7 +21,6 @@ class ExpandableView(
 
     interface Action {
         fun popToBubble() {}
-
     }
 
     interface Listener {
@@ -30,8 +30,6 @@ class ExpandableView(
 
     // public --------------------------------------------------------------------------------------
 
-
-    private var isInitialized = false
     fun show() {
 
         if (builder.view != null) {
@@ -44,17 +42,13 @@ class ExpandableView(
             throw Exception("You doesn't specify compose or view, please review your code!")
         }
 
-        if (isInitialized) {
-//            ContextCompat.getMainExecutor(builder.context).execute {}
-            builder.composeLifecycleOwner?.onStart()
-            builder.composeLifecycleOwner?.onResume()
-
-        } else {
+        if (isComposeInitialized.not()) {
             builder.composeLifecycleOwner?.onCreate()
-            builder.composeLifecycleOwner?.onStart()
-
-            isInitialized = true
+            isComposeInitialized = true
         }
+
+        builder.composeLifecycleOwner?.onStart()
+        builder.composeLifecycleOwner?.onResume()
 
 
         super.show(builder.composeView!!)
@@ -64,23 +58,31 @@ class ExpandableView(
 
 
     fun remove() {
-        builder.view?.let {
-            super.remove(it)
+        if(builder.view != null){
+            super.remove(builder.view!!)
+            builder.listener.onCloseExpandableView()
+            return
+        }
+
+        // it's important to check if the expandable-view is initialized or not,
+        // if you blindly end the compose's lifecycle, error appear
+        if (isComposeInitialized.not()) {
+            return
         }
 
         builder.composeView?.also {
-            super.remove(it)
             builder.composeLifecycleOwner?.onPause()
             builder.composeLifecycleOwner?.onStop()
-
+            builder.composeLifecycleOwner?.onDestroy()
+            super.remove(it)
         }
         builder.listener.onCloseExpandableView()
     }
 
     override fun destroy() {
-        super.destroy()
+        builder.composeLifecycleOwner?.onStop()
         builder.composeLifecycleOwner?.onDestroy()
-
+        super.destroy()
     }
 
 
@@ -112,7 +114,7 @@ class ExpandableView(
         internal var viewStyle: Int? = R.style.default_bubble_style
 
         internal var composeLifecycleOwner: ComposeLifecycleOwner? = null
-        internal var composeView: ComposeView? = null
+        internal var composeView: FloatingComposeView? = null
 
         internal var listener = object : Listener {}
 
@@ -130,7 +132,7 @@ class ExpandableView(
             if (view != null) {
                 throw IllegalStateException("Cannot pass composable after setting view")
             }
-            composeView = ComposeView(context).apply {
+            composeView = FloatingComposeView(context).apply {
                 setContent { content() }
             }
             composeLifecycleOwner = ComposeLifecycleOwner()

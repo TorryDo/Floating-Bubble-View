@@ -24,6 +24,7 @@
         <service
             android:name=".MyServiceKt"
             />
+        <receiver android:name=".FloatingBubbleReceiver" />
     </application>
 
 </manifest>
