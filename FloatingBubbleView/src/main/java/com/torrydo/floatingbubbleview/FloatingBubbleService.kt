@@ -8,7 +8,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.Discouraged
 import androidx.annotation.RequiresApi
@@ -98,7 +97,7 @@ abstract class FloatingBubbleService : Service() {
     fun currentRoute() = currentRoute
 
     fun showBubbles() {
-        if(floatingBubble == null){
+        if (floatingBubble == null) {
             floatingBubble = setupBubble(customFloatingBubbleAction)
                 .addServiceInteractor(customFloatingBubbleServiceInteractor)
                 .build()
@@ -125,7 +124,7 @@ abstract class FloatingBubbleService : Service() {
             expandableView = setupExpandableView(customExpandableViewListener)
                 ?.build()
 
-            if (expandableView == null){
+            if (expandableView == null) {
                 throw NotImplementedError("you DID NOT override expandable view")
             }
         }
@@ -133,7 +132,7 @@ abstract class FloatingBubbleService : Service() {
             expandableView!!.show()
             currentRoute = Route.ExpandableView
         } catch (e: Exception) {
-            Log.e("<>", "showExpandableView: ", e)
+//            Log.e("<>", "showExpandableView: ", e)
             return false
         }
 

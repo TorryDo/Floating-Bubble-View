@@ -3,12 +3,8 @@ package com.torrydo.floatingbubbleview
 import android.annotation.SuppressLint
 import android.graphics.Point
 import android.graphics.PointF
-import android.util.Log
-import android.view.GestureDetector
+import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.BubbleBinding
 
 internal class FloatingBubbleView(
@@ -41,7 +37,7 @@ internal class FloatingBubbleView(
         }
 
         halfIconWidthPx = width / 2
-        halfIconHeightPx = height /2
+        halfIconHeightPx = height / 2
 
         setupLayoutParams()
         setupBubbleProperties()
@@ -181,7 +177,7 @@ internal class FloatingBubbleView(
             builder.listener?.onDown(motionEvent.rawX, motionEvent.rawY)
         }
 
-        fun onActionMove(motionEvent: MotionEvent){
+        fun onActionMove(motionEvent: MotionEvent) {
             builder.listener?.onMove(motionEvent.rawX, motionEvent.rawY)
         }
 
@@ -191,7 +187,19 @@ internal class FloatingBubbleView(
 
         // listen actions --------------------------------------------------------------------------
 
-        val gestureDetector = GestureDetector(builder.context, SingleTapConfirm())
+        val gestureDetector = GestureDetector(builder.context, object : SimpleOnGestureListener() {
+
+//            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+//                builder.listener?.onClick()
+//                return super.onSingleTapConfirmed(e)
+//            }
+
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
+                builder.listener?.onClick()
+                return super.onSingleTapUp(e)
+            }
+
+        })
 
         binding.bubbleView.apply {
 
@@ -199,11 +207,7 @@ internal class FloatingBubbleView(
 
             setOnTouchListener { _, motionEvent ->
 
-                // detect onTouch event first. If event is consumed, return@setOnTouch...
-                if (gestureDetector.onTouchEvent(motionEvent)) {
-                    builder.listener?.onClick()
-                    return@setOnTouchListener true
-                }
+                gestureDetector.onTouchEvent(motionEvent)
 
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> onActionDown(motionEvent)
@@ -213,12 +217,7 @@ internal class FloatingBubbleView(
 
                 return@setOnTouchListener true
             }
-        }
-    }
 
-    private class SingleTapConfirm : SimpleOnGestureListener() {
-        override fun onSingleTapUp(event: MotionEvent): Boolean {
-            return true
         }
     }
 
