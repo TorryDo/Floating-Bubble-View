@@ -30,14 +30,13 @@ class MyServiceKt : FloatingBubbleService() {
         }
 
 
-
     }
 
     override fun initialRoute(): Route {
         return Route.Empty
     }
 
-    private var size   =0
+    private var size = 0
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
@@ -49,7 +48,7 @@ class MyServiceKt : FloatingBubbleService() {
 
         showBubbles()
 
-        when(route){
+        when (route) {
             Route.Bubble.name -> {
                 showBubbles()
             }
@@ -116,7 +115,6 @@ class MyServiceKt : FloatingBubbleService() {
     override fun notificationId() = 69
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
-        Log.d("<>", "size: ${size}");
         return FloatingBubble.Builder(this)
 
             // set bubble icon attributes, currently only drawable and bitmap are supported
@@ -125,10 +123,11 @@ class MyServiceKt : FloatingBubbleService() {
             // set style for bubble, fade animation by default
             .bubbleStyle(null)
 
-            // set start location of bubble, (x=0, y=0) is the top-left
-            .startLocation(0, 0)
+            // set start location for the bubble, (x=0, y=0) is the top-left
+            .startLocation(100, 100)        // in dp
+//            .startLocationPx(0, 0)          // in px
 
-            // enable auto animate bubble to the left/right side when release, true by default
+            // animate the bubble to the left/right side of the screen when finger is released, true by default
             .enableAnimateToEdge(true)
 
             // set close-bubble icon attributes, currently only drawable and bitmap are supported
@@ -141,7 +140,7 @@ class MyServiceKt : FloatingBubbleService() {
             .enableCloseBubble(true)
 
             // the more value (dp), the larger closeable-area
-            .closablePerimeter(100)
+            .distanceToClose(100)
 
             // choose behavior of the bubbles
             // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
@@ -166,6 +165,7 @@ class MyServiceKt : FloatingBubbleService() {
                 override fun onUp(x: Float, y: Float) {
                     Log.d("<>", "onup: ${x} - ${y}");
                 }   // ..., when finger release from bubble
+
                 override fun onDown(x: Float, y: Float) {
                     Log.d("<>", "ondown ${x}-${y}: ");
                 } // ..., when finger tap the bubble

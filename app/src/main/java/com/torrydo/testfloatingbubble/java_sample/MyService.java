@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.torrydo.floatingbubbleview.BubbleBehavior;
 import com.torrydo.floatingbubbleview.ExpandableView;
@@ -117,7 +116,7 @@ public class MyService extends FloatingBubbleService {
                 .enableCloseBubble(true)
 
                 // the more value (dp), the larger closeable-area
-                .closablePerimeter(100)
+                .distanceToClose(100)
 
                 // choose behavior of the bubbles
                 // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location

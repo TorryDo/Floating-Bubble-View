@@ -56,7 +56,7 @@ internal class FloatingCloseBubbleView(
         centerCloseBubbleX = baseX + halfWidthPx
         centerCloseBubbleY = baseY + halfHeightPx
 
-        closablePerimeterPx = builder.closablePerimeterDp.toPx
+        closablePerimeterPx = builder.closablePerimeterDp.toPx()
 
         setupLayoutParams()
         setupCloseBubbleProperties()
@@ -121,7 +121,7 @@ internal class FloatingCloseBubbleView(
         return distanceRatio
     }
 
-    fun distanceRatioFromLocationToClosableArea(x: Float, y: Float): Float{
+    fun distanceRatioFromLocationToClosableArea(x: Float, y: Float): Float {
         val distanceToLocation = MathHelper.distance(
             x1 = centerCloseBubbleX.toDouble(),
             y1 = centerCloseBubbleY.toDouble(),
@@ -136,6 +136,7 @@ internal class FloatingCloseBubbleView(
         return distanceRatio
 
     }
+
     fun animateCloseIconByBubble(x: Int, y: Int) {
 
         val distanceRatio = distanceRatioFromBubbleToClosableArea(x, y)

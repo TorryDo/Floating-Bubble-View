@@ -27,8 +27,8 @@ internal fun View.getXYPointOnScreen(): Point {
     return Point(arr[0], arr[1])
 }
 
-internal val Int.toDp: Int get() = (this / getSystem().displayMetrics.density).toInt()
-internal val Int.toPx: Int get() = (this * getSystem().displayMetrics.density).toInt()
+internal fun Int.toDp(): Int = (this / getSystem().displayMetrics.density).toInt()
+internal fun Int.toPx(): Int = (this * getSystem().displayMetrics.density).toInt()
 
 inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
