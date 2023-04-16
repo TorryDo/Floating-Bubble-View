@@ -27,6 +27,7 @@ class MainActivityKt : AppCompatActivity() {
                 stopMyService()
             } else {
                 val intent = Intent(this, MyServiceKt::class.java)
+                intent.putExtra("size", 60)
                 ContextCompat.startForegroundService(this, intent)
                 isVisible = false
             }

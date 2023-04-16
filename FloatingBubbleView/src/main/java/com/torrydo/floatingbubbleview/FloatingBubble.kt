@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.util.Size
 import android.view.View
-import androidx.annotation.Discouraged
 import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
@@ -90,8 +89,8 @@ internal constructor(
     }
 
     internal fun tryShowCloseBubbleAndBackground() {
-        bottomBackground?.show()
         closeBubbleView?.show()
+        bottomBackground?.show()
     }
 
     internal fun tryRemoveCloseBubbleAndBackground() {
@@ -201,7 +200,6 @@ internal constructor(
 
         // config
         internal var startPoint = Point(0, 0)
-        internal var elevation = 0
         internal var opacity = 1f
         internal var isCloseBubbleEnabled = true
         internal var isAnimateToEdgeEnabled = true
@@ -228,7 +226,7 @@ internal constructor(
          *
          * @param dp distance between bubble and close-bubble
          * */
-        fun closablePerimeter(dp: Int): Builder {
+        fun distanceToClose(dp: Int): Builder {
             this.closablePerimeterDp = dp
             return this
         }
@@ -242,7 +240,7 @@ internal constructor(
         }
 
         /**
-         * @param enabled animate bubble to the left/right side of the screen
+         * @param enabled animate the bubble to the left/right side of the screen when finger is released, true by default
          * */
         fun enableAnimateToEdge(enabled: Boolean): Builder {
             isAnimateToEdgeEnabled = enabled
@@ -275,7 +273,7 @@ internal constructor(
          * set drawable to bubble width given width and height in dp
          * */
         fun bubble(@DrawableRes drawable: Int, widthDp: Int, heightDp: Int): Builder {
-            bubbleSizePx = Size(widthDp.toPx, heightDp.toPx)
+            bubbleSizePx = Size(widthDp.toPx(), heightDp.toPx())
             return bubble(drawable)
         }
 
@@ -291,7 +289,7 @@ internal constructor(
          * set bitmap to bubble width given width and height in dp
          * */
         fun bubble(bitmap: Bitmap, widthDp: Int, heightDp: Int): Builder {
-            bubbleSizePx = Size(widthDp.toPx, heightDp.toPx)
+            bubbleSizePx = Size(widthDp.toPx(), heightDp.toPx())
             return bubble(bitmap)
         }
 
@@ -321,7 +319,7 @@ internal constructor(
          * set drawable to close-bubble with given width and height in dp
          * */
         fun closeBubble(@DrawableRes drawable: Int, widthDp: Int, heightDp: Int): Builder {
-            this.closeBubbleSizePx = Size(widthDp.toPx, heightDp.toPx)
+            this.closeBubbleSizePx = Size(widthDp.toPx(), heightDp.toPx())
             return closeBubble(drawable)
         }
 
@@ -380,29 +378,37 @@ internal constructor(
         }
 
         /**
-         * examples: x=0, y=0 show bubble on the top-left corner of the screen.
+         * examples: x=0, y=0 show the bubble on the top-left corner of the screen.
          *
-         * you can set x/y as negative value, but the bubble will be outside the screen.
+         * you can set x/y as a negative values, but the bubble will be outside the screen.
+         *
+         * @param x 0 ... screenWidth (dp).
+         * @param y 0 ... screenHeight (dp).
+         * */
+        fun startLocation(x: Int, y: Int): Builder {
+            startPoint.x = x.toPx()
+            startPoint.y = y.toPx()
+            return this
+        }
+
+        /**
+         * examples: x=0, y=0 show the bubble on the top-left corner of the screen.
+         *
+         * you can set x/y as negative values, but the bubble will be outside the screen.
          *
          * @param x 0 ... screenWidth (px).
          * @param y 0 ... screenHeight (px).
          * */
-        fun startLocation(x: Int, y: Int): Builder {
+        fun startLocationPx(x: Int, y: Int): Builder {
             startPoint.x = x
             startPoint.y = y
-            return this
-        }
-
-        // not exposed to the outside packages because of being developed
-        internal fun elevation(dp: Int): Builder {
-            elevation = dp
             return this
         }
 
         /**
          * - 0.0f: invisible
          * - 0.0f < x < 1.0f: view with opacity
-         * - 1.0f: completely visible
+         * - 1.0f: fully visible
          * */
         fun opacity(opacity: Float): Builder {
             this.opacity = opacity

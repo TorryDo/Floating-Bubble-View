@@ -8,19 +8,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.Discouraged
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import androidx.core.app.NotificationManagerCompat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 
 abstract class FloatingBubbleService : Service() {
@@ -61,14 +54,14 @@ abstract class FloatingBubbleService : Service() {
 
         when (currentRoute) {
             Route.Empty -> {
-                initViewsAndNotification()
+                startWithNotification()
             }
             Route.Bubble -> {
-                initViewsAndNotification()
+                startWithNotification()
                 showBubbles()
             }
             Route.ExpandableView -> {
-                initViewsAndNotification()
+                startWithNotification()
                 showExpandableView()
             }
         }
@@ -84,27 +77,16 @@ abstract class FloatingBubbleService : Service() {
      * init view instances and notification
      * */
     @Throws(PermissionDeniedException::class)
-    private fun initViewsAndNotification() {
+    private fun startWithNotification() {
 
         if (!isDrawOverlaysPermissionGranted()) {
             throw PermissionDeniedException()
         }
 
-        initViewInstances()
-
         if (isHigherThanAndroid8()) {
             showForegroundNotification()
         }
 
-    }
-
-    private fun initViewInstances() {
-        floatingBubble = setupBubble(customFloatingBubbleAction)
-            .addServiceInteractor(customFloatingBubbleServiceInteractor)
-            .build()
-
-        expandableView = setupExpandableView(customExpandableViewListener)
-            ?.build()
     }
 
     // region Public Methods -----------------------------------------------------------------------
@@ -115,6 +97,11 @@ abstract class FloatingBubbleService : Service() {
     fun currentRoute() = currentRoute
 
     fun showBubbles() {
+        if (floatingBubble == null) {
+            floatingBubble = setupBubble(customFloatingBubbleAction)
+                .addServiceInteractor(customFloatingBubbleServiceInteractor)
+                .build()
+        }
         floatingBubble!!.showIcon()
         currentRoute = Route.Bubble
     }
@@ -133,13 +120,19 @@ abstract class FloatingBubbleService : Service() {
     @Throws(NotImplementedError::class)
     fun showExpandableView(): Boolean {
         if (expandableView == null) {
-            throw NotImplementedError("you DID NOT override expandable view")
+
+            expandableView = setupExpandableView(customExpandableViewListener)
+                ?.build()
+
+            if (expandableView == null) {
+                throw NotImplementedError("you DID NOT override expandable view")
+            }
         }
         try {
             expandableView!!.show()
             currentRoute = Route.ExpandableView
         } catch (e: Exception) {
-            Log.e("<>", "showExpandableView: ", e)
+//            Log.e("<>", "showExpandableView: ", e)
             return false
         }
 
@@ -151,15 +144,9 @@ abstract class FloatingBubbleService : Service() {
     }
 
     /**
-     * remove all views or init notification if first-time call
+     * remove all views
      * */
     fun removeAllViews() {
-
-        if (isNotificationInitialized.not()) {
-            initViewsAndNotification()
-            isNotificationInitialized = true
-            return
-        }
 
         removeExpandableView()
         removeBubbles()

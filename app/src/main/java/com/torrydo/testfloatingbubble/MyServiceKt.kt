@@ -3,6 +3,7 @@ package com.torrydo.testfloatingbubble
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -29,26 +30,30 @@ class MyServiceKt : FloatingBubbleService() {
         }
 
 
-
     }
 
     override fun initialRoute(): Route {
-        return Route.Bubble
+        return Route.Empty
     }
+
+    private var size = 0
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        val route = intent?.getStringExtra("route") ?: return START_STICKY
+        val route = intent?.getStringExtra("route")
 
-        when(route){
+        val _size = intent?.getIntExtra("size", 0)
+
+        size = _size ?: 0
+
+        showBubbles()
+
+        when (route) {
             Route.Bubble.name -> {
                 showBubbles()
             }
             Route.ExpandableView.name -> {
                 showExpandableView()
-            }
-            Route.Empty.name -> {
-                removeAllViews()
             }
         }
         return START_STICKY
@@ -113,19 +118,20 @@ class MyServiceKt : FloatingBubbleService() {
         return FloatingBubble.Builder(this)
 
             // set bubble icon attributes, currently only drawable and bitmap are supported
-            .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
+            .bubble(R.drawable.ic_rounded_blue_diamond, size, size)
 
             // set style for bubble, fade animation by default
             .bubbleStyle(null)
 
-            // set start location of bubble, (x=0, y=0) is the top-left
-            .startLocation(0, 0)
+            // set start location for the bubble, (x=0, y=0) is the top-left
+            .startLocation(100, 100)        // in dp
+//            .startLocationPx(0, 0)          // in px
 
-            // enable auto animate bubble to the left/right side when release, true by default
+            // animate the bubble to the left/right side of the screen when finger is released, true by default
             .enableAnimateToEdge(true)
 
             // set close-bubble icon attributes, currently only drawable and bitmap are supported
-            .closeBubble(R.drawable.ic_close_bubble, 60, 60)
+            .closeBubble(R.drawable.ic_close_bubble, size, size)
 
             // set style for close-bubble, null by default
             .closeBubbleStyle(null)
@@ -134,7 +140,7 @@ class MyServiceKt : FloatingBubbleService() {
             .enableCloseBubble(true)
 
             // the more value (dp), the larger closeable-area
-            .closablePerimeter(100)
+            .distanceToClose(100)
 
             // choose behavior of the bubbles
             // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
@@ -156,8 +162,13 @@ class MyServiceKt : FloatingBubbleService() {
                 ) {
                 } // The location of the finger on the screen which triggers the movement of the bubble.
 
-                override fun onUp(x: Float, y: Float) {}   // ..., when finger release from bubble
-                override fun onDown(x: Float, y: Float) {} // ..., when finger tap the bubble
+                override fun onUp(x: Float, y: Float) {
+                    Log.d("<>", "onup: ${x} - ${y}");
+                }   // ..., when finger release from bubble
+
+                override fun onDown(x: Float, y: Float) {
+                    Log.d("<>", "ondown ${x}-${y}: ");
+                } // ..., when finger tap the bubble
             })
             // set bubble's opacity
             .opacity(1f)
