@@ -1,5 +1,5 @@
 # 🍀Floating Bubble View
-An Android library that adds floating bubbles to your home screen 🎨, supporting both XML and 💘 Jetpack Compose
+An Android library that adds floating bubbles to your home screen 🎨, supports both XML and 💘 Jetpack Compose
 
 &nbsp;
 
@@ -158,7 +158,7 @@ Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="
 </br>
 
 ### 3, start bubble service and enjoy 3️⃣ 🎉🍀
-> Make sure "display over other apps" permission is granted, otherwise the app will crash ⚠
+> Make sure "display over other apps" permission is granted, otherwise the app will crash ⚠❗💥
 
 <details><summary><b>Java version</b></summary>
 
@@ -209,8 +209,9 @@ public class MyService extends FloatingBubbleService {
                 // set style for bubble, fade animation by default
                 .bubbleStyle(null)
 
-                // set start location of bubble, (x=0, y=0) is the top-left
-                .startLocation(0, 0)
+                // set start location for the bubble, (x=0, y=0) is the top-left
+                .startLocation(100, 100)        // in dp
+                .startLocationPx(100, 100)      // in px
 
                 // enable auto animate bubble to the left/right side when release, true by default
                 .enableAnimateToEdge(true)
@@ -224,8 +225,8 @@ public class MyService extends FloatingBubbleService {
                 // show close-bubble, true by default
                 .enableCloseBubble(true)
 
-                // the more value (dp), the larger closeable-area
-                .closablePerimeter(100)
+                // the more value (dp), the larger closable-area
+                .distanceToClose(100)
 
                 // choose behavior of the bubbles
                 // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
@@ -307,8 +308,9 @@ class MyService : FloatingBubbleService() {
             // set style for bubble, fade animation by default
             .bubbleStyle(null)
 
-            // set start location of bubble, (x=0, y=0) is the top-left
-            .startLocation(0, 0)
+            // set start location for the bubble, (x=0, y=0) is the top-left
+            .startLocation(100, 100)        // in dp
+            .startLocationPx(100, 100)      // in px
 
             // enable auto animate bubble to the left/right side when release, true by default
             .enableAnimateToEdge(true)
@@ -323,7 +325,7 @@ class MyService : FloatingBubbleService() {
             .enableCloseBubble(true)
 
             // the more value (dp), the larger closeable-area
-            .closablePerimeter(100)
+            .distanceToClose(100)
 
             // choose behavior of the bubbles
             // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
@@ -353,7 +355,7 @@ class MyService : FloatingBubbleService() {
         val layout = inflater.inflate(R.layout.layout_view_test, null)
 
         layout.findViewById<View>(R.id.card_view).setOnClickListener { v: View? ->
-            Toast.makeText(this, "hello from card view from kotlin", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "hello from kotlin", Toast.LENGTH_SHORT).show();
             action.popToBubble()
         }
 
