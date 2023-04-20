@@ -28,13 +28,11 @@ public class MyService extends FloatingBubbleService {
     /**
      * Sets up a notification for Bubble on Android 8 and up.
      *
-     * @param channelId The ID of the notification channel.
      * @return The notification instance.
      */
-    @NonNull
     @Override
-    public Notification setupNotificationBuilder(@NonNull String channelId) {
-        return new NotificationCompat.Builder(this, channelId)
+    public Notification initialNotification() {
+        return new NotificationCompat.Builder(this, channelId())
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
                 .setContentTitle("bubble is running")
@@ -72,6 +70,7 @@ public class MyService extends FloatingBubbleService {
 
         assert intent != null;
         this.data = intent.getStringExtra("key1");
+
 
         if (this.data != null) {
             try {
@@ -134,13 +133,16 @@ public class MyService extends FloatingBubbleService {
                     }
 
                     @Override
-                    public void onMove(float x, float y) {} // The location of the finger on the screen which triggers the movement of the bubble.
+                    public void onMove(float x, float y) {
+                    } // The location of the finger on the screen which triggers the movement of the bubble.
 
                     @Override
-                    public void onUp(float x, float y) {} // ..., when finger release from bubble
+                    public void onUp(float x, float y) {
+                    } // ..., when finger release from bubble
 
                     @Override
-                    public void onDown(float x, float y) {} // ..., when finger tap the bubble
+                    public void onDown(float x, float y) {
+                    } // ..., when finger tap the bubble
                 })
 
                 // set bubble's opacity
@@ -172,10 +174,12 @@ public class MyService extends FloatingBubbleService {
 
                 .addExpandableViewListener(new ExpandableView.Listener() {
                     @Override
-                    public void onOpenExpandableView() {}
+                    public void onOpenExpandableView() {
+                    }
 
                     @Override
-                    public void onCloseExpandableView() {}
+                    public void onCloseExpandableView() {
+                    }
                 });
     }
 }

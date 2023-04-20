@@ -23,7 +23,9 @@ class MyServiceKt : FloatingBubbleService() {
             } else {
                 removeAllViews()
             }
-            updateNotification()
+
+            notify(myNotification(FloatingBubbleReceiver.isEnabled))
+
         }
         FloatingBubbleReceiver.stop_bubble_function = {
             stopSelf()
@@ -39,12 +41,15 @@ class MyServiceKt : FloatingBubbleService() {
     private var size = 0
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         val route = intent?.getStringExtra("route")
 
         val _size = intent?.getIntExtra("size", 0)
 
+        noti_message = intent?.getStringExtra("noti_message")
+
         size = _size ?: 0
+
+        notify(myNotification(true))
 
         showBubbles()
 
@@ -59,20 +64,19 @@ class MyServiceKt : FloatingBubbleService() {
         return START_STICKY
     }
 
-    /**
-     * Sets up a notification for Bubble on Android 8 and up.
-     * @param channelId The ID of the notification channel.
-     * @return The notification instance.
-     */
-    override fun setupNotificationBuilder(channelId: String): Notification {
+    var noti_message: String? = ""
 
-        val builder = NotificationCompat.Builder(this, channelId)
+    private fun myNotification(
+        isVisible: Boolean
+    ): Notification{
+        val builder = NotificationCompat.Builder(this, channelId())
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
             .setContentTitle("bubble is running")
-            .setContentText("click to do nothing")
+            .setContentText(noti_message)
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
+            .setSilent(true)
 
 
         // Create the hide action button
@@ -99,7 +103,7 @@ class MyServiceKt : FloatingBubbleService() {
             )
         val actionStop = NotificationCompat.Action.Builder(null, "Stop", actionStopPendingIntent)
 
-        val action1 = if (FloatingBubbleReceiver.isEnabled) {
+        val action1 = if (isVisible) {
             NotificationCompat.Action.Builder(null, "Hide", actionHidePendingIntent).build()
         } else {
             NotificationCompat.Action.Builder(null, "Show", actionHidePendingIntent).build()
@@ -108,6 +112,10 @@ class MyServiceKt : FloatingBubbleService() {
         builder.addAction(actionStop.build())
 
         return builder.build()
+    }
+
+    override fun initialNotification(): Notification? {
+        return null
     }
 
     override fun channelId() = "your_channel_id"
@@ -223,4 +231,5 @@ class MyServiceKt : FloatingBubbleService() {
                 override fun onCloseExpandableView() {}
             })
     }
+
 }
