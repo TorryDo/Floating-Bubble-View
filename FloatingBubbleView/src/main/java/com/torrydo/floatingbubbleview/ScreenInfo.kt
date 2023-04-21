@@ -1,6 +1,7 @@
 package com.torrydo.floatingbubbleview
 
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.util.DisplayMetrics
@@ -20,7 +21,59 @@ internal object ScreenInfo {
     internal var statusBarHeightPx = 0
     internal var softNavBarHeightPx = 0
 
-    // functions -----------------------------------------------------------------------------------
+
+    // methods -------------------------------------------------------------------------------------
+    fun onOrientationChanged(context: Context) {
+
+        statusBarHeightPx = getStatusBarHeight(context)
+        softNavBarHeightPx = getSoftNavigationBarHeight(context)
+
+        getScreenSize(context).also {
+            if(it.height >= it.width){ // portrait
+                widthPx = it.width
+                heightPx = it.height
+            }else{
+                widthPx = it.width - statusBarHeightPx - softNavBarHeightPx
+                heightPx = it.height
+            }
+        }
+
+    }
+
+    //region Internal methods ----------------------------------------------------------------------
+
+    /**
+     * @return pixel
+     * */
+    internal fun getStatusBarHeight(context: Context): Int {
+        val statusBarHeightId =
+            context.resources.getIdentifier("status_bar_height", "dimen", "android")
+        return context.resources.getDimensionPixelSize(statusBarHeightId)
+    }
+
+    fun getSoftNavigationBarHeight(context: Context): Int {
+        var result = 0
+        val resourceId =
+            context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = context.resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
+    /**
+     * Returns screen size in pixels.
+     */
+    fun getScreenSize(context: Context): Size {
+        return WeakReference(context).get()?.let {
+
+            api.getScreenSize(it)
+
+        } ?: Size(0, 0)
+    }
+
+    //endregion
+
 
     private val api: Api =
         when {
@@ -31,34 +84,6 @@ internal object ScreenInfo {
             // android 5 to 11
             else -> Api()
         }
-
-    /**
-     * @return pixel
-     * */
-    internal fun getStatusBarHeight(context: Context): Int{
-        val statusBarHeightId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-        return context.resources.getDimensionPixelSize(statusBarHeightId)
-    }
-
-    fun getSoftNavigationBarSize(context: Context): Int {
-        var result = 0
-        val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
-        if (resourceId > 0) {
-            result = context.resources.getDimensionPixelSize(resourceId)
-        }
-        return result
-    }
-
-    /**
-     * Returns screen size in pixels.
-     */
-    internal fun getScreenSize(context: Context): Size {
-        return WeakReference(context).get()?.let {
-
-            api.getScreenSize(it)
-
-        } ?: Size(0, 0)
-    }
 
     private open class Api {
 

@@ -1,6 +1,7 @@
 package com.torrydo.floatingbubbleview
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.graphics.Point
 import android.graphics.PointF
 import android.view.*
@@ -21,13 +22,21 @@ internal class FloatingBubbleView(
     private val rawPointOnDown = PointF(0f, 0f)
     private val newPoint = Point(0, 0)
 
-    private val halfScreenWidth = ScreenInfo.widthPx / 2
-    private val halfScreenHeight = ScreenInfo.heightPx / 2
+    private var halfScreenWidth = ScreenInfo.widthPx / 2
+    private var halfScreenHeight = ScreenInfo.heightPx / 2
 
-    private val halfIconWidthPx: Int
-    private val halfIconHeightPx: Int
+    private var halfIconWidthPx: Int
+    private var halfIconHeightPx: Int
+
+    private var orientation = -1
 
     init {
+
+        orientation = if (ScreenInfo.heightPx >= ScreenInfo.widthPx) {
+            Configuration.ORIENTATION_PORTRAIT
+        } else {
+            Configuration.ORIENTATION_LANDSCAPE
+        }
 
         builder.bubbleSizePx.also {
             if (it.notZero()) {
@@ -42,8 +51,10 @@ internal class FloatingBubbleView(
         setupLayoutParams()
         setupBubbleProperties()
         customTouch()
+
     }
 
+    private val isPortrait get() = orientation == Configuration.ORIENTATION_PORTRAIT
 
     private var isAnimatingToEdge = false
     fun animateIconToEdge(onFinished: (() -> Unit)? = null) {
@@ -105,7 +116,7 @@ internal class FloatingBubbleView(
 
     }
 
-    fun updateLocation(x: Float, y: Float) {
+    fun updateLocationUI(x: Float, y: Float) {
         val mIconDeltaX = x - rawPointOnDown.x
         val mIconDeltaY = y - rawPointOnDown.y
 
@@ -133,12 +144,12 @@ internal class FloatingBubbleView(
     /**
      * set location without updating UI
      * */
-    fun setLocation(x: Float, y: Float){
+    fun setLocation(x: Float, y: Float) {
         newPoint.x = x.toInt()
         newPoint.y = y.toInt()
     }
 
-    fun rawLocationOnScreen(): Pair<Float, Float>{
+    fun rawLocationOnScreen(): Pair<Float, Float> {
         return Pair(newPoint.x.toFloat(), newPoint.y.toFloat())
     }
 
@@ -217,11 +228,8 @@ internal class FloatingBubbleView(
 
                 return@setOnTouchListener true
             }
-
         }
     }
-
-    // override
 
     override fun setupLayoutParams() {
         super.setupLayoutParams()
@@ -231,12 +239,11 @@ internal class FloatingBubbleView(
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
+
             builder.bubbleStyle?.let {
                 windowAnimations = it
             }
 
         }
-
-
     }
 }

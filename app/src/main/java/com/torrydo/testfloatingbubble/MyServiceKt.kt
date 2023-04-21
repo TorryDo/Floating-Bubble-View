@@ -170,13 +170,9 @@ class MyServiceKt : FloatingBubbleService() {
                 ) {
                 } // The location of the finger on the screen which triggers the movement of the bubble.
 
-                override fun onUp(x: Float, y: Float) {
-                    Log.d("<>", "onup: ${x} - ${y}");
-                }   // ..., when finger release from bubble
+                override fun onUp(x: Float, y: Float) {}   // ..., when finger release from bubble
 
-                override fun onDown(x: Float, y: Float) {
-                    Log.d("<>", "ondown ${x}-${y}: ");
-                } // ..., when finger tap the bubble
+                override fun onDown(x: Float, y: Float) {} // ..., when finger tap the bubble
             })
             // set bubble's opacity
             .opacity(1f)

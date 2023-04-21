@@ -5,8 +5,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.Discouraged
 import androidx.annotation.RequiresApi
@@ -23,6 +25,8 @@ abstract class FloatingBubbleService : Service() {
     private var isNotificationInitialized = false
 
     private var currentRoute = Route.Empty
+
+    private var orientation: Int = -1
 
     companion object {
 
@@ -53,7 +57,7 @@ abstract class FloatingBubbleService : Service() {
         }
 
         isRunning = true
-
+        orientation = this.resources.configuration.orientation
         currentRoute = initialRoute()
 
         initialNotification()?.let {
@@ -65,15 +69,49 @@ abstract class FloatingBubbleService : Service() {
             Route.Bubble -> showBubbles()
             Route.ExpandableView -> showExpandableView()
         }
+
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Check if the configuration has actually changed.
+        if (newConfig.orientation != orientation) {
+            val newOrientation = newConfig.orientation
+            when (newOrientation) {
+                Configuration.ORIENTATION_PORTRAIT -> {
+                    ScreenInfo.onOrientationChanged(this)
+//                    floatingBubble?.onOrientationChanged(newOrientation)
+                    floatingBubble?.removeIcon()
+                    floatingBubble?.tryRemoveCloseBubbleAndBackground()
+                    floatingBubble = null
+                    showBubbles()
+                }
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    ScreenInfo.onOrientationChanged(this)
+//                    floatingBubble?.onOrientationChanged(newOrientation)
+                    floatingBubble?.removeIcon()
+                    floatingBubble?.tryRemoveCloseBubbleAndBackground()
+                    floatingBubble = null
+                    showBubbles()
+                }
+                else -> {
+                    Log.d("<>", "change undefine: ");
+                }
+            }
+            orientation = newOrientation
+        }
+
     }
 
     override fun onDestroy() {
         removeAllViews()
         super.onDestroy()
+
         isRunning = false
     }
 
-    // region Show/Hide methods -----------------------------------------------------------------------
+    //region Show/Hide methods ---------------------------------------------------------------------
 
     /**
      * get current route
@@ -233,7 +271,7 @@ abstract class FloatingBubbleService : Service() {
     }
     //endregion
 
-    //region Builder ---------------------------------------------------------------------
+    //region Builder -------------------------------------------------------------------------------
 
     open fun initialRoute(): Route = Route.Bubble
 

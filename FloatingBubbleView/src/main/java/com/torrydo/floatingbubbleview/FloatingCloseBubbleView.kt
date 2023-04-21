@@ -1,7 +1,9 @@
 package com.torrydo.floatingbubbleview
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.WindowManager
+import androidx.core.content.OnConfigurationChangedProvider
 import com.torrydo.floatingbubbleview.databinding.CloseBubbleBinding
 
 internal class FloatingCloseBubbleView(
@@ -12,25 +14,24 @@ internal class FloatingCloseBubbleView(
 ) {
 
     companion object {
-        internal const val DEFAULT_PADDING_BOTTOM_PX = 30
+        internal const val DEFAULT_PADDING_BOTTOM_PX = 20
     }
 
-    private val LIMIT_FLY_HEIGHT: Int
+    private var LIMIT_FLY_HEIGHT: Int
 
-    val halfWidthPx: Int
-    val halfHeightPx: Int
+    var halfWidthPx: Int
+    var halfHeightPx: Int
 
-    private val halfScreenWidth: Int
-    val baseX: Int
-    val baseY: Int
+    private var halfScreenWidth: Int
+    var baseX: Int
+    var baseY: Int
 
-    private val centerCloseBubbleX: Int
-    private val centerCloseBubbleY: Int
+    private var centerCloseBubbleX: Int
+    private var centerCloseBubbleY: Int
 
-    private val closablePerimeterPx: Int
+    private var closablePerimeterPx: Int
 
     init {
-
         builder.closeBubbleSizePx.also {
             if (it.notZero()) {
                 width = it.width
@@ -53,7 +54,7 @@ internal class FloatingCloseBubbleView(
                 ScreenInfo.statusBarHeightPx -
                 DEFAULT_PADDING_BOTTOM_PX
 
-        centerCloseBubbleX = baseX + halfWidthPx
+        centerCloseBubbleX = halfScreenWidth
         centerCloseBubbleY = baseY + halfHeightPx
 
         closablePerimeterPx = builder.closablePerimeterDp.toPx()
@@ -61,7 +62,6 @@ internal class FloatingCloseBubbleView(
         setupLayoutParams()
         setupCloseBubbleProperties()
     }
-
 
     override fun setupLayoutParams() {
         super.setupLayoutParams()
@@ -73,29 +73,7 @@ internal class FloatingCloseBubbleView(
         }
     }
 
-    // private -------------------------------------------------------------------------------------
-
-
-    private fun setupCloseBubbleProperties() {
-        val icBitmap = builder.closeIconBitmap ?: R.drawable.ic_close_bubble.toBitmap(
-            builder.context
-        )
-
-        binding.closeBubbleImg.apply {
-            setImageBitmap(icBitmap)
-
-            layoutParams.width = this@FloatingCloseBubbleView.width
-            layoutParams.height = this@FloatingCloseBubbleView.height
-
-            alpha = builder.opacity
-
-        }
-
-        windowParams.apply {
-            this.x = baseX
-            this.y = baseY
-        }
-    }
+    //region Public methods ------------------------------------------------------------------------
 
     /**
      * @param x is the top left x axis of the bubble
@@ -162,6 +140,29 @@ internal class FloatingCloseBubbleView(
                     }
                 }
             update()
+        }
+    }
+
+    //endregion ------------------------------------------------------------------------------------
+
+    private fun setupCloseBubbleProperties() {
+        val icBitmap = builder.closeIconBitmap ?: R.drawable.ic_close_bubble.toBitmap(
+            builder.context
+        )
+
+        binding.closeBubbleImg.apply {
+            setImageBitmap(icBitmap)
+
+            layoutParams.width = this@FloatingCloseBubbleView.width
+            layoutParams.height = this@FloatingCloseBubbleView.height
+
+            alpha = builder.opacity
+
+        }
+
+        windowParams.apply {
+            this.x = baseX
+            this.y = baseY
         }
     }
 
