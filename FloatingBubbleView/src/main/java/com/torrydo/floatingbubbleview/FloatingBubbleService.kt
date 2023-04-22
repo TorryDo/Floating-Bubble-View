@@ -81,19 +81,29 @@ abstract class FloatingBubbleService : Service() {
             when (newOrientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
                     ScreenInfo.onOrientationChanged(this)
-//                    floatingBubble?.onOrientationChanged(newOrientation)
-                    floatingBubble?.removeIcon()
-                    floatingBubble?.tryRemoveCloseBubbleAndBackground()
-                    floatingBubble = null
-                    showBubbles()
+                    if (currentRoute == Route.Bubble) {
+                        floatingBubble?.removeIcon()
+                        floatingBubble?.tryRemoveCloseBubbleAndBackground()
+                        floatingBubble = null
+                        showBubbles()
+                    } else {
+                        floatingBubble = setupBubble(customFloatingBubbleAction)
+                            .addServiceInteractor(customFloatingBubbleServiceInteractor)
+                            .build()
+                    }
                 }
                 Configuration.ORIENTATION_LANDSCAPE -> {
                     ScreenInfo.onOrientationChanged(this)
-//                    floatingBubble?.onOrientationChanged(newOrientation)
-                    floatingBubble?.removeIcon()
-                    floatingBubble?.tryRemoveCloseBubbleAndBackground()
-                    floatingBubble = null
-                    showBubbles()
+                    if (currentRoute == Route.Bubble) {
+                        floatingBubble?.removeIcon()
+                        floatingBubble?.tryRemoveCloseBubbleAndBackground()
+                        floatingBubble = null
+                        showBubbles()
+                    } else {
+                        floatingBubble = setupBubble(customFloatingBubbleAction)
+                            .addServiceInteractor(customFloatingBubbleServiceInteractor)
+                            .build()
+                    }
                 }
                 else -> {
                     Log.d("<>", "change undefine: ");
