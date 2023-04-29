@@ -1,9 +1,7 @@
 package com.torrydo.floatingbubbleview
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.WindowManager
-import androidx.core.content.OnConfigurationChangedProvider
 import com.torrydo.floatingbubbleview.databinding.CloseBubbleBinding
 
 internal class FloatingCloseBubbleView(
@@ -14,7 +12,7 @@ internal class FloatingCloseBubbleView(
 ) {
 
     companion object {
-        internal const val DEFAULT_PADDING_BOTTOM_PX = 20
+        internal const val DEFAULT_PADDING_BOTTOM_PX = 30
     }
 
     private var LIMIT_FLY_HEIGHT: Int
@@ -53,6 +51,10 @@ internal class FloatingCloseBubbleView(
                 ScreenInfo.softNavBarHeightPx -
                 ScreenInfo.statusBarHeightPx -
                 DEFAULT_PADDING_BOTTOM_PX
+
+        if (ScreenInfo.isLandscape) {
+            baseY = baseY - DEFAULT_PADDING_BOTTOM_PX + ScreenInfo.softNavBarHeightPx
+        }
 
         centerCloseBubbleX = halfScreenWidth
         centerCloseBubbleY = baseY + halfHeightPx

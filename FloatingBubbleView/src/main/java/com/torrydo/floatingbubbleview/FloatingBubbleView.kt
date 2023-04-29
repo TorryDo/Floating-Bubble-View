@@ -132,7 +132,11 @@ internal class FloatingBubbleView(
         if (isAboveStatusBar) {
             newPoint.y = safeTopY
         } else if (isUnderSoftNavBar) {
-            newPoint.y = safeBottomY
+            if(ScreenInfo.isPortrait){
+                newPoint.y = safeBottomY
+            } else if(newPoint.y - ScreenInfo.softNavBarHeightPx > safeBottomY){
+                newPoint.y = safeBottomY + (ScreenInfo.softNavBarHeightPx)
+            }
         }
         //endregion
 

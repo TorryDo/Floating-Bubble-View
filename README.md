@@ -1,7 +1,7 @@
 # 🍀Floating Bubble View
 An Android library that adds floating bubbles to your home screen 🎨, supports both XML and 💘 Jetpack Compose
 
-&nbsp;
+<br>
 
 https://user-images.githubusercontent.com/85553681/223082521-789146d2-c8f7-4e54-a4d7-f281cd495404.mp4
 
@@ -400,16 +400,11 @@ public class MyService extends FloatingBubbleService {
     
     ...
 
-    /**
-     * Sets up a notification for Bubble on Android 8 and up.
-     *
-     * @param channelId The ID of the notification channel.
-     * @return The notification instance.
-     */
-    @NonNull
+    // config the initial notification for Bubble on Android 8 and up.
+    // return null if you want to show the notification later.
     @Override
-    public Notification setupNotificationBuilder(@NonNull String channelId) {
-        return new NotificationCompat.Builder(this, channelId)
+    public Notification initialNotification() {
+        return new NotificationCompat.Builder(this, channelId())
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
                 .setContentTitle("bubble is running")
@@ -446,19 +441,16 @@ public class MyService extends FloatingBubbleService {
 ```kotlin
 class MyService : FloatingBubbleService() {
 
-    /**
-     * Sets up a notification for Bubble on Android 8 and up.
-     * @param channelId The ID of the notification channel.
-     * @return The notification instance.
-     */
-    override fun setupNotificationBuilder(channelId: String): Notification {
-        return NotificationCompat.Builder(this, channelId)
+    // config the initial notification for Bubble on Android 8 and up.
+    // return null if you want to show the notification later.
+    open fun initialNotification(): Notification? {
+        return NotificationCompat.Builder(this, channelId())
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
             .setContentTitle("bubble is running")
-            .setContentText("click to do nothing")
-            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setPriority(PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
+            .setSilent(true)
             .build()
     }
 
@@ -467,6 +459,17 @@ class MyService : FloatingBubbleService() {
     override fun notificationId() = 69
 }
 ```
+
+</details>
+
+<details><summary>Notice since Android 13 ⚠ </summary>
+<br/>
+
+Starting in Android 13 (API level 33), notifications are only visible if the "POST_NOTIFICATIONS" permission is granted.<br/>
+
+> The service will run normally even if the notification is not visible. 🍀
+
+> P/s: You still need to initialize the notification before showing any view.
 
 </details>
 
@@ -544,6 +547,7 @@ fun SomeComposable(){
 | `showExpandableView()` | Displays the expandable-view |
 | `removeExpandableView()` | Removes the expandable-view |
 | `removeAllViews()` | Removes all views |
+| `notify(Notification)` | Displays or updates notification |
 
 <!-- | `updateNotification()`| Updates the displayed notification by calling (again) `setupNotificationBuilder()` | -->
 

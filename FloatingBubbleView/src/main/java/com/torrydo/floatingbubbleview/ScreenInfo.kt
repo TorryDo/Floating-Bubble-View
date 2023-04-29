@@ -5,8 +5,10 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.Size
 import android.view.Display
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.WindowMetrics
 import androidx.annotation.RequiresApi
@@ -21,6 +23,9 @@ internal object ScreenInfo {
     internal var statusBarHeightPx = 0
     internal var softNavBarHeightPx = 0
 
+    var isPortrait = true
+    val isLandscape get() = isPortrait.not()
+
 
     // methods -------------------------------------------------------------------------------------
     fun onOrientationChanged(context: Context) {
@@ -32,9 +37,13 @@ internal object ScreenInfo {
             if(it.height >= it.width){ // portrait
                 widthPx = it.width
                 heightPx = it.height
+
+                isPortrait = true
             }else{
                 widthPx = it.width - statusBarHeightPx - softNavBarHeightPx
                 heightPx = it.height
+
+                isPortrait = false
             }
         }
 

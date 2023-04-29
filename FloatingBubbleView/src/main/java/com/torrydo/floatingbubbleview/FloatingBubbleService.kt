@@ -106,7 +106,7 @@ abstract class FloatingBubbleService : Service() {
                     }
                 }
                 else -> {
-                    Log.d("<>", "change undefine: ");
+//                    Log.d("<>", "change undefine: ");
                 }
             }
             orientation = newOrientation
