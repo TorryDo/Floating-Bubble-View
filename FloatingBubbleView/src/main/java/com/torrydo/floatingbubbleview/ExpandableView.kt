@@ -96,7 +96,6 @@ class ExpandableView(
             gravity = Gravity.TOP
             flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
             dimAmount = builder.dim         // default = 0.5f
-            softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 
             builder.viewStyle?.let {
                 windowAnimations = it

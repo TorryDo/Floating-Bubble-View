@@ -28,6 +28,7 @@ class MainActivityKt : AppCompatActivity() {
             } else {
                 val intent = Intent(this, MyServiceKt::class.java)
                 intent.putExtra("size", 60)
+                intent.putExtra("noti_message", "HELLO FROM MAIN ACT")
                 ContextCompat.startForegroundService(this, intent)
                 isVisible = false
             }

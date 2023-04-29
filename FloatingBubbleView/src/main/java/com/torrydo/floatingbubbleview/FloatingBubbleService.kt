@@ -5,9 +5,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.graphics.Color
+import android.content.res.Configuration
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.Discouraged
 import androidx.annotation.RequiresApi
@@ -24,6 +25,8 @@ abstract class FloatingBubbleService : Service() {
     private var isNotificationInitialized = false
 
     private var currentRoute = Route.Empty
+
+    private var orientation: Int = -1
 
     companion object {
 
@@ -48,48 +51,77 @@ abstract class FloatingBubbleService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
     override fun onCreate() {
         super.onCreate()
-        isRunning = true
-
-        currentRoute = initialRoute()
-
-        when (currentRoute) {
-            Route.Empty -> {
-                startWithNotification()
-            }
-            Route.Bubble -> {
-                startWithNotification()
-                showBubbles()
-            }
-            Route.ExpandableView -> {
-                startWithNotification()
-                showExpandableView()
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        removeAllViews()
-        super.onDestroy()
-        isRunning = false
-    }
-
-    /**
-     * init view instances and notification
-     * */
-    @Throws(PermissionDeniedException::class)
-    private fun startWithNotification() {
 
         if (!isDrawOverlaysPermissionGranted()) {
             throw PermissionDeniedException()
         }
 
-        if (isHigherThanAndroid8()) {
-            showForegroundNotification()
+        isRunning = true
+        orientation = this.resources.configuration.orientation
+        currentRoute = initialRoute()
+
+        initialNotification()?.let {
+            notify(it)
+        }
+
+        when (currentRoute) {
+            Route.Empty -> {}
+            Route.Bubble -> showBubbles()
+            Route.ExpandableView -> showExpandableView()
         }
 
     }
 
-    // region Public Methods -----------------------------------------------------------------------
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Check if the configuration has actually changed.
+        if (newConfig.orientation != orientation) {
+            val newOrientation = newConfig.orientation
+            when (newOrientation) {
+                Configuration.ORIENTATION_PORTRAIT -> {
+                    ScreenInfo.onOrientationChanged(this)
+                    if (currentRoute == Route.Bubble) {
+                        floatingBubble?.removeIcon()
+                        floatingBubble?.tryRemoveCloseBubbleAndBackground()
+                        floatingBubble = null
+                        showBubbles()
+                    } else {
+                        floatingBubble = setupBubble(customFloatingBubbleAction)
+                            .addServiceInteractor(customFloatingBubbleServiceInteractor)
+                            .build()
+                    }
+                }
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    ScreenInfo.onOrientationChanged(this)
+                    if (currentRoute == Route.Bubble) {
+                        floatingBubble?.removeIcon()
+                        floatingBubble?.tryRemoveCloseBubbleAndBackground()
+                        floatingBubble = null
+                        showBubbles()
+                    } else {
+                        floatingBubble = setupBubble(customFloatingBubbleAction)
+                            .addServiceInteractor(customFloatingBubbleServiceInteractor)
+                            .build()
+                    }
+                }
+                else -> {
+//                    Log.d("<>", "change undefine: ");
+                }
+            }
+            orientation = newOrientation
+        }
+
+    }
+
+    override fun onDestroy() {
+        removeAllViews()
+        super.onDestroy()
+
+        isRunning = false
+    }
+
+    //region Show/Hide methods ---------------------------------------------------------------------
 
     /**
      * get current route
@@ -103,7 +135,9 @@ abstract class FloatingBubbleService : Service() {
                 .build()
         }
         floatingBubble!!.showIcon()
+
         currentRoute = Route.Bubble
+
     }
 
     /**
@@ -112,6 +146,10 @@ abstract class FloatingBubbleService : Service() {
     fun removeBubbles() {
         floatingBubble?.removeIcon()
         floatingBubble?.tryRemoveCloseBubbleAndBackground()
+
+        if (currentRoute == Route.Bubble) {
+            currentRoute = Route.Empty
+        }
     }
 
     /**
@@ -130,7 +168,9 @@ abstract class FloatingBubbleService : Service() {
         }
         try {
             expandableView!!.show()
+
             currentRoute = Route.ExpandableView
+
         } catch (e: Exception) {
 //            Log.e("<>", "showExpandableView: ", e)
             return false
@@ -141,6 +181,10 @@ abstract class FloatingBubbleService : Service() {
 
     fun removeExpandableView() {
         expandableView?.remove()
+
+        if (currentRoute == Route.ExpandableView) {
+            currentRoute = Route.Empty
+        }
     }
 
     /**
@@ -152,12 +196,67 @@ abstract class FloatingBubbleService : Service() {
         removeBubbles()
 
         currentRoute = Route.Empty
+
     }
 
     //endregion
 
+    //region Notification --------------------------------------------------------------------------
 
-    //region Interface ----------------------------------------------------------------------------
+    open fun channelId() = "bubble_service"
+    open fun channelName() = "floating bubble"
+
+    open fun notificationId() = 101
+
+    /**
+     * show the notification or update if already exists
+     * */
+    fun notify(notification: Notification) {
+
+        if (isNotificationInitialized) {
+            NotificationManagerCompat.from(this).notify(notificationId(), notification)
+            return
+        }
+
+        if (isAndroid8OrHigher()) {
+            createNotificationChannel(channelId(), channelName())
+        }
+
+        startForeground(notificationId(), notification)
+
+        isNotificationInitialized = true
+
+    }
+
+    open fun initialNotification(): Notification? {
+        return NotificationCompat.Builder(this, channelId())
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
+            .setContentTitle("bubble is running")
+            .setPriority(PRIORITY_MIN)
+            .setCategory(Notification.CATEGORY_SERVICE)
+            .setSilent(true)
+            .build()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    open fun createNotificationChannel(
+        channelId: String,
+        channelName: String
+    ) {
+        val channel = NotificationChannel(
+            channelId,
+            channelName,
+            NotificationManager.IMPORTANCE_DEFAULT // IMPORTANCE_NONE recreate the notification if update
+        )
+        channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+        val notificationManagerCompat = NotificationManagerCompat.from(this)
+        notificationManagerCompat.createNotificationChannel(channel)
+    }
+
+    //endregion
+
+    //region Interface implementation --------------------------------------------------------------
 
     private val customExpandableViewListener = object : ExpandableView.Action {
         override fun popToBubble() {
@@ -182,68 +281,7 @@ abstract class FloatingBubbleService : Service() {
     }
     //endregion
 
-    //region Notification --------------------------------------------------------------------------
-
-    open fun channelId() = "bubble_service"
-    open fun channelName() = "floating bubble"
-
-    open fun notificationId() = 101
-
-    /**
-     * create a new instance by calling `setupNotificationBuilder`, then update it to the existing notification
-     * */
-    fun updateNotification() {
-        val notification = setupNotificationBuilder(channelId())
-        NotificationManagerCompat.from(this).notify(notificationId(), notification)
-    }
-
-    private fun showForegroundNotification() {
-
-        val channelId = if (isHigherThanAndroid8()) {
-            createNotificationChannel(channelId(), channelName())
-        } else {
-            // In earlier version, channel ID is not required
-            // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
-            ""
-        }
-        val notification = setupNotificationBuilder(channelId)
-
-        startForeground(notificationId(), notification)
-
-        isNotificationInitialized = true
-    }
-
-
-    open fun setupNotificationBuilder(channelId: String): Notification {
-        return NotificationCompat.Builder(this, channelId)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-            .setContentTitle("bubble is running")
-            .setPriority(PRIORITY_MIN)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .build()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(
-        channelId: String,
-        channelName: String
-    ): String {
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
-            NotificationManager.IMPORTANCE_DEFAULT // IMPORTANCE_NONE recreate the notification
-        )
-        channel.lightColor = Color.BLUE
-        channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        val notificationManagerCompat = NotificationManagerCompat.from(this)
-        notificationManagerCompat.createNotificationChannel(channel)
-        return channelId
-    }
-
-    //endregion
-
-    //region View builders ---------------------------------------------------------------------
+    //region Builder -------------------------------------------------------------------------------
 
     open fun initialRoute(): Route = Route.Bubble
 
@@ -253,9 +291,8 @@ abstract class FloatingBubbleService : Service() {
 
     //endregion
 
-    //region Helper Method -------------------------------------------------------------------------
+
     @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
-    private fun isHigherThanAndroid8() = Build.VERSION.SDK_INT >= AndroidVersions.`8`
-    //endregion
+    private fun isAndroid8OrHigher() = Build.VERSION.SDK_INT >= AndroidVersions.`8`
 
 }

@@ -20,12 +20,7 @@ internal constructor(
     private var bottomBackground: FloatingBottomBackground? = null
 
     init {
-        ScreenInfo.getScreenSize(builder.context).also {
-            ScreenInfo.widthPx = it.width
-            ScreenInfo.heightPx = it.height
-        }
-        ScreenInfo.statusBarHeightPx = ScreenInfo.getStatusBarHeight(builder.context)
-        ScreenInfo.softNavBarHeightPx = ScreenInfo.getSoftNavigationBarSize(builder.context)
+        ScreenInfo.onOrientationChanged(builder.context)
 
         bubbleView = FloatingBubbleView(
             builder.addFloatingBubbleListener(CustomBubbleListener())
@@ -78,7 +73,7 @@ internal constructor(
         fun requestStop()
     }
 
-    // internal func ---------------------------------------------------------------------------------
+    //region public methods ------------------------------------------------------------------------
 
     internal fun showIcon() {
         bubbleView.show()
@@ -98,7 +93,9 @@ internal constructor(
         bottomBackground?.remove()
     }
 
-    // private func --------------------------------------------------------------------------------
+    //endregion
+
+    //region Private func --------------------------------------------------------------------------
 
     private inner class CustomBubbleListener : Listener {
 
@@ -108,7 +105,7 @@ internal constructor(
         override fun onMove(x: Float, y: Float) {
             when (builder.behavior) {
                 BubbleBehavior.DYNAMIC_CLOSE_BUBBLE -> {
-                    bubbleView.updateLocation(x, y)
+                    bubbleView.updateLocationUI(x, y)
                     val (bubbleX, bubbleY) = bubbleView.rawLocationOnScreen()
                     closeBubbleView?.animateCloseIconByBubble(bubbleX.toInt(), bubbleY.toInt())
                 }
@@ -130,7 +127,7 @@ internal constructor(
 
                     } else {
                         isBubbleAnimated = false
-                        bubbleView.updateLocation(x, y)
+                        bubbleView.updateLocationUI(x, y)
                     }
                 }
             }
@@ -180,7 +177,9 @@ internal constructor(
         ) == 0.0f
     }
 
-    // builder -------------------------------------------------------------------------------------
+    //endregion
+
+    //region Builder -------------------------------------------------------------------------------
 
     class Builder(internal val context: Context) {
 
@@ -419,5 +418,7 @@ internal constructor(
             return FloatingBubble(this)
         }
     }
+
+    //endregion
 
 }
