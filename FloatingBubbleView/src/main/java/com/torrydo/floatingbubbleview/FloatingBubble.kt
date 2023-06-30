@@ -103,6 +103,13 @@ internal constructor(
         private var isBubbleAnimated = false
 
         override fun onMove(x: Float, y: Float) {
+
+            val bubbleSizeCompat = if(builder.bubbleView != null){
+                Size(builder.bubbleView!!.width, builder.bubbleView!!.height)
+            }else{
+                builder.bubbleSizePx
+            }
+
             when (builder.behavior) {
                 BubbleBehavior.DYNAMIC_CLOSE_BUBBLE -> {
                     bubbleView.updateLocationUI(x, y)
@@ -113,8 +120,10 @@ internal constructor(
                     if (isFingerInsideClosableArea(x, y)) {
                         if (isBubbleAnimated.not()) {
 
-                            val xOffset = (closeBubbleView!!.width - builder.bubbleSizePx.width) / 2
-                            val yOffset = (closeBubbleView!!.height - builder.bubbleSizePx.height) / 2
+
+
+                            val xOffset = (closeBubbleView!!.width - bubbleSizeCompat.width) / 2
+                            val yOffset = (closeBubbleView!!.height - bubbleSizeCompat.height) / 2
 
                             val xUpdated = closeBubbleView!!.baseX.toFloat() + xOffset
                             val yUpdated = closeBubbleView!!.baseY.toFloat() + yOffset
@@ -186,7 +195,7 @@ internal constructor(
         private val DEFAULT_BUBBLE_SIZE_PX = 160
 
         // bubble
-        internal var iconView: View? = null
+        internal var bubbleView: View? = null
         internal var iconBitmap: Bitmap? = null
         internal var bubbleStyle: Int? = R.style.default_bubble_style
         internal var bubbleSizePx: Size = Size(DEFAULT_BUBBLE_SIZE_PX, DEFAULT_BUBBLE_SIZE_PX)
@@ -204,12 +213,16 @@ internal constructor(
         internal var isAnimateToEdgeEnabled = true
         internal var isBottomBackgroundEnabled = false
 
-        internal var closablePerimeterDp = 100
+        internal var distanceToCloseDp = 100
 
         internal var listener: Listener? = null
         internal var serviceInteractor: ServiceInteractor? = null
 
         internal var behavior: BubbleBehavior = BubbleBehavior.FIXED_CLOSE_BUBBLE
+
+        //region state
+        internal var isMovementEnabled = true
+        //endregion
 
 
         /**
@@ -226,7 +239,7 @@ internal constructor(
          * @param dp distance between bubble and close-bubble
          * */
         fun distanceToClose(dp: Int): Builder {
-            this.closablePerimeterDp = dp
+            this.distanceToCloseDp = dp
             return this
         }
 
@@ -254,9 +267,12 @@ internal constructor(
             return this
         }
 
-        // being developed, therefore this function not exposed to the outside package
-        internal fun bubble(view: View): Builder {
-            iconView = view
+        /**
+         * set view to bubble
+         */
+        fun bubble(view: View): Builder {
+            bubbleView = view
+//            bubbleSizePx = Size(view.measuredWidth, view.measuredHeight)
             return this
         }
 

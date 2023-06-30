@@ -47,7 +47,7 @@ class MyServiceKt : FloatingBubbleService() {
 
         noti_message = intent?.getStringExtra("noti_message")
 
-        size = _size ?: 0
+        size = _size ?: 60
 
         notify(myNotification(true))
 
@@ -123,10 +123,13 @@ class MyServiceKt : FloatingBubbleService() {
     override fun notificationId() = 69
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
+        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val v = inflater.inflate(R.layout.sample_bubble, null)
         return FloatingBubble.Builder(this)
 
             // set bubble icon attributes, currently only drawable and bitmap are supported
-            .bubble(R.drawable.ic_rounded_blue_diamond, size, size)
+//            .bubble(R.drawable.ic_rounded_blue_diamond, size, size)
+            .bubble(v)
 
             // set style for bubble, fade animation by default
             .bubbleStyle(null)

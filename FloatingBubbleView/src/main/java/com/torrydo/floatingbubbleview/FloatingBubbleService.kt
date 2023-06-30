@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.view.View
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.Discouraged
 import androidx.annotation.RequiresApi
@@ -121,7 +122,15 @@ abstract class FloatingBubbleService : Service() {
         isRunning = false
     }
 
-    //region Show/Hide methods ---------------------------------------------------------------------
+    //region Public methods ---------------------------------------------------------------------
+
+    fun enableBubbleMovement(enabled: Boolean){
+
+    }
+
+    fun updateBubble(view: View){
+
+    }
 
     /**
      * get current route

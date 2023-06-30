@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bubbleRoot"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:elevation="1dp"
-    >
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/bubbleView"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+    <LinearLayout
+        android:id="@+id/bubbleContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        android:src="@drawable/ic_rounded_blue_diamond"
-        />
+        <!-- default view        -->
+        <ImageView
+            android:id="@+id/bubbleImg"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
 
-</FrameLayout>
+            android:src="@drawable/ic_rounded_blue_diamond"
+
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

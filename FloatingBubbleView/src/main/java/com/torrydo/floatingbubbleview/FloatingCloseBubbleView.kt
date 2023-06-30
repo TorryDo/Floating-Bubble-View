@@ -1,5 +1,6 @@
 package com.torrydo.floatingbubbleview
 
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.CloseBubbleBinding
@@ -59,7 +60,7 @@ internal class FloatingCloseBubbleView(
         centerCloseBubbleX = halfScreenWidth
         centerCloseBubbleY = baseY + halfHeightPx
 
-        closablePerimeterPx = builder.closablePerimeterDp.toPx()
+        closablePerimeterPx = builder.distanceToCloseDp.toPx()
 
         setupLayoutParams()
         setupCloseBubbleProperties()
@@ -144,8 +145,20 @@ internal class FloatingCloseBubbleView(
             update()
         }
     }
-
     //endregion ------------------------------------------------------------------------------------
+
+    private fun stickToBubble(x: Int, y: Int) {
+
+        val bubbleSizeCompat = builder.bubbleSizeCompat()
+
+        val middleBubbleX = x + bubbleSizeCompat.width / 2
+        val middleBubbleY = y + bubbleSizeCompat.height / 2
+
+        windowParams.x = middleBubbleX - halfWidthPx
+        windowParams.y = middleBubbleY - halfHeightPx
+
+        update()
+    }
 
     private fun setupCloseBubbleProperties() {
         val icBitmap = builder.closeIconBitmap ?: R.drawable.ic_close_bubble.toBitmap(
@@ -166,17 +179,6 @@ internal class FloatingCloseBubbleView(
             this.x = baseX
             this.y = baseY
         }
-    }
-
-    private fun stickToBubble(x: Int, y: Int) {
-
-        val middleBubbleX = x + builder.bubbleSizePx.width / 2
-        val middleBubbleY = y + builder.bubbleSizePx.height / 2
-
-        windowParams.x = middleBubbleX - halfWidthPx
-        windowParams.y = middleBubbleY - halfHeightPx
-
-        update()
     }
 
 }

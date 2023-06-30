@@ -6,6 +6,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
+import android.widget.ImageView
 import com.torrydo.floatingbubbleview.databinding.BubbleBinding
 
 internal class FloatingBubbleView(
@@ -23,10 +24,6 @@ internal class FloatingBubbleView(
     private val newPoint = Point(0, 0)
 
     private var halfScreenWidth = ScreenInfo.widthPx / 2
-    private var halfScreenHeight = ScreenInfo.heightPx / 2
-
-    private var halfIconWidthPx: Int
-    private var halfIconHeightPx: Int
 
     private var orientation = -1
 
@@ -45,25 +42,26 @@ internal class FloatingBubbleView(
             }
         }
 
-        halfIconWidthPx = width / 2
-        halfIconHeightPx = height / 2
-
         setupLayoutParams()
         setupBubbleProperties()
         customTouch()
 
     }
 
-    private val isPortrait get() = orientation == Configuration.ORIENTATION_PORTRAIT
-
     private var isAnimatingToEdge = false
     fun animateIconToEdge(onFinished: (() -> Unit)? = null) {
         if (isAnimatingToEdge) return
 
-        isAnimatingToEdge = true
-        val iconX = binding.root.getXYPointOnScreen().x // 0..X
+        val bubbleWidthCompat = if (builder.bubbleView != null) {
+            builder.bubbleView!!.width
+        } else {
+            width
+        }
 
-        val isOnTheLeftSide = iconX + halfIconWidthPx < halfScreenWidth
+        isAnimatingToEdge = true
+        val iconX = binding.root.getXYPointOnScreen().x
+
+        val isOnTheLeftSide = iconX + bubbleWidthCompat / 2 < halfScreenWidth
         val startX: Int
         val endX: Int
         if (isOnTheLeftSide) {
@@ -71,8 +69,9 @@ internal class FloatingBubbleView(
             endX = 0
         } else {
             startX = iconX
-            endX = ScreenInfo.widthPx - width
+            endX = ScreenInfo.widthPx - bubbleWidthCompat
         }
+
         AnimHelper.startSpringX(
             startValue = startX.toFloat(),
             finalPosition = endX.toFloat(),
@@ -97,11 +96,25 @@ internal class FloatingBubbleView(
 
     private fun setupBubbleProperties() {
 
+        windowParams.apply {
+            x = builder.startPoint.x
+            y = builder.startPoint.y
+        }
+
+        if (builder.bubbleView != null) {
+
+            binding.bubbleContent.addView(builder.bubbleView)
+
+            return
+        }
+
         val iconBitmap = builder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
             builder.context
         )
 
-        binding.bubbleView.apply {
+
+
+        binding.bubbleContent.findViewById<ImageView>(R.id.bubbleImg).apply {
             setImageBitmap(iconBitmap)
             layoutParams.width = this@FloatingBubbleView.width
             layoutParams.height = this@FloatingBubbleView.height
@@ -109,10 +122,7 @@ internal class FloatingBubbleView(
             alpha = builder.opacity
         }
 
-        windowParams.apply {
-            x = builder.startPoint.x
-            y = builder.startPoint.y
-        }
+        binding.bubbleImg.visibility = View.VISIBLE
 
     }
 
@@ -132,9 +142,9 @@ internal class FloatingBubbleView(
         if (isAboveStatusBar) {
             newPoint.y = safeTopY
         } else if (isUnderSoftNavBar) {
-            if(ScreenInfo.isPortrait){
+            if (ScreenInfo.isPortrait) {
                 newPoint.y = safeBottomY
-            } else if(newPoint.y - ScreenInfo.softNavBarHeightPx > safeBottomY){
+            } else if (newPoint.y - ScreenInfo.softNavBarHeightPx > safeBottomY) {
                 newPoint.y = safeBottomY + (ScreenInfo.softNavBarHeightPx)
             }
         }
@@ -204,11 +214,6 @@ internal class FloatingBubbleView(
 
         val gestureDetector = GestureDetector(builder.context, object : SimpleOnGestureListener() {
 
-//            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-//                builder.listener?.onClick()
-//                return super.onSingleTapConfirmed(e)
-//            }
-
             override fun onSingleTapUp(e: MotionEvent): Boolean {
                 builder.listener?.onClick()
                 return super.onSingleTapUp(e)
@@ -216,7 +221,7 @@ internal class FloatingBubbleView(
 
         })
 
-        binding.bubbleView.apply {
+        binding.bubbleRoot.apply {
 
             afterMeasured { updateGestureExclusion(builder.context) }
 
