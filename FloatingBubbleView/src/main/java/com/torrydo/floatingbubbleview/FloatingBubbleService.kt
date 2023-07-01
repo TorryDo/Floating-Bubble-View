@@ -124,13 +124,6 @@ abstract class FloatingBubbleService : Service() {
 
     //region Public methods ---------------------------------------------------------------------
 
-    fun enableBubbleMovement(enabled: Boolean){
-
-    }
-
-    fun updateBubble(view: View){
-
-    }
 
     /**
      * get current route
