@@ -129,8 +129,10 @@ class MyServiceKt : FloatingBubbleService() {
 
             // set bubble icon attributes, currently only drawable and bitmap are supported
 //            .bubble(R.drawable.ic_rounded_blue_diamond, size, size)
-            .bubble(v)
-
+//            .bubble(v)
+            .compose {
+                BubbleCompose()
+            }
             // set style for bubble, fade animation by default
             .bubbleStyle(null)
 

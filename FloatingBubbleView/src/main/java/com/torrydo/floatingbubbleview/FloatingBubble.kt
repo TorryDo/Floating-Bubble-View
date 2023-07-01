@@ -7,6 +7,7 @@ import android.util.Size
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
+import androidx.compose.runtime.Composable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 
@@ -18,6 +19,8 @@ internal constructor(
     private var bubbleView: FloatingBubbleView
     private var closeBubbleView: FloatingCloseBubbleView? = null
     private var bottomBackground: FloatingBottomBackground? = null
+
+    private var isComposeInit = false
 
     init {
         ScreenInfo.onOrientationChanged(builder.context)
@@ -69,17 +72,39 @@ internal constructor(
 
     }
 
-    internal interface ServiceInteractor{
+    internal interface ServiceInteractor {
         fun requestStop()
     }
 
     //region public methods ------------------------------------------------------------------------
 
     internal fun showIcon() {
+
+        if(builder.composeLifecycleOwner != null){
+            if(isComposeInit.not()){
+                builder.composeLifecycleOwner?.onCreate()
+                isComposeInit = true
+            }
+
+            builder.composeLifecycleOwner?.apply {
+                onStart()
+                onResume()
+            }
+        }
+
         bubbleView.show()
     }
 
     internal fun removeIcon() {
+
+        if(builder.composeLifecycleOwner != null && isComposeInit){
+            builder.composeLifecycleOwner!!.apply {
+                onPause()
+                onStop()
+                onDestroy()
+            }
+        }
+
         bubbleView.remove()
     }
 
@@ -104,9 +129,9 @@ internal constructor(
 
         override fun onMove(x: Float, y: Float) {
 
-            val bubbleSizeCompat = if(builder.bubbleView != null){
+            val bubbleSizeCompat = if (builder.bubbleView != null) {
                 Size(builder.bubbleView!!.width, builder.bubbleView!!.height)
-            }else{
+            } else {
                 builder.bubbleSizePx
             }
 
@@ -116,11 +141,10 @@ internal constructor(
                     val (bubbleX, bubbleY) = bubbleView.rawLocationOnScreen()
                     closeBubbleView?.animateCloseIconByBubble(bubbleX.toInt(), bubbleY.toInt())
                 }
+
                 BubbleBehavior.FIXED_CLOSE_BUBBLE -> {
                     if (isFingerInsideClosableArea(x, y)) {
                         if (isBubbleAnimated.not()) {
-
-
 
                             val xOffset = (closeBubbleView!!.width - bubbleSizeCompat.width) / 2
                             val yOffset = (closeBubbleView!!.height - bubbleSizeCompat.height) / 2
@@ -151,7 +175,7 @@ internal constructor(
             isCloseBubbleVisible = false
             tryRemoveCloseBubbleAndBackground()
 
-            val shouldDestroy = when(builder.behavior){
+            val shouldDestroy = when (builder.behavior) {
                 BubbleBehavior.FIXED_CLOSE_BUBBLE -> isFingerInsideClosableArea(x, y)
                 BubbleBehavior.DYNAMIC_CLOSE_BUBBLE -> {
                     val (bubbleX, bubbleY) = bubbleView.rawLocationOnScreen()
@@ -220,9 +244,9 @@ internal constructor(
 
         internal var behavior: BubbleBehavior = BubbleBehavior.FIXED_CLOSE_BUBBLE
 
-        //region state
-        internal var isMovementEnabled = true
-        //endregion
+        // composable
+        internal var composeView: (@Composable ()->Unit)? = null
+        internal var composeLifecycleOwner: ComposeLifecycleOwner? = null
 
 
         /**
@@ -264,6 +288,18 @@ internal constructor(
          * */
         fun enableCloseBubble(enabled: Boolean): Builder {
             isCloseBubbleEnabled = enabled
+            return this
+        }
+
+        fun compose(content: @Composable () -> Unit): Builder {
+//            bubbleView = FloatingComposeView(context).apply {
+//                setContent { content() }
+//            }
+            composeLifecycleOwner = ComposeLifecycleOwner()
+//            composeLifecycleOwner?.attachToDecorView(bubbleView!!)
+
+            composeView = content
+
             return this
         }
 
@@ -387,7 +423,7 @@ internal constructor(
             return this
         }
 
-        internal fun addServiceInteractor(interactor: ServiceInteractor): Builder{
+        internal fun addServiceInteractor(interactor: ServiceInteractor): Builder {
             this.serviceInteractor = interactor
             return this
         }

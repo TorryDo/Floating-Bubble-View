@@ -7,6 +7,7 @@ import android.graphics.PointF
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.widget.ImageView
+import androidx.compose.ui.platform.ComposeView
 import com.torrydo.floatingbubbleview.databinding.BubbleBinding
 
 internal class FloatingBubbleView(
@@ -103,7 +104,21 @@ internal class FloatingBubbleView(
 
         if (builder.bubbleView != null) {
 
-            binding.bubbleContent.addView(builder.bubbleView)
+            binding.bubbleRoot.addView(builder.bubbleView)
+
+            return
+        }
+
+        if (builder.composeLifecycleOwner != null) {
+
+            builder.bubbleView = binding.bubbleRoot.findViewById<ComposeView>(R.id.view_compose).apply {
+                setContent {
+                    builder.composeView!!()
+                }
+                visibility = View.VISIBLE
+            }
+
+            builder.composeLifecycleOwner?.attachToDecorView(binding.bubbleRoot)
 
             return
         }
@@ -114,7 +129,7 @@ internal class FloatingBubbleView(
 
 
 
-        binding.bubbleContent.findViewById<ImageView>(R.id.bubbleImg).apply {
+        binding.bubbleRoot.findViewById<ImageView>(R.id.bubbleImg).apply {
             setImageBitmap(iconBitmap)
             layoutParams.width = this@FloatingBubbleView.width
             layoutParams.height = this@FloatingBubbleView.height
