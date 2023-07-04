@@ -1,6 +1,5 @@
 package com.torrydo.floatingbubbleview
 
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.CloseBubbleBinding
@@ -32,13 +31,8 @@ internal class FloatingCloseBubbleView(
 
     init {
         builder.closeBubbleSizePx.also {
-            if (it.notZero()) {
-                width = it.width
-                height = it.height
-            } else {
-                width = builder.bubbleSizePx.width
-                height = builder.bubbleSizePx.height
-            }
+            width = it.width
+            height = it.height
         }
 
         LIMIT_FLY_HEIGHT = ScreenInfo.heightPx / 10
@@ -85,8 +79,10 @@ internal class FloatingCloseBubbleView(
      * */
     fun distanceRatioFromBubbleToClosableArea(x: Int, y: Int): Float {
 
-        val centerBubbleX = x + builder.bubbleSizePx.width / 2
-        val centerBubbleY = y + builder.bubbleSizePx.height / 2
+        val bubbleSize = builder.bubbleSize()
+
+        val centerBubbleX = x + bubbleSize.width / 2
+        val centerBubbleY = y + bubbleSize.height / 2
 
         val distanceToBubble = MathHelper.distance(
             x1 = centerCloseBubbleX.toDouble(),
@@ -149,7 +145,7 @@ internal class FloatingCloseBubbleView(
 
     private fun stickToBubble(x: Int, y: Int) {
 
-        val bubbleSizeCompat = builder.bubbleSizeCompat()
+        val bubbleSizeCompat = builder.bubbleSize()
 
         val middleBubbleX = x + bubbleSizeCompat.width / 2
         val middleBubbleY = y + bubbleSizeCompat.height / 2
@@ -171,7 +167,7 @@ internal class FloatingCloseBubbleView(
             layoutParams.width = this@FloatingCloseBubbleView.width
             layoutParams.height = this@FloatingCloseBubbleView.height
 
-            alpha = builder.opacity
+//            alpha = builder.opacity
 
         }
 

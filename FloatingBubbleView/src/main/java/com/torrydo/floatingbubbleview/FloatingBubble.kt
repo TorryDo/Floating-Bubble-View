@@ -129,11 +129,7 @@ internal constructor(
 
         override fun onMove(x: Float, y: Float) {
 
-            val bubbleSizeCompat = if (builder.bubbleView != null) {
-                Size(builder.bubbleView!!.width, builder.bubbleView!!.height)
-            } else {
-                builder.bubbleSizePx
-            }
+            val bubbleSizeCompat = Size(builder.bubbleView!!.width, builder.bubbleView!!.height)
 
             when (builder.behavior) {
                 BubbleBehavior.DYNAMIC_CLOSE_BUBBLE -> {
@@ -220,9 +216,7 @@ internal constructor(
 
         // bubble
         internal var bubbleView: View? = null
-        internal var iconBitmap: Bitmap? = null
         internal var bubbleStyle: Int? = R.style.default_bubble_style
-        internal var bubbleSizePx: Size = Size(DEFAULT_BUBBLE_SIZE_PX, DEFAULT_BUBBLE_SIZE_PX)
 
         // close-bubble
         internal var closeIconView: View? = null
@@ -232,7 +226,6 @@ internal constructor(
 
         // config
         internal var startPoint = Point(0, 0)
-        internal var opacity = 1f
         internal var isCloseBubbleEnabled = true
         internal var isAnimateToEdgeEnabled = true
         internal var isBottomBackgroundEnabled = false
@@ -312,37 +305,6 @@ internal constructor(
             return this
         }
 
-        /**
-         * set drawable to bubble with default size
-         * */
-        fun bubble(@DrawableRes drawable: Int): Builder {
-            iconBitmap = ContextCompat.getDrawable(context, drawable)!!.toBitmap()
-            return this
-        }
-
-        /**
-         * set drawable to bubble width given width and height in dp
-         * */
-        fun bubble(@DrawableRes drawable: Int, widthDp: Int, heightDp: Int): Builder {
-            bubbleSizePx = Size(widthDp.toPx(), heightDp.toPx())
-            return bubble(drawable)
-        }
-
-        /**
-         * set bitmap to bubble width default size
-         * */
-        fun bubble(bitmap: Bitmap): Builder {
-            iconBitmap = bitmap
-            return this
-        }
-
-        /**
-         * set bitmap to bubble width given width and height in dp
-         * */
-        fun bubble(bitmap: Bitmap, widthDp: Int, heightDp: Int): Builder {
-            bubbleSizePx = Size(widthDp.toPx(), heightDp.toPx())
-            return bubble(bitmap)
-        }
 
         /**
          * set open and exit animation to bubble
@@ -453,16 +415,6 @@ internal constructor(
         fun startLocationPx(x: Int, y: Int): Builder {
             startPoint.x = x
             startPoint.y = y
-            return this
-        }
-
-        /**
-         * - 0.0f: invisible
-         * - 0.0f < x < 1.0f: view with opacity
-         * - 1.0f: fully visible
-         * */
-        fun opacity(opacity: Float): Builder {
-            this.opacity = opacity
             return this
         }
 

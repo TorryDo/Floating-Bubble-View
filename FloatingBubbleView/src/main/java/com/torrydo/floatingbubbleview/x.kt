@@ -9,12 +9,8 @@ import android.util.Size
  *
  * otherwise the bubble size variable
  * */
-fun FloatingBubble.Builder.bubbleSizeCompat(): Size {
-    return if (bubbleView != null) {
-        Size(bubbleView!!.width, bubbleView!!.height)
-    } else {
-        bubbleSizePx
-    }
+fun FloatingBubble.Builder.bubbleSize(): Size {
+    return Size(bubbleView!!.width, bubbleView!!.height)
 }
 
 //fun FloatingBubble.Builder.bubbleWidthCompat(): Int {

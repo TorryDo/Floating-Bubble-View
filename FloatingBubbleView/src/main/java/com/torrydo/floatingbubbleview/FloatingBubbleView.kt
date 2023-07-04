@@ -36,12 +36,12 @@ internal class FloatingBubbleView(
             Configuration.ORIENTATION_LANDSCAPE
         }
 
-        builder.bubbleSizePx.also {
-            if (it.notZero()) {
-                width = it.width
-                height = it.height
-            }
-        }
+//        builder.bubbleSizePx.also {
+//            if (it.notZero()) {
+//                width = it.width
+//                height = it.height
+//            }
+//        }
 
         setupLayoutParams()
         setupBubbleProperties()
@@ -123,21 +123,21 @@ internal class FloatingBubbleView(
             return
         }
 
-        val iconBitmap = builder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
-            builder.context
-        )
+//        val iconBitmap = builder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
+//            builder.context
+//        )
+//
+//
+//
+//        binding.bubbleRoot.findViewById<ImageView>(R.id.bubbleImg).apply {
+//            setImageBitmap(iconBitmap)
+//            layoutParams.width = this@FloatingBubbleView.width
+//            layoutParams.height = this@FloatingBubbleView.height
+//
+//            alpha = builder.opacity
+//        }
 
-
-
-        binding.bubbleRoot.findViewById<ImageView>(R.id.bubbleImg).apply {
-            setImageBitmap(iconBitmap)
-            layoutParams.width = this@FloatingBubbleView.width
-            layoutParams.height = this@FloatingBubbleView.height
-
-            alpha = builder.opacity
-        }
-
-        binding.bubbleImg.visibility = View.VISIBLE
+//        binding.bubbleImg.visibility = View.VISIBLE
 
     }
 
