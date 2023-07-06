@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Point
 import android.graphics.PointF
+import android.util.Log
 import android.view.*
-import android.view.GestureDetector.SimpleOnGestureListener
-import android.widget.ImageView
 import androidx.compose.ui.platform.ComposeView
 import com.torrydo.floatingbubbleview.databinding.BubbleBinding
+import kotlin.math.abs
 
 internal class FloatingBubbleView(
     private val builder: FloatingBubble.Builder,
@@ -104,12 +104,13 @@ internal class FloatingBubbleView(
 
         if (builder.composeLifecycleOwner != null) {
 
-            builder.bubbleView = binding.bubbleRoot.findViewById<ComposeView>(R.id.view_compose).apply {
-                setContent {
-                    builder.composeView!!()
+            builder.bubbleView =
+                binding.bubbleRoot.findViewById<ComposeView>(R.id.view_compose).apply {
+                    setContent {
+                        builder.composeView!!()
+                    }
+                    visibility = View.VISIBLE
                 }
-                visibility = View.VISIBLE
-            }
 
             builder.composeLifecycleOwner?.attachToDecorView(binding.bubbleRoot)
 
@@ -182,52 +183,63 @@ internal class FloatingBubbleView(
         )
     }
 
+    private val MAX_X_MOVE = 1f
+    private val MAX_Y_MOVE = 1f
+    private var ignoreClick: Boolean = false
+
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
-        fun onActionDown(motionEvent: MotionEvent) {
-            prevPoint.x = windowParams.x
-            prevPoint.y = windowParams.y
 
-            rawPointOnDown.x = motionEvent.rawX
-            rawPointOnDown.y = motionEvent.rawY
+        fun handleMovement(event: MotionEvent) {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    prevPoint.x = windowParams.x
+                    prevPoint.y = windowParams.y
 
-            builder.listener?.onDown(motionEvent.rawX, motionEvent.rawY)
+                    rawPointOnDown.x = event.rawX
+                    rawPointOnDown.y = event.rawY
+
+                    builder.listener?.onDown(event.rawX, event.rawY)
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    builder.listener?.onMove(event.rawX, event.rawY)
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    builder.listener?.onUp(event.rawX, event.rawY)
+                }
+            }
         }
 
-        fun onActionMove(motionEvent: MotionEvent) {
-            builder.listener?.onMove(motionEvent.rawX, motionEvent.rawY)
-        }
+        fun ignoreChildClickEvent(event: MotionEvent): Boolean{
+            when(event.action){
+                MotionEvent.ACTION_DOWN -> {
+                    ignoreClick = false
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    if (abs(event.x) > MAX_X_MOVE || abs(event.y) > MAX_Y_MOVE) {
+                        ignoreClick = true
+                    }
+                }
+            }
 
-        fun onActionUp(motionEvent: MotionEvent) {
-            builder.listener?.onUp(motionEvent.rawX, motionEvent.rawY)
+            return ignoreClick
         }
 
         // listen actions --------------------------------------------------------------------------
 
-        val gestureDetector = GestureDetector(builder.context, object : SimpleOnGestureListener() {
-
-            override fun onSingleTapUp(e: MotionEvent): Boolean {
-                builder.listener?.onClick()
-                return super.onSingleTapUp(e)
-            }
-
-        })
 
         binding.bubbleRoot.apply {
 
             afterMeasured { updateGestureExclusion(builder.context) }
 
-            setOnTouchListener { _, motionEvent ->
+            doOnTouchEvent = {
+                handleMovement(it)
+            }
 
-                gestureDetector.onTouchEvent(motionEvent)
-
-                when (motionEvent.action) {
-                    MotionEvent.ACTION_DOWN -> onActionDown(motionEvent)
-                    MotionEvent.ACTION_MOVE -> onActionMove(motionEvent)
-                    MotionEvent.ACTION_UP -> onActionUp(motionEvent)
-                }
-
-                return@setOnTouchListener true
+            ignoreChildEvent = { motionEvent ->
+                ignoreChildClickEvent(motionEvent)
             }
         }
     }

@@ -128,10 +128,6 @@ public class MyService extends FloatingBubbleService {
 
                 // add listener for the bubble
                 .addFloatingBubbleListener(new FloatingBubble.Listener() {
-                    @Override
-                    public void onClick() {
-                        action.navigateToExpandableView(); // must override `setupExpandableView`, otherwise throw an exception
-                    }
 
                     @Override
                     public void onMove(float x, float y) {

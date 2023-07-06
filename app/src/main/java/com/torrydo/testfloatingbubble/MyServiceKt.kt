@@ -129,14 +129,19 @@ class MyServiceKt : FloatingBubbleService() {
 
         val imgView = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, size, size)
 
+        
+        imgView.setOnClickListener {
+            action.navigateToExpandableView()
+        }
+
         return FloatingBubble.Builder(this)
 
             // set bubble icon attributes, currently only drawable and bitmap are supported
-            .bubble(imgView)
+//            .bubble(imgView)
 //            .bubble(v)
-//            .compose {
-//                BubbleCompose()
-//            }
+            .compose {
+                BubbleCompose()
+            }
             // set style for bubble, fade animation by default
             .bubbleStyle(null)
 
@@ -169,9 +174,6 @@ class MyServiceKt : FloatingBubbleService() {
 
             // add listener for the bubble
             .addFloatingBubbleListener(object : FloatingBubble.Listener {
-                override fun onClick() {
-//                    action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
-                }
 
                 override fun onMove(
                     x: Float,

@@ -1,16 +1,22 @@
 package com.torrydo.floatingbubbleview.viewx
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.torrydo.floatingbubbleview.toPx
+import kotlin.math.abs
+
 
 object ViewHelper {
 
+    //region load bubble
     @JvmStatic
     fun fromBitmap(context: Context, bm: Bitmap): View {
         return ImageView(context).apply {
@@ -46,5 +52,6 @@ object ViewHelper {
         }
 
     }
+    //endregion
 
 }

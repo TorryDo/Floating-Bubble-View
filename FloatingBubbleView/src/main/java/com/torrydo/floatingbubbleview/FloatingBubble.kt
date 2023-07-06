@@ -68,8 +68,6 @@ internal constructor(
          * */
         fun onMove(x: Float, y: Float) {}
 
-        fun onClick() {}
-
     }
 
     internal interface ServiceInteractor {
@@ -360,11 +358,6 @@ internal constructor(
 
             val tempListener = this.listener
             this.listener = object : Listener {
-
-                override fun onClick() {
-                    tempListener?.onClick()
-                    listener.onClick()
-                }
 
                 override fun onDown(x: Float, y: Float) {
                     tempListener?.onDown(x, y)
