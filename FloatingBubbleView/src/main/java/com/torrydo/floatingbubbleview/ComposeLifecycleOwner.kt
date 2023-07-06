@@ -12,7 +12,7 @@ import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 
 
-class ComposeLifecycleOwner : LifecycleOwner, SavedStateRegistryOwner {
+internal class ComposeLifecycleOwner : LifecycleOwner, SavedStateRegistryOwner {
 
     fun onCreate() {
         savedStateRegistryController.performRestore(null)

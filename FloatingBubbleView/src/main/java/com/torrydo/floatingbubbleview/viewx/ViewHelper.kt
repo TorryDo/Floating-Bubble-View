@@ -19,21 +19,27 @@ object ViewHelper {
     }
 
     @JvmStatic
+    fun fromBitmap(context: Context, bm: Bitmap, widthDp: Int, heightDp: Int): View {
+        val view = fromBitmap(context, bm)
+        return view.apply {
+            layoutParams = ViewGroup.LayoutParams(widthDp.toPx(), heightDp.toPx())
+        }
+    }
+
+    @JvmStatic
     fun fromDrawable(context: Context, @DrawableRes drawable: Int): View {
         return ImageView(context).apply {
             setImageDrawable(ContextCompat.getDrawable(context, drawable))
         }
     }
 
-    @JvmOverloads
     @JvmStatic
     fun fromDrawable(
         context: Context,
         @DrawableRes drawable: Int,
-        widthDp: Int = 160,
-        heightDp: Int = 160,
+        widthDp: Int,
+        heightDp: Int,
     ): View {
-
         val view = fromDrawable(context, drawable)
         return view.apply {
             layoutParams = ViewGroup.LayoutParams(widthDp.toPx(), heightDp.toPx())

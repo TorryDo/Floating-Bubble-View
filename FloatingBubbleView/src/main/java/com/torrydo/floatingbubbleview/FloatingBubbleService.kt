@@ -8,14 +8,13 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
-import android.view.View
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.Discouraged
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import androidx.core.app.NotificationManagerCompat
+import com.torrydo.floatingbubbleview.exceptions.PermissionDeniedException
 
 
 abstract class FloatingBubbleService : Service() {
@@ -93,6 +92,7 @@ abstract class FloatingBubbleService : Service() {
                             .build()
                     }
                 }
+
                 Configuration.ORIENTATION_LANDSCAPE -> {
                     ScreenInfo.onOrientationChanged(this)
                     if (currentRoute == Route.Bubble) {
@@ -106,6 +106,7 @@ abstract class FloatingBubbleService : Service() {
                             .build()
                     }
                 }
+
                 else -> {
 //                    Log.d("<>", "change undefine: ");
                 }

@@ -84,7 +84,7 @@ internal class FloatingCloseBubbleView(
         val centerBubbleX = x + bubbleSize.width / 2
         val centerBubbleY = y + bubbleSize.height / 2
 
-        val distanceToBubble = MathHelper.distance(
+        val distanceToBubble = XMath.distance(
             x1 = centerCloseBubbleX.toDouble(),
             y1 = centerCloseBubbleY.toDouble(),
             x2 = centerBubbleX.toDouble(),
@@ -99,7 +99,7 @@ internal class FloatingCloseBubbleView(
     }
 
     fun distanceRatioFromLocationToClosableArea(x: Float, y: Float): Float {
-        val distanceToLocation = MathHelper.distance(
+        val distanceToLocation = XMath.distance(
             x1 = centerCloseBubbleX.toDouble(),
             y1 = centerCloseBubbleY.toDouble(),
             x2 = x.toDouble(),
@@ -166,9 +166,6 @@ internal class FloatingCloseBubbleView(
 
             layoutParams.width = this@FloatingCloseBubbleView.width
             layoutParams.height = this@FloatingCloseBubbleView.height
-
-//            alpha = builder.opacity
-
         }
 
         windowParams.apply {
