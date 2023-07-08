@@ -29,7 +29,7 @@ jobs:
         run: chmod +x ./gradlew
 
       # Decode the secring file
-      - name: Decode Keystore File
+      - name: Decode Secring File
         id: decode_secring
         uses: timheuer/base64-to-file@v1.2
         with:
@@ -43,10 +43,9 @@ jobs:
 
       # Build bundle and publish to Maven Central
       - name: Build & publish to Maven Central
-        run: ./gradlew
+        run: ./gradlew publish --no-daemon --no-parallel
           -PmavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}
           -PmavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          -PsigningKeyId=${{ secrets.SIGNING_KEY_ID }}
-          -PsigningPassword=${{ secrets.SIGNING_PASSWORD }}
-          -PsigningSecretKeyRingFile="../${{ steps.decode_secring.outputs.filePath }}"
-          publishBundle --max-workers 1
+          -Psigning.keyId=${{ secrets.SIGNING_KEY_ID }}
+          -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
+          -Psigning.secretKeyRingFile="../${{ steps.decode_secring.outputs.filePath }}"
