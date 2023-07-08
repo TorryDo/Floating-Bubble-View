@@ -8,7 +8,7 @@ An Android library that adds floating bubbles to your home screen 🎨, supports
 
 | 🍀 Bubble 🎨 |  🔥 Custom 💘   | 
 | :-: | :-: |
-| <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/bubble.gif" height="600"> | <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/custom_view.gif" height="600"> |
+| <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/bubble.gif" height="600" width="272"> | <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/custom_view.gif" height="600" width="276"> |
 
 
 </div>
