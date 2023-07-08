@@ -1,10 +1,12 @@
 package com.torrydo.floatingbubbleview
 
 import android.content.Context
+import android.graphics.Point
 import android.graphics.Rect
 import android.os.Build
 import android.provider.Settings
 import android.view.View
+import android.view.ViewTreeObserver
 
 
 // exclude view gesture on home screen -------------------------------------------------------------
@@ -39,4 +41,25 @@ internal fun Context.isDrawOverlaysPermissionGranted(): Boolean {
     }
 
     return Settings.canDrawOverlays(this)
+}
+
+inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            if (measuredWidth > 0 && measuredHeight > 0) {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                afterMeasuredWork()
+            }
+        }
+    })
+}
+
+/**
+ * @return Point( 0 .. x, 0 .. y )
+ * */
+internal fun View.getXYPointOnScreen(): Point {
+    val arr = IntArray(2)
+    this.getLocationOnScreen(arr)
+
+    return Point(arr[0], arr[1])
 }

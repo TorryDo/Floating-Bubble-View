@@ -3,7 +3,6 @@ package com.torrydo.testfloatingbubble
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.torrydo.floatingbubbleview.*
+import com.torrydo.floatingbubbleview.viewx.ViewHelper
 
 
 class MyServiceKt : FloatingBubbleService() {
@@ -47,7 +47,7 @@ class MyServiceKt : FloatingBubbleService() {
 
         noti_message = intent?.getStringExtra("noti_message")
 
-        size = _size ?: 0
+        size = _size ?: 60
 
         notify(myNotification(true))
 
@@ -123,11 +123,24 @@ class MyServiceKt : FloatingBubbleService() {
     override fun notificationId() = 69
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
+        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val v = inflater.inflate(R.layout.sample_bubble, null)
+
+        val imgView = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, size, size)
+
+        
+        imgView.setOnClickListener {
+            action.navigateToExpandableView()
+        }
+
         return FloatingBubble.Builder(this)
 
             // set bubble icon attributes, currently only drawable and bitmap are supported
-            .bubble(R.drawable.ic_rounded_blue_diamond, size, size)
-
+//            .bubble(imgView)
+//            .bubble(v)
+            .bubble {
+                BubbleCompose()
+            }
             // set style for bubble, fade animation by default
             .bubbleStyle(null)
 
@@ -160,9 +173,6 @@ class MyServiceKt : FloatingBubbleService() {
 
             // add listener for the bubble
             .addFloatingBubbleListener(object : FloatingBubble.Listener {
-                override fun onClick() {
-                    action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
-                }
 
                 override fun onMove(
                     x: Float,
@@ -174,8 +184,6 @@ class MyServiceKt : FloatingBubbleService() {
 
                 override fun onDown(x: Float, y: Float) {} // ..., when finger tap the bubble
             })
-            // set bubble's opacity
-            .opacity(1f)
 
     }
 

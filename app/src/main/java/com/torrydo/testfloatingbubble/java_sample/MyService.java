@@ -16,6 +16,7 @@ import com.torrydo.floatingbubbleview.ExpandableView;
 import com.torrydo.floatingbubbleview.FloatingBubble;
 import com.torrydo.floatingbubbleview.FloatingBubbleService;
 import com.torrydo.floatingbubbleview.Route;
+import com.torrydo.floatingbubbleview.viewx.ViewHelper;
 import com.torrydo.testfloatingbubble.R;
 
 import kotlin.NotImplementedError;
@@ -94,7 +95,7 @@ public class MyService extends FloatingBubbleService {
 
         return new FloatingBubble.Builder(this)
                 // set bubble icon attributes, currently only drawable and bitmap are supported
-                .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
+                .bubble(ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60))
 
                 // set style for bubble, fade animation by default
                 .bubbleStyle(null)
@@ -127,10 +128,6 @@ public class MyService extends FloatingBubbleService {
 
                 // add listener for the bubble
                 .addFloatingBubbleListener(new FloatingBubble.Listener() {
-                    @Override
-                    public void onClick() {
-                        action.navigateToExpandableView(); // must override `setupExpandableView`, otherwise throw an exception
-                    }
 
                     @Override
                     public void onMove(float x, float y) {
@@ -143,10 +140,10 @@ public class MyService extends FloatingBubbleService {
                     @Override
                     public void onDown(float x, float y) {
                     } // ..., when finger tap the bubble
-                })
+                });
 
-                // set bubble's opacity
-                .opacity(1f);
+//                // set bubble's opacity
+//                .opacity(1f);
     }
 
     @Nullable

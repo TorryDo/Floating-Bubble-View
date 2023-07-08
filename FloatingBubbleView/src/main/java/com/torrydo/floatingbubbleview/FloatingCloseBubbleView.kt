@@ -31,13 +31,8 @@ internal class FloatingCloseBubbleView(
 
     init {
         builder.closeBubbleSizePx.also {
-            if (it.notZero()) {
-                width = it.width
-                height = it.height
-            } else {
-                width = builder.bubbleSizePx.width
-                height = builder.bubbleSizePx.height
-            }
+            width = it.width
+            height = it.height
         }
 
         LIMIT_FLY_HEIGHT = ScreenInfo.heightPx / 10
@@ -59,7 +54,7 @@ internal class FloatingCloseBubbleView(
         centerCloseBubbleX = halfScreenWidth
         centerCloseBubbleY = baseY + halfHeightPx
 
-        closablePerimeterPx = builder.closablePerimeterDp.toPx()
+        closablePerimeterPx = builder.distanceToCloseDp.toPx()
 
         setupLayoutParams()
         setupCloseBubbleProperties()
@@ -84,10 +79,12 @@ internal class FloatingCloseBubbleView(
      * */
     fun distanceRatioFromBubbleToClosableArea(x: Int, y: Int): Float {
 
-        val centerBubbleX = x + builder.bubbleSizePx.width / 2
-        val centerBubbleY = y + builder.bubbleSizePx.height / 2
+        val bubbleSize = builder.bubbleSize()
 
-        val distanceToBubble = MathHelper.distance(
+        val centerBubbleX = x + bubbleSize.width / 2
+        val centerBubbleY = y + bubbleSize.height / 2
+
+        val distanceToBubble = XMath.distance(
             x1 = centerCloseBubbleX.toDouble(),
             y1 = centerCloseBubbleY.toDouble(),
             x2 = centerBubbleX.toDouble(),
@@ -102,7 +99,7 @@ internal class FloatingCloseBubbleView(
     }
 
     fun distanceRatioFromLocationToClosableArea(x: Float, y: Float): Float {
-        val distanceToLocation = MathHelper.distance(
+        val distanceToLocation = XMath.distance(
             x1 = centerCloseBubbleX.toDouble(),
             y1 = centerCloseBubbleY.toDouble(),
             x2 = x.toDouble(),
@@ -144,8 +141,20 @@ internal class FloatingCloseBubbleView(
             update()
         }
     }
-
     //endregion ------------------------------------------------------------------------------------
+
+    private fun stickToBubble(x: Int, y: Int) {
+
+        val bubbleSizeCompat = builder.bubbleSize()
+
+        val middleBubbleX = x + bubbleSizeCompat.width / 2
+        val middleBubbleY = y + bubbleSizeCompat.height / 2
+
+        windowParams.x = middleBubbleX - halfWidthPx
+        windowParams.y = middleBubbleY - halfHeightPx
+
+        update()
+    }
 
     private fun setupCloseBubbleProperties() {
         val icBitmap = builder.closeIconBitmap ?: R.drawable.ic_close_bubble.toBitmap(
@@ -157,26 +166,12 @@ internal class FloatingCloseBubbleView(
 
             layoutParams.width = this@FloatingCloseBubbleView.width
             layoutParams.height = this@FloatingCloseBubbleView.height
-
-            alpha = builder.opacity
-
         }
 
         windowParams.apply {
             this.x = baseX
             this.y = baseY
         }
-    }
-
-    private fun stickToBubble(x: Int, y: Int) {
-
-        val middleBubbleX = x + builder.bubbleSizePx.width / 2
-        val middleBubbleY = y + builder.bubbleSizePx.height / 2
-
-        windowParams.x = middleBubbleX - halfWidthPx
-        windowParams.y = middleBubbleY - halfHeightPx
-
-        update()
     }
 
 }

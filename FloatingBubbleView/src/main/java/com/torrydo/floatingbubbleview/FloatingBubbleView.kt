@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Point
 import android.graphics.PointF
+import android.util.Log
 import android.view.*
-import android.view.GestureDetector.SimpleOnGestureListener
+import androidx.compose.ui.platform.ComposeView
 import com.torrydo.floatingbubbleview.databinding.BubbleBinding
+import kotlin.math.abs
 
 internal class FloatingBubbleView(
     private val builder: FloatingBubble.Builder,
@@ -23,10 +25,6 @@ internal class FloatingBubbleView(
     private val newPoint = Point(0, 0)
 
     private var halfScreenWidth = ScreenInfo.widthPx / 2
-    private var halfScreenHeight = ScreenInfo.heightPx / 2
-
-    private var halfIconWidthPx: Int
-    private var halfIconHeightPx: Int
 
     private var orientation = -1
 
@@ -38,32 +36,26 @@ internal class FloatingBubbleView(
             Configuration.ORIENTATION_LANDSCAPE
         }
 
-        builder.bubbleSizePx.also {
-            if (it.notZero()) {
-                width = it.width
-                height = it.height
-            }
-        }
-
-        halfIconWidthPx = width / 2
-        halfIconHeightPx = height / 2
-
         setupLayoutParams()
         setupBubbleProperties()
         customTouch()
 
     }
 
-    private val isPortrait get() = orientation == Configuration.ORIENTATION_PORTRAIT
-
     private var isAnimatingToEdge = false
     fun animateIconToEdge(onFinished: (() -> Unit)? = null) {
         if (isAnimatingToEdge) return
 
-        isAnimatingToEdge = true
-        val iconX = binding.root.getXYPointOnScreen().x // 0..X
+        val bubbleWidthCompat = if (builder.bubbleView != null) {
+            builder.bubbleView!!.width
+        } else {
+            width
+        }
 
-        val isOnTheLeftSide = iconX + halfIconWidthPx < halfScreenWidth
+        isAnimatingToEdge = true
+        val iconX = binding.root.getXYPointOnScreen().x
+
+        val isOnTheLeftSide = iconX + bubbleWidthCompat / 2 < halfScreenWidth
         val startX: Int
         val endX: Int
         if (isOnTheLeftSide) {
@@ -71,8 +63,9 @@ internal class FloatingBubbleView(
             endX = 0
         } else {
             startX = iconX
-            endX = ScreenInfo.widthPx - width
+            endX = ScreenInfo.widthPx - bubbleWidthCompat
         }
+
         AnimHelper.startSpringX(
             startValue = startX.toFloat(),
             finalPosition = endX.toFloat(),
@@ -97,21 +90,31 @@ internal class FloatingBubbleView(
 
     private fun setupBubbleProperties() {
 
-        val iconBitmap = builder.iconBitmap ?: R.drawable.ic_rounded_blue_diamond.toBitmap(
-            builder.context
-        )
-
-        binding.bubbleView.apply {
-            setImageBitmap(iconBitmap)
-            layoutParams.width = this@FloatingBubbleView.width
-            layoutParams.height = this@FloatingBubbleView.height
-
-            alpha = builder.opacity
-        }
-
         windowParams.apply {
             x = builder.startPoint.x
             y = builder.startPoint.y
+        }
+
+        if (builder.bubbleView != null) {
+
+            binding.bubbleRoot.addView(builder.bubbleView)
+
+            return
+        }
+
+        if (builder.composeLifecycleOwner != null) {
+
+            builder.bubbleView =
+                binding.bubbleRoot.findViewById<ComposeView>(R.id.view_compose).apply {
+                    setContent {
+                        builder.composeView!!()
+                    }
+                    visibility = View.VISIBLE
+                }
+
+            builder.composeLifecycleOwner?.attachToDecorView(binding.bubbleRoot)
+
+            return
         }
 
     }
@@ -132,9 +135,9 @@ internal class FloatingBubbleView(
         if (isAboveStatusBar) {
             newPoint.y = safeTopY
         } else if (isUnderSoftNavBar) {
-            if(ScreenInfo.isPortrait){
+            if (ScreenInfo.isPortrait) {
                 newPoint.y = safeBottomY
-            } else if(newPoint.y - ScreenInfo.softNavBarHeightPx > safeBottomY){
+            } else if (newPoint.y - ScreenInfo.softNavBarHeightPx > safeBottomY) {
                 newPoint.y = safeBottomY + (ScreenInfo.softNavBarHeightPx)
             }
         }
@@ -180,57 +183,63 @@ internal class FloatingBubbleView(
         )
     }
 
+    private val MAX_X_MOVE = 1f
+    private val MAX_Y_MOVE = 1f
+    private var ignoreClick: Boolean = false
+
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
-        fun onActionDown(motionEvent: MotionEvent) {
-            prevPoint.x = windowParams.x
-            prevPoint.y = windowParams.y
 
-            rawPointOnDown.x = motionEvent.rawX
-            rawPointOnDown.y = motionEvent.rawY
+        fun handleMovement(event: MotionEvent) {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    prevPoint.x = windowParams.x
+                    prevPoint.y = windowParams.y
 
-            builder.listener?.onDown(motionEvent.rawX, motionEvent.rawY)
+                    rawPointOnDown.x = event.rawX
+                    rawPointOnDown.y = event.rawY
+
+                    builder.listener?.onDown(event.rawX, event.rawY)
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    builder.listener?.onMove(event.rawX, event.rawY)
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    builder.listener?.onUp(event.rawX, event.rawY)
+                }
+            }
         }
 
-        fun onActionMove(motionEvent: MotionEvent) {
-            builder.listener?.onMove(motionEvent.rawX, motionEvent.rawY)
-        }
+        fun ignoreChildClickEvent(event: MotionEvent): Boolean{
+            when(event.action){
+                MotionEvent.ACTION_DOWN -> {
+                    ignoreClick = false
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    if (abs(event.x) > MAX_X_MOVE || abs(event.y) > MAX_Y_MOVE) {
+                        ignoreClick = true
+                    }
+                }
+            }
 
-        fun onActionUp(motionEvent: MotionEvent) {
-            builder.listener?.onUp(motionEvent.rawX, motionEvent.rawY)
+            return ignoreClick
         }
 
         // listen actions --------------------------------------------------------------------------
 
-        val gestureDetector = GestureDetector(builder.context, object : SimpleOnGestureListener() {
 
-//            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-//                builder.listener?.onClick()
-//                return super.onSingleTapConfirmed(e)
-//            }
-
-            override fun onSingleTapUp(e: MotionEvent): Boolean {
-                builder.listener?.onClick()
-                return super.onSingleTapUp(e)
-            }
-
-        })
-
-        binding.bubbleView.apply {
+        binding.bubbleRoot.apply {
 
             afterMeasured { updateGestureExclusion(builder.context) }
 
-            setOnTouchListener { _, motionEvent ->
+            doOnTouchEvent = {
+                handleMovement(it)
+            }
 
-                gestureDetector.onTouchEvent(motionEvent)
-
-                when (motionEvent.action) {
-                    MotionEvent.ACTION_DOWN -> onActionDown(motionEvent)
-                    MotionEvent.ACTION_MOVE -> onActionMove(motionEvent)
-                    MotionEvent.ACTION_UP -> onActionUp(motionEvent)
-                }
-
-                return@setOnTouchListener true
+            ignoreChildEvent = { motionEvent ->
+                ignoreChildClickEvent(motionEvent)
             }
         }
     }

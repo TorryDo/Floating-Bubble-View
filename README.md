@@ -3,8 +3,15 @@ An Android library that adds floating bubbles to your home screen 🎨, supports
 
 <br>
 
-https://user-images.githubusercontent.com/85553681/223082521-789146d2-c8f7-4e54-a4d7-f281cd495404.mp4
 
+<div align="center">
+
+| 🍀 Bubble 🎨 |  🔥 Custom 💘   | 
+| :-: | :-: |
+| <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/bubble.gif" height="600"> | <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/custom_view.gif" height="600"> |
+
+
+</div>
 
 &nbsp;
 
@@ -193,7 +200,7 @@ Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="
 
 ### 1, Bubble and ExpandableView
 
-<details><summary>Java version</summary>
+<details><summary>Java</summary>
 
 ```java
 public class MyService extends FloatingBubbleService {
@@ -202,9 +209,17 @@ public class MyService extends FloatingBubbleService {
     @Override
     public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
 
+        // You can create your own view manually, or using this helper class that I specially designed for you 💖
+        View v = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60);
+
+        v.setOnClickListener{ // sorry I don't remember the syntax :(
+            action.navigateToExpandableView();
+        }
+
         return new FloatingBubble.Builder(this)
-                // set bubble icon attributes, currently only drawable and bitmap are supported
-                .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
+
+                // pass view
+                .bubble(v)
 
                 // set style for bubble, fade animation by default
                 .bubbleStyle(null)
@@ -238,11 +253,6 @@ public class MyService extends FloatingBubbleService {
 
                 // add listener for the bubble
                 .addFloatingBubbleListener(new FloatingBubble.Listener() {
-
-                    @Override
-                    public void onClick() {
-                        action.navigateToExpandableView(); // must override `setupExpandableView`, otherwise throw an exception
-                    }
 
                     @Override
                     public void onMove(float x, float y) {} // The location of the finger on the screen which triggers the movement of the bubble.
@@ -294,18 +304,31 @@ public class MyService extends FloatingBubbleService {
 ```
 </details>
 
-<details open><summary>Kotlin version</summary>
+<details open><summary>Kotlin</summary>
 
 ```kotlin
 class MyService : FloatingBubbleService() {
 
     override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
+
+        // You can create your own view manually, or using this helper class that I specially designed for you 💖
+        val v = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60);
+
+        v.setOnClickListener{ 
+            action.navigateToExpandableView()
+        }
+
         return FloatingBubble.Builder(this)
 
-            // set bubble icon attributes, currently only drawable and bitmap are supported
-            .bubble(R.drawable.ic_rounded_blue_diamond, 60, 60)
+            // pass view
+            .bubble(v)
 
-            // set style for bubble, fade animation by default
+            // or our sweetie, Jetpack Compose
+            .bubble{
+                BubbleCompose()
+            }
+
+            // set style for the bubble, fade animation by default
             .bubbleStyle(null)
 
             // set start location for the bubble, (x=0, y=0) is the top-left
@@ -337,9 +360,6 @@ class MyService : FloatingBubbleService() {
 
             // add listener for the bubble
             .addFloatingBubbleListener(object : FloatingBubble.Listener {
-                override fun onClick() {
-                    action.navigateToExpandableView() // must override `setupExpandableView`, otherwise throw an exception
-                }
                 override fun onMove(x: Float, y: Float) {} // The location of the finger on the screen which triggers the movement of the bubble.
                 override fun onUp(x: Float, y: Float) {}   // ..., when finger release from bubble
                 override fun onDown(x: Float, y: Float) {} // ..., when finger tap the bubble
@@ -361,11 +381,11 @@ class MyService : FloatingBubbleService() {
 
         return ExpandableView.Builder(this)
 
-            // You should pass either a view or a compose, not both. Passing both will cause a crash. ❗💥
+            // You should not pass both view and compose. Passing both will cause crashing. ❗💥
             // set view to expandable-view
             .view(layout)
 
-            // You should pass either a view or a compose, not both. Passing both will cause a crash. ❗💥
+            // You should not pass both view and compose. Passing both will cause crashing. ❗💥
             // set composable to expandable-view
             .compose {
                 TestComposeView(
@@ -393,7 +413,7 @@ class MyService : FloatingBubbleService() {
 </details>
 
 ### 2, Notification
-<details><summary>Java version</summary>
+<details><summary>Java</summary>
 
 ```java
 public class MyService extends FloatingBubbleService {
@@ -436,7 +456,7 @@ public class MyService extends FloatingBubbleService {
 
 </details>
 
-<details open><summary>Kotlin version</summary>
+<details open><summary>Kotlin</summary>
 
 ```kotlin
 class MyService : FloatingBubbleService() {
