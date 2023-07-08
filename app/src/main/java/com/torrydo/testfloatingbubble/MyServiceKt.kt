@@ -3,7 +3,6 @@ package com.torrydo.testfloatingbubble
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -139,7 +138,7 @@ class MyServiceKt : FloatingBubbleService() {
             // set bubble icon attributes, currently only drawable and bitmap are supported
 //            .bubble(imgView)
 //            .bubble(v)
-            .compose {
+            .bubble {
                 BubbleCompose()
             }
             // set style for bubble, fade animation by default

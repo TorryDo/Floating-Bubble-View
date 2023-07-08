@@ -282,7 +282,7 @@ internal constructor(
             return this
         }
 
-        fun compose(content: @Composable () -> Unit): Builder {
+        fun bubble(content: @Composable () -> Unit): Builder {
 //            bubbleView = FloatingComposeView(context).apply {
 //                setContent { content() }
 //            }
