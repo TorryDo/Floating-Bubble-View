@@ -1,8 +1,8 @@
 name: Publish to maven central
 
 on:
-#   push:
-#     branches: [ release/v* ]
+  push:
+    branches: [ release/v* ]
   workflow_dispatch:
 
 #env:

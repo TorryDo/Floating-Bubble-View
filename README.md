@@ -11,29 +11,28 @@ An Android library that adds floating bubbles to your home screen 🎨, supports
 | <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/bubble.gif" height="600" width="272"> | <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/custom_view.gif" height="600" width="276"> |
 
 
+[<img src="https://img.shields.io/badge/platform-Android-yellow.svg" valign="middle">](https://www.android.com)
+[<img src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat" valign="middle">](https://android-arsenal.com/api?level=21)
+[<img src="https://img.shields.io/maven-central/v/io.github.torrydo/floating-bubble-view" valign="middle">]()
+[<img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" valign="middle">](https://www.apache.org/licenses/LICENSE-2.0)
+
 </div>
 
 &nbsp;
-
-
-
-| Platform |  API  | Version | License |
-| :-: | :-: | :-: | :-: | 
-|[<img src="https://img.shields.io/badge/platform-Android-yellow.svg" valign="middle">](https://www.android.com)| [<img src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat" valign="middle">](https://android-arsenal.com/api?level=21) | [<img src="https://img.shields.io/maven-central/v/io.github.torrydo/floating-bubble-view" valign="middle">]() | [<img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" valign="middle">](https://www.apache.org/licenses/LICENSE-2.0) |
-
-</br>
 
 ## Variants
 - ### Flutter version
      If you are looking for a Flutter version of this library, check [dash_bubble](https://github.com/moazelsawaf/dash_bubble), a Flutter plugin that allows you to create a floating bubble on the screen. by [Moaz El-sawaf](https://github.com/moazelsawaf).
 
+
 ## Table of Contents 📝
-1. [Getting started](#getting_started)  
-2. [Setup](#setup)
-3. [Usage](#usage)
-4. [Contribution guide](#contribution_guide)
-5. [WIP Note](#note) 🚧
-6. [License](#license)
+> 1. [Getting started](#getting_started)  
+> 2. [Setup](#setup)
+> 3. [Usage](#usage)
+> 4. [Contribution guide](#contribution_guide)
+> 5. [WIP Note](#note) 🚧
+> 6. [License](#license)
+
 
 
 ## I, Getting started 🍕🍔🍟 <a name="getting_started"/>
@@ -67,7 +66,7 @@ android {
     </details>
 
 
-    <details><summary>settings.gradle (alternative step If "allprojects" not found in the above step)</summary>
+    <details><summary>settings.gradle (alternative step If "allprojects" not found)</summary>
 
     ```gradle
     pluginManagement {
