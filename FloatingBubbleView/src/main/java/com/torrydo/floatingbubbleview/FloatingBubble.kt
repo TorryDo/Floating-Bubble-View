@@ -23,7 +23,6 @@ internal constructor(
     private var isComposeInit = false
 
     init {
-        ScreenInfo.onOrientationChanged(builder.context)
 
         bubbleView = FloatingBubbleView(
             builder.addFloatingBubbleListener(CustomBubbleListener())

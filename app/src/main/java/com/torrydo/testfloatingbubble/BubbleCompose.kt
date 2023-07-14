@@ -51,7 +51,7 @@ fun BubbleCompose() {
         modifier = Modifier
             .height(50.dp)
             .clip(shape = RoundedCornerShape(100.dp))
-            .background(Color.White),
+            .background(Color.LightGray),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = {

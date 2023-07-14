@@ -1,8 +1,10 @@
 package com.torrydo.floatingbubbleview
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.CloseBubbleBinding
+import com.torrydo.screenez.ScreenEz
 
 internal class FloatingCloseBubbleView(
     private val builder: FloatingBubble.Builder,
@@ -35,20 +37,20 @@ internal class FloatingCloseBubbleView(
             height = it.height
         }
 
-        LIMIT_FLY_HEIGHT = ScreenInfo.heightPx / 10
+        LIMIT_FLY_HEIGHT = ScreenEz.fullHeight / 10
 
-        halfScreenWidth = ScreenInfo.widthPx / 2
+        halfScreenWidth = ScreenEz.safeWidth / 2
         halfWidthPx = width / 2
         halfHeightPx = height / 2
         baseX = halfScreenWidth - halfWidthPx
-        baseY = ScreenInfo.heightPx -
+        baseY = ScreenEz.fullHeight -
                 height -
-                ScreenInfo.softNavBarHeightPx -
-                ScreenInfo.statusBarHeightPx -
+                ScreenEz.navBarHeight -
+                ScreenEz.statusBarHeight -
                 DEFAULT_PADDING_BOTTOM_PX
 
-        if (ScreenInfo.isLandscape) {
-            baseY = baseY - DEFAULT_PADDING_BOTTOM_PX + ScreenInfo.softNavBarHeightPx
+        if (ScreenEz.isPortrait().not()) {
+            baseY = baseY - DEFAULT_PADDING_BOTTOM_PX + ScreenEz.navBarHeight
         }
 
         centerCloseBubbleX = halfScreenWidth
@@ -122,15 +124,18 @@ internal class FloatingCloseBubbleView(
             stickToBubble(x, y)
         } else {
 
-            val isXOnTheLeft = x < halfScreenWidth
+            val bubbleWidth = builder.bubbleView!!.width
+            val centerBubbleX = (x + bubbleWidth/2)
+
+            val isXOnTheLeft = centerBubbleX < halfScreenWidth
 
             windowParams.x = if (isXOnTheLeft) {
-                baseX - ((halfScreenWidth - x) * distanceRatio) / 5
+                baseX - ((halfScreenWidth - centerBubbleX) * distanceRatio) / 5
             } else {
-                baseX + ((x - halfScreenWidth) * distanceRatio) / 5
+                baseX + ((centerBubbleX - halfScreenWidth) * distanceRatio) / 5
             }.toInt()
 
-            windowParams.y = baseY - (((ScreenInfo.heightPx - y) * distanceRatio) / 10)
+            windowParams.y = baseY - (((ScreenEz.fullHeight - y) * distanceRatio) / 10)
                 .toInt().let {
                     return@let if (it > LIMIT_FLY_HEIGHT) {
                         LIMIT_FLY_HEIGHT

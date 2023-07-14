@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import androidx.compose.ui.platform.ComposeView
 import com.torrydo.floatingbubbleview.databinding.BubbleBinding
+import com.torrydo.screenez.ScreenEz
 import kotlin.math.abs
 
 internal class FloatingBubbleView(
@@ -24,13 +25,13 @@ internal class FloatingBubbleView(
     private val rawPointOnDown = PointF(0f, 0f)
     private val newPoint = Point(0, 0)
 
-    private var halfScreenWidth = ScreenInfo.widthPx / 2
+    private var halfScreenWidth = ScreenEz.fullWidth / 2
 
     private var orientation = -1
 
     init {
 
-        orientation = if (ScreenInfo.heightPx >= ScreenInfo.widthPx) {
+        orientation = if (ScreenEz.fullHeight >= ScreenEz.fullWidth) {
             Configuration.ORIENTATION_PORTRAIT
         } else {
             Configuration.ORIENTATION_LANDSCAPE
@@ -63,7 +64,7 @@ internal class FloatingBubbleView(
             endX = 0
         } else {
             startX = iconX
-            endX = ScreenInfo.widthPx - bubbleWidthCompat
+            endX = ScreenEz.safeWidth - bubbleWidthCompat
         }
 
         AnimHelper.startSpringX(
@@ -128,18 +129,14 @@ internal class FloatingBubbleView(
 
         //region prevent bubble Y point move outside the screen
         val safeTopY = 0
-        val safeBottomY =
-            ScreenInfo.heightPx - ScreenInfo.softNavBarHeightPx - ScreenInfo.statusBarHeightPx - height
+        val safeBottomY = ScreenEz.safeHeight - binding.root.height
+
         val isAboveStatusBar = newPoint.y < safeTopY
         val isUnderSoftNavBar = newPoint.y > safeBottomY
         if (isAboveStatusBar) {
             newPoint.y = safeTopY
         } else if (isUnderSoftNavBar) {
-            if (ScreenInfo.isPortrait) {
-                newPoint.y = safeBottomY
-            } else if (newPoint.y - ScreenInfo.softNavBarHeightPx > safeBottomY) {
-                newPoint.y = safeBottomY + (ScreenInfo.softNavBarHeightPx)
-            }
+            newPoint.y = safeBottomY
         }
         //endregion
 

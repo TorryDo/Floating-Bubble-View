@@ -145,7 +145,7 @@ class MyServiceKt : FloatingBubbleService() {
             .bubbleStyle(null)
 
             // set start location for the bubble, (x=0, y=0) is the top-left
-            .startLocation(100, 100)        // in dp
+            .startLocation(0, 0)        // in dp
 //            .startLocationPx(0, 0)          // in px
 
             // animate the bubble to the left/right side of the screen when finger is released, true by default
@@ -166,7 +166,7 @@ class MyServiceKt : FloatingBubbleService() {
             // choose behavior of the bubbles
             // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
             // FIXED_CLOSE_BUBBLE: bubble will automatically move to the close-bubble when it reaches the closable-area
-            .behavior(BubbleBehavior.FIXED_CLOSE_BUBBLE)
+            .behavior(BubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
 
             // enable bottom background, false by default
             .bottomBackground(false)

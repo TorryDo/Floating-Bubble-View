@@ -4,6 +4,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.BottomBackgroundBinding
+import com.torrydo.screenez.ScreenEz
 
 internal class FloatingBottomBackground(
     private val builder: FloatingBubble.Builder
@@ -43,7 +44,7 @@ internal class FloatingBottomBackground(
 
         windowParams.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT
-            height = ScreenInfo.heightPx / 5
+            height = ScreenEz.fullHeight / 5
             gravity = Gravity.BOTTOM or Gravity.CENTER
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
