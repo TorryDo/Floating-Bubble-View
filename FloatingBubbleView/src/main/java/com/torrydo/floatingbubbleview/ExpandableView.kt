@@ -58,7 +58,7 @@ class ExpandableView(
 
 
     fun remove() {
-        if(builder.view != null){
+        if (builder.view != null) {
             super.remove(builder.view!!)
             builder.listener.onCloseExpandableView()
             return
@@ -91,10 +91,16 @@ class ExpandableView(
     override fun setupLayoutParams() {
         super.setupLayoutParams()
 
+        val mFlag = if(builder.isSystemUiIncluded){
+            WindowManager.LayoutParams.FLAG_DIM_BEHIND
+        }else{
+            WindowManager.LayoutParams.FLAG_DIM_BEHIND
+        }
+
         windowParams.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT
             gravity = Gravity.TOP
-            flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
+            flags = mFlag
             dimAmount = builder.dim         // default = 0.5f
 
             builder.viewStyle?.let {
@@ -117,7 +123,16 @@ class ExpandableView(
 
         internal var listener = object : Listener {}
 
+        internal var isSystemUiIncluded: Boolean = false
+
         internal var dim = 0.5f
+
+        fun includeSystemUI(included: Boolean): Builder {
+
+            isSystemUiIncluded = included
+
+            return this
+        }
 
         fun view(view: View): Builder {
             if (composeView != null) {

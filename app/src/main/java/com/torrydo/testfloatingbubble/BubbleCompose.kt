@@ -31,10 +31,15 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 
 @Composable
-fun BubbleCompose() {
+fun BubbleCompose(
+    show: () -> Unit,
+    hide: () -> Unit
+) {
 
     val context = LocalContext.current
 
@@ -55,7 +60,13 @@ fun BubbleCompose() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = {
+            runBlocking {
+                hide()
+                delay(500)
+                show()
+            }
             isPlay = isPlay.not()
+
         }) {
             Icon(
                 imageVector = if (isPlay) Icons.Default.PlayArrow else Icons.Default.Pause,
