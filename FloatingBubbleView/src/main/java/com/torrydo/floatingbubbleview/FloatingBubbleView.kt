@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Point
 import android.graphics.PointF
-import android.util.Log
 import android.view.*
 import androidx.compose.ui.platform.ComposeView
 import com.torrydo.floatingbubbleview.databinding.BubbleBinding
-import com.torrydo.screenez.ScreenEz
 import kotlin.math.abs
 
 internal class FloatingBubbleView(
@@ -25,13 +23,13 @@ internal class FloatingBubbleView(
     private val rawPointOnDown = PointF(0f, 0f)
     private val newPoint = Point(0, 0)
 
-    private var halfScreenWidth = ScreenEz.fullWidth / 2
+    private var halfScreenWidth = sez.fullWidth / 2
 
     private var orientation = -1
 
     init {
 
-        orientation = if (ScreenEz.fullHeight >= ScreenEz.fullWidth) {
+        orientation = if (sez.fullHeight >= sez.fullWidth) {
             Configuration.ORIENTATION_PORTRAIT
         } else {
             Configuration.ORIENTATION_LANDSCAPE
@@ -64,7 +62,7 @@ internal class FloatingBubbleView(
             endX = 0
         } else {
             startX = iconX
-            endX = ScreenEz.safeWidth - bubbleWidthCompat
+            endX = sez.safeWidth - bubbleWidthCompat
         }
 
         AnimHelper.startSpringX(
@@ -129,7 +127,7 @@ internal class FloatingBubbleView(
 
         //region prevent bubble Y point move outside the screen
         val safeTopY = 0
-        val safeBottomY = ScreenEz.safeHeight - binding.root.height
+        val safeBottomY = sez.safeHeight - binding.root.height
 
         val isAboveStatusBar = newPoint.y < safeTopY
         val isUnderSoftNavBar = newPoint.y > safeBottomY
@@ -209,11 +207,12 @@ internal class FloatingBubbleView(
             }
         }
 
-        fun ignoreChildClickEvent(event: MotionEvent): Boolean{
-            when(event.action){
+        fun ignoreChildClickEvent(event: MotionEvent): Boolean {
+            when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     ignoreClick = false
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     if (abs(event.x) > MAX_X_MOVE || abs(event.y) > MAX_Y_MOVE) {
                         ignoreClick = true
@@ -229,7 +228,7 @@ internal class FloatingBubbleView(
 
         binding.bubbleRoot.apply {
 
-            afterMeasured { updateGestureExclusion(builder.context) }
+            afterMeasured { updateGestureExclusion() }
 
             doOnTouchEvent = {
                 handleMovement(it)

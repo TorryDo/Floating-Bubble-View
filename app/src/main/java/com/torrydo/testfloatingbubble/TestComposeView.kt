@@ -36,28 +36,29 @@ fun TestComposeView(
         items.addAll(temp)
     }
 
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 10.dp)
-            .fillMaxWidth()
-            .height(500.dp)
-            .background(Color.LightGray),
-    ) {
-        Button(onClick = { popBack() }) {
-            Text(text = "pop back!")
-        }
-        LazyColumn(
+    Column{
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .fillMaxHeight()
+                .background(Color.LightGray),
         ) {
-            itemsIndexed(items) { index, item ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = item.toString(), fontSize = 18.sp)
+            Button(onClick = { popBack() }) {
+                Text(text = "pop back!")
+            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                itemsIndexed(items) { index, item ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = item.toString(), fontSize = 18.sp)
+                    }
                 }
             }
         }

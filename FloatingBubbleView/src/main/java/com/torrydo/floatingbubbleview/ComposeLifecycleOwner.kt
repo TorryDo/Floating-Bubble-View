@@ -53,13 +53,10 @@ internal class ComposeLifecycleOwner : LifecycleOwner, SavedStateRegistryOwner {
 
     }
 
-    // LifecycleOwner methods
     private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
 
     override fun getLifecycle(): Lifecycle = lifecycleRegistry
 
-
-    // SavedStateRegistry methods
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
     override val savedStateRegistry: SavedStateRegistry
         get() = savedStateRegistryController.savedStateRegistry

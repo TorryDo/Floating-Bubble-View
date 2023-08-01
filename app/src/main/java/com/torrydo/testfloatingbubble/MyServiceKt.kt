@@ -2,7 +2,6 @@ package com.torrydo.testfloatingbubble
 
 import android.app.Notification
 import android.app.PendingIntent
-import android.content.Context.LAYOUT_INFLATER_SERVICE
 import android.content.Intent
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -11,7 +10,11 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.torrydo.floatingbubbleview.*
+import com.torrydo.floatingbubbleview.BubbleBehavior
+import com.torrydo.floatingbubbleview.ExpandableView
+import com.torrydo.floatingbubbleview.FloatingBubble
+import com.torrydo.floatingbubbleview.FloatingBubbleService
+import com.torrydo.floatingbubbleview.Route
 import com.torrydo.floatingbubbleview.viewx.ViewHelper
 
 
@@ -58,6 +61,7 @@ class MyServiceKt : FloatingBubbleService() {
             Route.Bubble.name -> {
                 showBubbles()
             }
+
             Route.ExpandableView.name -> {
                 showExpandableView()
             }
@@ -69,7 +73,7 @@ class MyServiceKt : FloatingBubbleService() {
 
     private fun myNotification(
         isVisible: Boolean
-    ): Notification{
+    ): Notification {
         val builder = NotificationCompat.Builder(this, channelId())
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
@@ -129,7 +133,7 @@ class MyServiceKt : FloatingBubbleService() {
 
         val imgView = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, size, size)
 
-        
+
         imgView.setOnClickListener {
             action.navigateToExpandableView()
         }
@@ -137,14 +141,14 @@ class MyServiceKt : FloatingBubbleService() {
         return FloatingBubble.Builder(this)
 
             // set bubble icon attributes, currently only drawable and bitmap are supported
-            .bubble(imgView)
+//            .bubble(imgView)
 //            .bubble(v)
-//            .bubble {
-//                BubbleCompose(
-//                    show = {showBubbles()},
-//                    hide = {removeBubbles()}
-//                )
-//            }
+            .bubble {
+                BubbleCompose(
+                    show = {showBubbles()},
+                    hide = {removeBubbles()}
+                )
+            }
             // set style for bubble, fade animation by default
             .bubbleStyle(null)
 
@@ -170,10 +174,10 @@ class MyServiceKt : FloatingBubbleService() {
             // choose behavior of the bubbles
             // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
             // FIXED_CLOSE_BUBBLE: bubble will automatically move to the close-bubble when it reaches the closable-area
-            .behavior(BubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
+            .behavior(BubbleBehavior.FIXED_CLOSE_BUBBLE)
 
             // enable bottom background, false by default
-            .bottomBackground(false)
+//            .bottomBackground(true)
 
             // add listener for the bubble
             .addFloatingBubbleListener(object : FloatingBubble.Listener {
@@ -232,6 +236,8 @@ class MyServiceKt : FloatingBubbleService() {
 
             // apply style for the expandable-view
             .expandableViewStyle(null)
+
+//            .drawUnderSystemUI(true)
 
             // ddd listener for the expandable-view
             .addExpandableViewListener(object : ExpandableView.Listener {

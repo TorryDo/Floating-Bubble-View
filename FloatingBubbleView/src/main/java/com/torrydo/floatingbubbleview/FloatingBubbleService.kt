@@ -1,5 +1,6 @@
 package com.torrydo.floatingbubbleview
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -15,7 +16,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import androidx.core.app.NotificationManagerCompat
 import com.torrydo.floatingbubbleview.exceptions.PermissionDeniedException
-import com.torrydo.screenez.ScreenEz
 
 
 abstract class FloatingBubbleService : Service() {
@@ -53,11 +53,11 @@ abstract class FloatingBubbleService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        ScreenEz.with(this.applicationContext)
-
         if (!isDrawOverlaysPermissionGranted()) {
             throw PermissionDeniedException()
         }
+
+        sez.with(this.applicationContext)
 
         isRunning = true
         orientation = this.resources.configuration.orientation
@@ -76,13 +76,12 @@ abstract class FloatingBubbleService : Service() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
+
+        sez.refresh()
 
         // Check if the configuration has actually changed.
         if (newConfig.orientation != orientation) {
             val newOrientation = newConfig.orientation
-
-            ScreenEz.refresh()
 
             when (newOrientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
@@ -118,6 +117,7 @@ abstract class FloatingBubbleService : Service() {
             orientation = newOrientation
         }
 
+        super.onConfigurationChanged(newConfig)
     }
 
     override fun onDestroy() {
@@ -218,6 +218,7 @@ abstract class FloatingBubbleService : Service() {
     /**
      * show the notification or update if already exists
      * */
+    @SuppressLint("MissingPermission")
     fun notify(notification: Notification) {
 
         if (isNotificationInitialized) {

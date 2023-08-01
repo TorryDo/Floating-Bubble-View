@@ -1,11 +1,11 @@
 package com.torrydo.floatingbubbleview
 
 import android.content.Context
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.StyleRes
 import androidx.compose.runtime.Composable
+import com.torrydo.screenez.ScreenRotation
 
 class ExpandableView(
     private val builder: Builder,
@@ -91,17 +91,36 @@ class ExpandableView(
     override fun setupLayoutParams() {
         super.setupLayoutParams()
 
-        val mFlag = if(builder.isSystemUiIncluded){
-            WindowManager.LayoutParams.FLAG_DIM_BEHIND
-        }else{
-            WindowManager.LayoutParams.FLAG_DIM_BEHIND
+        var mFlag = WindowManager.LayoutParams.FLAG_DIM_BEHIND
+        var mHeight = WindowManager.LayoutParams.WRAP_CONTENT
+        var mWidth = WindowManager.LayoutParams.MATCH_PARENT
+        var mX: Int? = null
+
+        if (builder.isDrawUnderSystemUI) {
+            mFlag = WindowManager.LayoutParams.FLAG_DIM_BEHIND or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+
+            mWidth = sez.fullWidth
+            mHeight = sez.fullHeight
+
+            if (sez.screenRotation == ScreenRotation.LANDSCAPE) {
+                mX = -sez.navBarHeight
+            }
+
         }
 
         windowParams.apply {
-            width = WindowManager.LayoutParams.MATCH_PARENT
-            gravity = Gravity.TOP
+            width = mWidth
+            height = mHeight
             flags = mFlag
             dimAmount = builder.dim         // default = 0.5f
+
+//            this.verticalMargin = 0.07f // so fun hihi
+//            y = 100 // so fun hihihi
+            if (mX != null) {
+                x = mX
+            }
 
             builder.viewStyle?.let {
                 windowAnimations = it
@@ -123,14 +142,15 @@ class ExpandableView(
 
         internal var listener = object : Listener {}
 
-        internal var isSystemUiIncluded: Boolean = false
+        internal var isDrawUnderSystemUI: Boolean = false
 
         internal var dim = 0.5f
 
-        fun includeSystemUI(included: Boolean): Builder {
-
-            isSystemUiIncluded = included
-
+        /**
+         * Allow the expandable-view to display under the system UI elements
+         * */
+        internal fun drawUnderSystemUI(included: Boolean): Builder {
+            isDrawUnderSystemUI = included
             return this
         }
 
