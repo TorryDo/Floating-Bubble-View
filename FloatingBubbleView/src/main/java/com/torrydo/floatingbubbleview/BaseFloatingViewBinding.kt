@@ -23,10 +23,10 @@ internal open class BaseFloatingViewBinding<T : ViewBinding>(
      * */
     open fun show() {
         try {
-            if(binding.root.windowToken != null) return
+//            if(binding.root.windowToken != null) return
             super.show(binding.root)
         }catch (e: Exception){
-//            Log.d("<>", "show: ${e.stackTraceToString()}"); this line show error in some cases
+//            Log.e("<>FBV", "show: ${e.stackTraceToString()}"); //this line show error in some cases
         }
     }
 

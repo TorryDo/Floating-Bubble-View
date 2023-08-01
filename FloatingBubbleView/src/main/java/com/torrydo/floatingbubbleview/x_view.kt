@@ -7,16 +7,15 @@ import android.os.Build
 import android.provider.Settings
 import android.view.View
 import android.view.ViewTreeObserver
-import com.torrydo.screenez.ScreenEz
 
 
 // exclude view gesture on home screen -------------------------------------------------------------
 private var exclusionRects: MutableList<Rect> = ArrayList()
 
-internal fun View.updateGestureExclusion(context: Context) {
+internal fun View.updateGestureExclusion() {
     if (Build.VERSION.SDK_INT < AndroidVersions.`10`) return
 
-    val screenSize = ScreenEz.fullSize
+    val screenSize = sez.fullSize
 
     exclusionRects.clear()
 

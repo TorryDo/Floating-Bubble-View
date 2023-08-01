@@ -40,7 +40,6 @@ internal constructor(
 
     // listener ------------------------------------------------------------------------------------
 
-
     interface Action {
 
         /**
@@ -77,8 +76,8 @@ internal constructor(
 
     internal fun showIcon() {
 
-        if(builder.composeLifecycleOwner != null){
-            if(isComposeInit.not()){
+        if (builder.composeLifecycleOwner != null) {
+            if (isComposeInit.not()) {
                 builder.composeLifecycleOwner?.onCreate()
                 isComposeInit = true
             }
@@ -94,7 +93,7 @@ internal constructor(
 
     internal fun removeIcon() {
 
-        if(builder.composeLifecycleOwner != null && isComposeInit){
+        if (builder.composeLifecycleOwner != null && isComposeInit) {
             builder.composeLifecycleOwner!!.apply {
                 onPause()
                 onStop()
@@ -126,8 +125,6 @@ internal constructor(
 
         override fun onMove(x: Float, y: Float) {
 
-            val bubbleSizeCompat = Size(builder.bubbleView!!.width, builder.bubbleView!!.height)
-
             when (builder.behavior) {
                 BubbleBehavior.DYNAMIC_CLOSE_BUBBLE -> {
                     bubbleView.updateLocationUI(x, y)
@@ -139,11 +136,14 @@ internal constructor(
                     if (isFingerInsideClosableArea(x, y)) {
                         if (isBubbleAnimated.not()) {
 
-                            val xOffset = (closeBubbleView!!.width - bubbleSizeCompat.width) / 2
-                            val yOffset = (closeBubbleView!!.height - bubbleSizeCompat.height) / 2
+                            val bWidth = builder.bubbleView!!.width
+                            val bHeight = builder.bubbleView!!.height
 
-                            val xUpdated = closeBubbleView!!.baseX.toFloat() + xOffset
-                            val yUpdated = closeBubbleView!!.baseY.toFloat() + yOffset
+                            val xOffset = (closeBubbleView!!.width - bWidth) / 2
+                            val yOffset = (closeBubbleView!!.height - bHeight) / 2
+
+                            val xUpdated = (closeBubbleView!!.baseX + xOffset).toFloat()
+                            val yUpdated = (closeBubbleView!!.baseY + yOffset).toFloat()
 
                             bubbleView.animateTo(xUpdated, yUpdated)
                             bubbleView.setLocation(xUpdated, yUpdated)
@@ -197,9 +197,12 @@ internal constructor(
     }
 
     private fun isFingerInsideClosableArea(x: Float, y: Float): Boolean {
+        // because x and y of the finger which we got from MotionEvent included the cutout and the nav-bar, so we must exclude them
+        val mX = x - sez.safePaddingLeft
+        val mY = y - sez.safePaddingTop
         return closeBubbleView?.distanceRatioFromLocationToClosableArea(
-            x = x,
-            y = y
+            x = mX,
+            y = mY
         ) == 0.0f
     }
 
@@ -227,7 +230,10 @@ internal constructor(
         internal var isAnimateToEdgeEnabled = true
         internal var isBottomBackgroundEnabled = false
 
-        internal var distanceToCloseDp = 100
+        internal var distanceToClosePx = 200
+
+        internal var closeBubbleBottomPaddingPx = 80
+            private set
 
         internal var listener: Listener? = null
         internal var serviceInteractor: ServiceInteractor? = null
@@ -235,7 +241,7 @@ internal constructor(
         internal var behavior: BubbleBehavior = BubbleBehavior.FIXED_CLOSE_BUBBLE
 
         // composable
-        internal var composeView: (@Composable ()->Unit)? = null
+        internal var composeView: (@Composable () -> Unit)? = null
         internal var composeLifecycleOwner: ComposeLifecycleOwner? = null
 
 
@@ -253,7 +259,7 @@ internal constructor(
          * @param dp distance between bubble and close-bubble
          * */
         fun distanceToClose(dp: Int): Builder {
-            this.distanceToCloseDp = dp
+            this.distanceToClosePx = dp.toPx()
             return this
         }
 
@@ -282,14 +288,8 @@ internal constructor(
         }
 
         fun bubble(content: @Composable () -> Unit): Builder {
-//            bubbleView = FloatingComposeView(context).apply {
-//                setContent { content() }
-//            }
             composeLifecycleOwner = ComposeLifecycleOwner()
-//            composeLifecycleOwner?.attachToDecorView(bubbleView!!)
-
             composeView = content
-
             return this
         }
 

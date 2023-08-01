@@ -1,10 +1,8 @@
 package com.torrydo.floatingbubbleview
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.torrydo.floatingbubbleview.databinding.CloseBubbleBinding
-import com.torrydo.screenez.ScreenEz
 
 internal class FloatingCloseBubbleView(
     private val builder: FloatingBubble.Builder,
@@ -13,23 +11,17 @@ internal class FloatingCloseBubbleView(
     initializer = CloseBubbleBinding.inflate(LayoutInflater.from(builder.context)),
 ) {
 
-    companion object {
-        internal const val DEFAULT_PADDING_BOTTOM_PX = 30
-    }
-
     private var LIMIT_FLY_HEIGHT: Int
 
     var halfWidthPx: Int
     var halfHeightPx: Int
 
-    private var halfScreenWidth: Int
+    private var halfSafeScreenWidth: Int
     var baseX: Int
     var baseY: Int
 
     private var centerCloseBubbleX: Int
     private var centerCloseBubbleY: Int
-
-    private var closablePerimeterPx: Int
 
     init {
         builder.closeBubbleSizePx.also {
@@ -37,26 +29,16 @@ internal class FloatingCloseBubbleView(
             height = it.height
         }
 
-        LIMIT_FLY_HEIGHT = ScreenEz.fullHeight / 10
+        LIMIT_FLY_HEIGHT = sez.fullHeight / 10
 
-        halfScreenWidth = ScreenEz.safeWidth / 2
+        halfSafeScreenWidth = sez.safeWidth / 2
         halfWidthPx = width / 2
         halfHeightPx = height / 2
-        baseX = halfScreenWidth - halfWidthPx
-        baseY = ScreenEz.fullHeight -
-                height -
-                ScreenEz.navBarHeight -
-                ScreenEz.statusBarHeight -
-                DEFAULT_PADDING_BOTTOM_PX
+        baseX = halfSafeScreenWidth - halfWidthPx
+        baseY = sez.safeHeight - height - builder.closeBubbleBottomPaddingPx
 
-        if (ScreenEz.isPortrait().not()) {
-            baseY = baseY - DEFAULT_PADDING_BOTTOM_PX + ScreenEz.navBarHeight
-        }
-
-        centerCloseBubbleX = halfScreenWidth
+        centerCloseBubbleX = halfSafeScreenWidth
         centerCloseBubbleY = baseY + halfHeightPx
-
-        closablePerimeterPx = builder.distanceToCloseDp.toPx()
 
         setupLayoutParams()
         setupCloseBubbleProperties()
@@ -67,8 +49,9 @@ internal class FloatingCloseBubbleView(
 
         windowParams.apply {
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH /*or
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION*/
+//                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+//                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or
+                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
         }
     }
 
@@ -81,10 +64,11 @@ internal class FloatingCloseBubbleView(
      * */
     fun distanceRatioFromBubbleToClosableArea(x: Int, y: Int): Float {
 
-        val bubbleSize = builder.bubbleSize()
+        val bWidth = builder.bubbleView!!.width
+        val bHeight = builder.bubbleView!!.height
 
-        val centerBubbleX = x + bubbleSize.width / 2
-        val centerBubbleY = y + bubbleSize.height / 2
+        val centerBubbleX = x + bWidth / 2
+        val centerBubbleY = y + bHeight / 2
 
         val distanceToBubble = XMath.distance(
             x1 = centerCloseBubbleX.toDouble(),
@@ -92,7 +76,7 @@ internal class FloatingCloseBubbleView(
             x2 = centerBubbleX.toDouble(),
             y2 = centerBubbleY.toDouble()
         )
-        val distanceRatio = (closablePerimeterPx.toDouble() / distanceToBubble).let {
+        val distanceRatio = (builder.distanceToClosePx.toDouble() / distanceToBubble).let {
             if (it > 1) return@let 0
             return@let 1 - it
         }.toFloat()
@@ -100,14 +84,18 @@ internal class FloatingCloseBubbleView(
         return distanceRatio
     }
 
+    /**
+     * Important: the x and y is the location after exclude the nav bar and cutout
+     * */
     fun distanceRatioFromLocationToClosableArea(x: Float, y: Float): Float {
+
         val distanceToLocation = XMath.distance(
             x1 = centerCloseBubbleX.toDouble(),
             y1 = centerCloseBubbleY.toDouble(),
             x2 = x.toDouble(),
             y2 = y.toDouble()
         )
-        val distanceRatio = (closablePerimeterPx.toDouble() / distanceToLocation).let {
+        val distanceRatio = (builder.distanceToClosePx.toDouble() / distanceToLocation).let {
             if (it > 1) return@let 0
             return@let 1 - it
         }.toFloat()
@@ -125,17 +113,17 @@ internal class FloatingCloseBubbleView(
         } else {
 
             val bubbleWidth = builder.bubbleView!!.width
-            val centerBubbleX = (x + bubbleWidth/2)
+            val centerBubbleX = (x + bubbleWidth / 2)
 
-            val isXOnTheLeft = centerBubbleX < halfScreenWidth
+            val isXOnTheLeft = centerBubbleX < halfSafeScreenWidth
 
             windowParams.x = if (isXOnTheLeft) {
-                baseX - ((halfScreenWidth - centerBubbleX) * distanceRatio) / 5
+                baseX - ((halfSafeScreenWidth - centerBubbleX) * distanceRatio) / 5
             } else {
-                baseX + ((centerBubbleX - halfScreenWidth) * distanceRatio) / 5
+                baseX + ((centerBubbleX - halfSafeScreenWidth) * distanceRatio) / 5
             }.toInt()
 
-            windowParams.y = baseY - (((ScreenEz.fullHeight - y) * distanceRatio) / 10)
+            windowParams.y = baseY - (((sez.fullHeight - y) * distanceRatio) / 10)
                 .toInt().let {
                     return@let if (it > LIMIT_FLY_HEIGHT) {
                         LIMIT_FLY_HEIGHT
