@@ -149,6 +149,29 @@ Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="
 
 ### 2, add bubble-service to manifest file 2️⃣
 
+
+
+```xml
+<application>
+     <!-- these two permissions are added by default -->
+     <!-- <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/> -->
+     <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/> -->
+
+     <!-- You can find more permissions, use cases here: https://developer.android.com/about/versions/14/changes/fgs-types-required  -->
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+     
+     <service
+         android:name="<YOUR_PACKAGE>.MyService"
+         android:foregroundServiceType="specialUse"
+         >
+         <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="foo"/>  <!-- optional -->
+     </service>
+
+</application>
+```
+
+<details><summary>Android 13 and earlier</summary>
+
 ```xml
     <!-- these two permissions are added by default -->
     <!-- <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/> -->
@@ -160,6 +183,9 @@ Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="
 
     </application>
 ```
+     
+</details>
+
 
 </br>
 
