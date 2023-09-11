@@ -3,11 +3,14 @@ package com.torrydo.floatingbubbleview
 import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
+import androidx.annotation.Discouraged
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.AbstractComposeView
 
-internal class FloatingComposeView(
+// maybe removed in the near future
+@Discouraged("may be removed in the near future")
+internal class MyFloatingComposeView(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

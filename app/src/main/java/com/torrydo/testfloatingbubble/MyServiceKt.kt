@@ -1,249 +1,108 @@
 package com.torrydo.testfloatingbubble
 
-import android.app.Notification
-import android.app.PendingIntent
-import android.content.Intent
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.Toast
-import androidx.core.app.NotificationCompat
-import com.torrydo.floatingbubbleview.BubbleBehavior
-import com.torrydo.floatingbubbleview.ExpandableView
-import com.torrydo.floatingbubbleview.FloatingBubble
-import com.torrydo.floatingbubbleview.FloatingBubbleService
-import com.torrydo.floatingbubbleview.Route
-import com.torrydo.floatingbubbleview.viewx.ViewHelper
+import com.torrydo.floatingbubbleview.CloseBubbleBehavior
+import com.torrydo.floatingbubbleview.FloatingBubbleListener
+import com.torrydo.floatingbubbleview.helper.NotificationHelper
+import com.torrydo.floatingbubbleview.helper.ViewHelper
+import com.torrydo.floatingbubbleview.service.expandable.BubbleBuilder
+import com.torrydo.floatingbubbleview.service.expandable.ExpandableBubbleService
+import com.torrydo.floatingbubbleview.service.expandable.ExpandedBubbleBuilder
 
 
-class MyServiceKt : FloatingBubbleService() {
+class MyServiceKt : ExpandableBubbleService() {
 
-    init {
-        FloatingBubbleReceiver.hide_bubble_function = {
-            if (FloatingBubbleReceiver.isEnabled) {
-                showBubbles()
-            } else {
-                removeAllViews()
-            }
+    override fun startNotificationForeground() {
 
-            notify(myNotification(FloatingBubbleReceiver.isEnabled))
-
-        }
-        FloatingBubbleReceiver.stop_bubble_function = {
-            stopSelf()
-        }
-
-
+        val noti = NotificationHelper(this)
+        noti.createNotificationChannel()
+        startForeground(noti.notificationId, noti.defaultNotification())
     }
 
-    override fun initialRoute(): Route {
-        return Route.Empty
+    override fun onCreate() {
+        super.onCreate()
+        minimize()
     }
 
-    private var size = 0
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val route = intent?.getStringExtra("route")
-
-        val _size = intent?.getIntExtra("size", 0)
-
-        noti_message = intent?.getStringExtra("noti_message")
-
-        size = _size ?: 60
-
-        notify(myNotification(true))
-
-        showBubbles()
-
-        when (route) {
-            Route.Bubble.name -> {
-                showBubbles()
-            }
-
-            Route.ExpandableView.name -> {
-                showExpandableView()
-            }
-        }
-        return START_STICKY
-    }
-
-    var noti_message: String? = ""
-
-    private fun myNotification(
-        isVisible: Boolean
-    ): Notification {
-        val builder = NotificationCompat.Builder(this, channelId())
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-            .setContentTitle("bubble is running")
-            .setContentText(noti_message)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .setSilent(true)
-
-
-        // Create the hide action button
-        val actionHideIntent =
-            Intent(this, FloatingBubbleReceiver::class.java).apply { action = "ACTION_HIDE" }
-        val actionHidePendingIntent =
-            PendingIntent.getBroadcast(
-                this,
-                0,
-                actionHideIntent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
-
-        // Create the second action button
-        val actionStopIntent = Intent(this, FloatingBubbleReceiver::class.java).apply {
-            action = "ACTION_STOP"
-        }
-        val actionStopPendingIntent =
-            PendingIntent.getBroadcast(
-                this,
-                0,
-                actionStopIntent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        val actionStop = NotificationCompat.Action.Builder(null, "Stop", actionStopPendingIntent)
-
-        val action1 = if (isVisible) {
-            NotificationCompat.Action.Builder(null, "Hide", actionHidePendingIntent).build()
-        } else {
-            NotificationCompat.Action.Builder(null, "Show", actionHidePendingIntent).build()
-        }
-        builder.addAction(action1)
-        builder.addAction(actionStop.build())
-
-        return builder.build()
-    }
-
-    override fun initialNotification(): Notification? {
-        return null
-    }
-
-    override fun channelId() = "your_channel_id"
-    override fun channelName() = "your_channel_name"
-    override fun notificationId() = 69
-
-    override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val v = inflater.inflate(R.layout.sample_bubble, null)
-
-        val imgView = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, size, size)
-
+    override fun configBubble(): BubbleBuilder? {
+        val imgView = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60)
 
         imgView.setOnClickListener {
-            action.navigateToExpandableView()
+            expand()
         }
 
-        return FloatingBubble.Builder(this)
+        return BubbleBuilder(this)
 
-            // set bubble icon attributes, currently only drawable and bitmap are supported
-//            .bubble(imgView)
-//            .bubble(v)
-            .bubble {
-                BubbleCompose(
-                    show = {showBubbles()},
-                    hide = {removeBubbles()}
-                )
-            }
-            // set style for bubble, fade animation by default
+            // set bubble view
+            .bubbleView(imgView)
+
+            // or our sweetie, Jetpack Compose
+//            .bubbleCompose {
+//                BubbleCompose()
+//            }
+
+            // set style for the bubble, fade animation by default
             .bubbleStyle(null)
 
             // set start location for the bubble, (x=0, y=0) is the top-left
-            .startLocation(0, 0)        // in dp
-//            .startLocationPx(0, 0)          // in px
+            .startLocation(100, 100)    // in dp
+            .startLocationPx(100, 100)  // in px
 
-            // animate the bubble to the left/right side of the screen when finger is released, true by default
+            // enable auto animate bubble to the left/right side when release, true by default
             .enableAnimateToEdge(true)
 
-            // set close-bubble icon attributes, currently only drawable and bitmap are supported
-            .closeBubble(R.drawable.ic_close_bubble, size, size)
+            // set close-bubble view
+            .closeBubbleView(ViewHelper.fromDrawable(this, R.drawable.ic_close_bubble, 60, 60))
 
             // set style for close-bubble, null by default
             .closeBubbleStyle(null)
 
-            // show close-bubble, true by default
-            .enableCloseBubble(true)
+            // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
+            // FIXED_CLOSE_BUBBLE (default): bubble will automatically move to the close-bubble when it reaches the closable-area
+            .closeBehavior(CloseBubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
 
             // the more value (dp), the larger closeable-area
-            .distanceToClose(100)
-
-            // choose behavior of the bubbles
-            // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
-            // FIXED_CLOSE_BUBBLE: bubble will automatically move to the close-bubble when it reaches the closable-area
-            .behavior(BubbleBehavior.FIXED_CLOSE_BUBBLE)
+            .distanceToClose(200)
 
             // enable bottom background, false by default
-//            .bottomBackground(true)
+            .bottomBackground(true)
 
-            // add listener for the bubble
-            .addFloatingBubbleListener(object : FloatingBubble.Listener {
-
-                override fun onMove(
+            .addFloatingBubbleListener(object : FloatingBubbleListener {
+                override fun onFingerMove(
                     x: Float,
                     y: Float
                 ) {
                 } // The location of the finger on the screen which triggers the movement of the bubble.
 
-                override fun onUp(x: Float, y: Float) {}   // ..., when finger release from bubble
+                override fun onFingerUp(
+                    x: Float,
+                    y: Float
+                ) {
+                }   // ..., when finger release from bubble
 
-                override fun onDown(x: Float, y: Float) {} // ..., when finger tap the bubble
+                override fun onFingerDown(x: Float, y: Float) {} // ..., when finger tap the bubble
             })
 
     }
 
-    override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
+    override fun configExpandedBubble(): ExpandedBubbleBuilder? {
 
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
-        val wrapper: ViewGroup = object : FrameLayout(this) {
-            override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-                if (event.keyCode == KeyEvent.KEYCODE_BACK) {
-                    action.popToBubble()
-                    return true
-                }
-                return super.dispatchKeyEvent(event)
-            }
+        val expandedView = LayoutInflater.from(this).inflate(R.layout.layout_view_test, null)
+        expandedView.findViewById<View>(R.id.btn).setOnClickListener {
+            minimize()
         }
 
-        val layout = inflater.inflate(R.layout.layout_view_test, wrapper)
-
-        layout.findViewById<View>(R.id.card_view).setOnClickListener { v: View? ->
-            Toast.makeText(this, "hello from card view from kotlin", Toast.LENGTH_SHORT).show();
-            action.popToBubble()
-        }
-
-
-        return ExpandableView.Builder(this)
-
-            // set view to expandable-view, passing both view and compose will cause a crash.
-//            .view(layout)
-
-            // set composable to expandable-view, passing both view and compose will cause a crash.
-            .compose {
-                TestComposeView(
-                    popBack = {
-                        action.popToBubble()
-                    }
-                )
+        return ExpandedBubbleBuilder(this)
+            .expandedView(expandedView)
+            .expandedCompose {
+                ExpandedCompose()
             }
-
-            // set the amount of dimming below the view.
-            .dimAmount(0.8f)
-
-            // apply style for the expandable-view
-            .expandableViewStyle(null)
-
-//            .drawUnderSystemUI(true)
-
-            // ddd listener for the expandable-view
-            .addExpandableViewListener(object : ExpandableView.Listener {
-                override fun onOpenExpandableView() {}
-                override fun onCloseExpandableView() {}
-            })
+            .startLocation(0, 0)
+            .draggable(true)
+            .style(null)
+            .fillMaxWidth(true)
+            .enableAnimateToEdge(true)
+            .dimAmount(0.9f)
     }
-
 }

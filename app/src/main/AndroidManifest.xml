@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.torrydo.testfloatingbubble">
 
-<!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>-->
-<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>-->
+    <!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>-->
+    <!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>-->
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +27,10 @@
         </activity>
         <service
             android:name=".MyServiceKt"
-            />
+            android:foregroundServiceType="specialUse"
+            >
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="foo"/> <!-- optional -->
+        </service>
         <receiver android:name=".FloatingBubbleReceiver" />
     </application>
 

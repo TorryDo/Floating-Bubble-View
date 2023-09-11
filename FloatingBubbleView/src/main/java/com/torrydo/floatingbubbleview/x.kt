@@ -10,14 +10,6 @@ import com.torrydo.screenez.ScreenEasy
 import java.lang.ref.WeakReference
 
 
-/**
- * return size of the bubble view if it's not null
- *
- * otherwise the bubble size variable
- * */
-internal fun FloatingBubble.Builder.bubbleSize(): Size {
-    return Size(bubbleView!!.width, bubbleView!!.height)
-}
 
 internal fun Int.toBitmap(context: Context): Bitmap? {
     return WeakReference(context).get()?.let { weakContext ->
