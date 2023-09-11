@@ -15,10 +15,10 @@ import com.torrydo.testfloatingbubble.R;
 
 public class MyServiceJava extends ExpandableBubbleService {
 
-    @Override
-    public void startNotificationForeground() {
-        startForeground();
-    }
+//    @Override
+//    public void startNotificationForeground() {
+//        startForeground();
+//    }
 
     @Override
     public void onCreate() {

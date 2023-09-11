@@ -12,8 +12,6 @@ import com.torrydo.floatingbubbleview.sez
 
 abstract class FloatingBubbleService : Service() {
 
-
-
     open fun startNotificationForeground() {
         val noti = NotificationHelper(this)
         noti.createNotificationChannel()
