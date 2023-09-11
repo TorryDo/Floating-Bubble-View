@@ -1,5 +1,6 @@
 package com.torrydo.testfloatingbubble
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -19,9 +20,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,20 +35,37 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
 @Composable
 fun BubbleCompose(
     show: () -> Unit,
-    hide: () -> Unit
+    hide: () -> Unit,
+    animateToEdge: () -> Unit,
+    navigateToExpandable: () -> Unit
 ) {
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     var isPlay by remember { mutableStateOf(true) }
     var index by remember { mutableStateOf(0) }
 
+//    LaunchedEffect(Unit){
+//        while(true){
+//            if(index >=2){
+//                index = 0
+//            }else index++
+//            delay(1000)
+//        }
+//    }
+
+    LaunchedEffect(index){
+        Log.d("<>", "index: $index");
+    }
+    
     val songs = listOf(
         "See tình",
         "Shape of me",
@@ -61,9 +81,7 @@ fun BubbleCompose(
     ) {
         IconButton(onClick = {
             runBlocking {
-                hide()
-                delay(500)
-                show()
+                navigateToExpandable()
             }
             isPlay = isPlay.not()
 
@@ -92,15 +110,16 @@ fun BubbleCompose(
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(start = 10.dp, end = 20.dp)
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onLongPress = {
-                            Toast
-                                .makeText(context, "Long click: Copied \"${songs[index]}\"", Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    )
-                },
+//                .pointerInput(Unit) {
+//                    detectTapGestures(
+//                        onLongPress = {
+//                            Toast
+//                                .makeText(context, "Long click: Copied \"${songs[index]}\"", Toast.LENGTH_LONG)
+//                                .show()
+//                        }
+//                    )
+//                }
+            ,
             contentAlignment = Alignment.Center
         ) {
             Text(

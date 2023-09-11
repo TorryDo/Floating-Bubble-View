@@ -1,7 +1,6 @@
 package com.torrydo.floatingbubbleview
 
 import android.content.Context
-import android.graphics.Point
 import android.graphics.Rect
 import android.os.Build
 import android.provider.Settings
@@ -34,7 +33,7 @@ internal fun View.updateGestureExclusion() {
  * - some MIUI devices may not work properly
  *
  * */
-internal fun Context.isDrawOverlaysPermissionGranted(): Boolean {
+internal fun Context.canDrawOverlays(): Boolean {
 
     if (Build.VERSION.SDK_INT < AndroidVersions.`6`) {
         return true
@@ -57,9 +56,9 @@ inline fun View.afterMeasured(crossinline afterMeasuredWork: () -> Unit) {
 /**
  * @return Point( 0 .. x, 0 .. y )
  * */
-internal fun View.getXYPointOnScreen(): Point {
+internal fun View.getXYOnScreen(): Pair<Int, Int> {
     val arr = IntArray(2)
     this.getLocationOnScreen(arr)
 
-    return Point(arr[0], arr[1])
+    return Pair(arr[0], arr[1])
 }

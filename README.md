@@ -3,8 +3,9 @@ An Android library that adds floating bubbles to your home screen 🎨, supports
 
 <br>
 
-
 <div align="center">
+
+💖 Find this library useful? Don't forget to show some love by giving a `Star⭐`. Thank You 🥰
 
 | 🍀 Bubble 🎨 |  🔥 Custom 💘   | 
 | :-: | :-: |
@@ -21,7 +22,7 @@ An Android library that adds floating bubbles to your home screen 🎨, supports
 &nbsp;
 
 ## Variants
-- ### Flutter version
+- ### Flutter
      If you are looking for a Flutter version of this library, check [dash_bubble](https://github.com/moazelsawaf/dash_bubble), a Flutter plugin that allows you to create a floating bubble on the screen. by [Moaz El-sawaf](https://github.com/moazelsawaf).
 
 
@@ -49,24 +50,9 @@ android {
     }
 ```
 
-2. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` or `setting.gradle` file:
+2. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle`/`setting.gradle` file:
 
-    <details><summary>build.gradle (project-level)</summary>
-
-    ```gradle
-        allprojects {
-            repositories {
-                mavenCentral()
-                ...
-            }
-            ...
-        }
-    ```
-
-    </details>
-
-
-    <details><summary>settings.gradle (alternative step If "allprojects" not found)</summary>
+    <details><summary>settings.gradle</summary>
 
     ```gradle
     pluginManagement {
@@ -86,6 +72,23 @@ android {
 
     </details>
 
+    <details><summary>build.gradle (project-level) (on old gradle versions)</summary>
+
+    ```gradle
+        allprojects {
+            repositories {
+                mavenCentral()
+                ...
+            }
+            ...
+        }
+    ```
+
+    </details>
+
+
+
+
 </details>
 
 <!-- <br> -->
@@ -96,58 +99,50 @@ android {
 Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="https://img.shields.io/maven-central/v/io.github.torrydo/floating-bubble-view" valign="middle">
 
 ```gradle
-    dependencies {
-        implementation "io.github.torrydo:floating-bubble-view:<LATEST_VERSION>"
-    }
+dependencies {
+    implementation("io.github.torrydo:floating-bubble-view:<LATEST_VERSION>")
+}
 ```
 <br>
 
 ## II, Setup 🚀✈🛰 <a name="setup_usage"/>
 
-### 1, extends `FloatingBubbleService` then implements `setupBubble()`  1️⃣ <a name="setup"/>
+### 1, extends `ExpandableBubbleService()` and call `expand()` or `minimize()` 1️⃣ <a name="setup"/>
 
-<details><summary><b>Java version</b></summary>
+<details><summary><b>Java</b></summary>
 
 ```java
-    public class MyService extends FloatingBubbleService {
-
-        @NonNull
-        @Override
-        public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
-            return ...;
-        }
-
-        // optional, only required if you want to navigate to the expandable-view 
-        @Nullable
-        @Override
-        public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
-            return ...;
-        }
-    }
+Java docs is not completed yet because the author is (really) busy and (a little) tired 😪
 ```
 </details>
 
-<details open><summary><b>Kotlin version</b></summary>
+<details open><summary><b>Kotlin</b></summary>
 
 ```kotlin
-    class MyService: FloatingBubbleService() {
+class MyService: ExpandableBubbleService() {
 
-        override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
-            return ...
-        }
-
-        // optional, only required if you want to navigate to the expandable-view 
-        override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
-            return ...
-        }
+    override fun onCreate() {
+        super.onCreate()
+        minimize()
     }
+
+   // optional, only required if you want to call minimize()
+   override fun configBubble(): BubbleBuilder? {
+       return ...
+   }
+
+   // optional, only required if you want to call expand()
+   override fun configExpandedBubble(): ExpandedBubbleBuilder? {
+       return ...
+   }
+}
 ```
 
 </details>
 
 </br>
 
-### 2, add bubble-service to manifest file 2️⃣
+### 2, add bubble service to the manifest file 2️⃣
 
 
 
@@ -192,7 +187,7 @@ Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="
 ### 3, start bubble service and enjoy 3️⃣ 🎉🍀
 > Make sure "display over other apps" permission is granted, otherwise the app will crash ⚠❗💥
 
-<details><summary><b>Java version</b></summary>
+<details><summary><b>Java</b></summary>
 
 ```java
     Intent intent = new Intent(context, MyService.class);
@@ -204,7 +199,7 @@ Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="
 ```
 </details>
 
-<details open><summary><b>Kotlin version</b></summary>
+<details open><summary><b>Kotlin</b></summary>
 
 ```kotlin
     val intent = Intent(context, MyService::class.java)
@@ -228,102 +223,67 @@ Declare the dependencies in the module-level `build.gradle` file 🍀 <img src="
 <details><summary>Java</summary>
 
 ```java
-public class MyService extends FloatingBubbleService {
+public class MyServiceJava extends ExpandableBubbleService {
 
-    @NonNull
     @Override
-    public FloatingBubble.Builder setupBubble(@NonNull FloatingBubble.Action action) {
-
-        // You can create your own view manually, or using this helper class that I specially designed for you 💖
-        View v = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60);
-
-        v.setOnClickListener{ // sorry I don't remember the syntax :(
-            action.navigateToExpandableView();
-        }
-
-        return new FloatingBubble.Builder(this)
-
-                // pass view
-                .bubble(v)
-
-                // set style for bubble, fade animation by default
-                .bubbleStyle(null)
-
-                // set start location for the bubble, (x=0, y=0) is the top-left
-                .startLocation(100, 100)        // in dp
-                .startLocationPx(100, 100)      // in px
-
-                // enable auto animate bubble to the left/right side when release, true by default
-                .enableAnimateToEdge(true)
-
-                // set close-bubble icon attributes, currently only drawable and bitmap are supported
-                .closeBubble(R.drawable.ic_close_bubble, 60, 60)
-
-                // set style for close-bubble, null by default
-                .closeBubbleStyle(null)
-
-                // show close-bubble, true by default
-                .enableCloseBubble(true)
-
-                // the more value (dp), the larger closable-area
-                .distanceToClose(100)
-
-                // choose behavior of the bubbles
-                // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
-                // FIXED_CLOSE_BUBBLE: bubble will automatically move to the close-bubble when it reaches the closable-area
-                .behavior(BubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
-
-                // enable bottom background, false by default
-                .bottomBackground(false)
-
-                // add listener for the bubble
-                .addFloatingBubbleListener(new FloatingBubble.Listener() {
-
-                    @Override
-                    public void onMove(float x, float y) {} // The location of the finger on the screen which triggers the movement of the bubble.
-
-                    @Override
-                    public void onUp(float x, float y) {} // ..., when finger release from bubble
-
-                    @Override
-                    public void onDown(float x, float y) {} // ..., when finger tap the bubble
-                })
-
-                // set bubble's opacity
-                .opacity(1f);
+    public void onCreate() {
+        super.onCreate();
+        minimize();
     }
 
     @Nullable
     @Override
-    public ExpandableView.Builder setupExpandableView(@NonNull ExpandableView.Action action) {
-        
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.layout_view_test, null);
-
-        layout.findViewById(R.id.card_view).setOnClickListener(v -> {
-            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
-            action.popToBubble();
+    public BubbleBuilder configBubble() {
+        View imgView = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60);
+        imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                expand();
+            }
         });
-
-        return new ExpandableView.Builder(this)
-                
-                // set view to expandable-view. Jetpack Compose is not available in Java
-                .view(layout)
-
-                // set the amount of dimming below the view.
-                .dimAmount(0.8f)
-
-                // apply style for the expandable-view
-                .expandableViewStyle(null)
-                
-                // add listener for the expandable-view
-                .addExpandableViewListener(new ExpandableView.Listener() {
+        return new BubbleBuilder(this)
+                .bubbleView(imgView)
+                .bubbleStyle(R.style.default_bubble_style)
+                .bubbleDraggable(true)
+                .forceDragging(true)
+                .closeBubbleView(ViewHelper.fromDrawable(this, R.drawable.ic_close_bubble))
+                .closeBubbleStyle(R.style.default_close_bubble_style)
+                .distanceToClose(100)
+                .closeBehavior(CloseBubbleBehavior.FIXED_CLOSE_BUBBLE)
+                .startLocation(100, 100)
+                .enableAnimateToEdge(true)
+                .bottomBackground(false)
+                .addFloatingBubbleListener(new FloatingBubbleListener() {
                     @Override
-                    public void onOpenExpandableView() {}
-
+                    public void onFingerDown(float x, float y) {}
                     @Override
-                    public void onCloseExpandableView() {}
-                });
+                    public void onFingerUp(float x, float y) {}
+                    @Override
+                    public void onFingerMove(float x, float y) {}
+                })
+                ;
+                
+    }
+
+    @Nullable
+    @Override
+    public ExpandedBubbleBuilder configExpandedBubble() {
+        View expandedView = LayoutInflater.from(this).inflate(R.layout.layout_view_test, null);
+
+        expandedView.findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                minimize();
+            }
+        });
+        return new ExpandedBubbleBuilder(this)
+                .expandedView(expandedView)
+                .startLocation(0, 0)
+                .draggable(true)
+                .style(R.style.default_bubble_style)
+                .fillMaxWidth(true)
+                .enableAnimateToEdge(true)
+                .dimAmount(0.5f);
     }
 }
 ```
@@ -332,150 +292,103 @@ public class MyService extends FloatingBubbleService {
 <details open><summary>Kotlin</summary>
 
 ```kotlin
-class MyService : FloatingBubbleService() {
+class MyServiceKt : ExpandableBubbleService() {
 
-    override fun setupBubble(action: FloatingBubble.Action): FloatingBubble.Builder {
+    override fun onCreate() {
+        super.onCreate()
+        minimize()
+    }
 
-        // You can create your own view manually, or using this helper class that I specially designed for you 💖
-        val v = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60);
-
-        v.setOnClickListener{ 
-            action.navigateToExpandableView()
+    override fun configBubble(): BubbleBuilder? {
+        val imgView = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60)
+        imgView.setOnClickListener {
+            expand()
         }
 
-        return FloatingBubble.Builder(this)
-
-            // pass view
-            .bubble(v)
-
+        return BubbleBuilder(this)
+            
+            // set bubble view
+            .bubbleView(imgView)
+            
             // or our sweetie, Jetpack Compose
-            .bubble{
+            .bubbleCompose {
                 BubbleCompose()
             }
-
+            
             // set style for the bubble, fade animation by default
             .bubbleStyle(null)
-
+            
             // set start location for the bubble, (x=0, y=0) is the top-left
-            .startLocation(100, 100)        // in dp
-            .startLocationPx(100, 100)      // in px
-
+            .startLocation(100, 100)    // in dp
+            .startLocationPx(100, 100)  // in px
+            
             // enable auto animate bubble to the left/right side when release, true by default
             .enableAnimateToEdge(true)
-
-            // set close-bubble icon attributes, currently only drawable and bitmap are supported
-            .closeBubble(R.drawable.ic_close_bubble, 60, 60)
-
+            
+            // set close-bubble view
+            .closeBubbleView(ViewHelper.fromDrawable(this, R.drawable.ic_close_bubble, 60, 60))
+            
             // set style for close-bubble, null by default
             .closeBubbleStyle(null)
-
-            // show close-bubble, true by default
-            .enableCloseBubble(true)
-
-            // the more value (dp), the larger closeable-area
-            .distanceToClose(100)
-
-            // choose behavior of the bubbles
+            
             // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
-            // FIXED_CLOSE_BUBBLE: bubble will automatically move to the close-bubble when it reaches the closable-area
-            .behavior(BubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
-
+            // FIXED_CLOSE_BUBBLE (default): bubble will automatically move to the close-bubble when it reaches the closable-area
+            .closeBehavior(CloseBubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
+            
+            // the more value (dp), the larger closeable-area
+            .distanceToClose(200)
+            
             // enable bottom background, false by default
-            .bottomBackground(false)
-
-            // add listener for the bubble
-            .addFloatingBubbleListener(object : FloatingBubble.Listener {
-                override fun onMove(x: Float, y: Float) {} // The location of the finger on the screen which triggers the movement of the bubble.
-                override fun onUp(x: Float, y: Float) {}   // ..., when finger release from bubble
-                override fun onDown(x: Float, y: Float) {} // ..., when finger tap the bubble
+            .bottomBackground(true)
+            
+            .addFloatingBubbleListener(object : FloatingBubbleListener {
+                override fun onFingerMove(x: Float, y: Float) {} // The location of the finger on the screen which triggers the movement of the bubble.
+                override fun onFingerUp(x: Float, y: Float) {}   // ..., when finger release from bubble
+                override fun onFingerDown(x: Float, y: Float) {} // ..., when finger tap the bubble
             })
-            // set bubble's opacity
-            .opacity(1f)
 
     }
 
-    override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
+    override fun configExpandedBubble(): ExpandedBubbleBuilder? {
 
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val layout = inflater.inflate(R.layout.layout_view_test, null)
-
-        layout.findViewById<View>(R.id.card_view).setOnClickListener { v: View? ->
-            Toast.makeText(this, "hello from kotlin", Toast.LENGTH_SHORT).show();
-            action.popToBubble()
+        val expandedView = LayoutInflater.from(this).inflate(R.layout.layout_view_test, null)
+        expandedView.findViewById<View>(R.id.btn).setOnClickListener {
+            minimize()
         }
 
-        return ExpandableView.Builder(this)
-
-            // You should not pass both view and compose. Passing both will cause crashing. ❗💥
-            // set view to expandable-view
-            .view(layout)
-
-            // You should not pass both view and compose. Passing both will cause crashing. ❗💥
-            // set composable to expandable-view
-            .compose {
-                TestComposeView(
-                    popBack = {
-                        action.popToBubble()
-                    }
-                )
+        return ExpandedBubbleBuilder(this)
+            .expandedView(expandedView)
+            .expandedCompose { 
+                ExpandedCompose()
             }
-
-            // set the amount of dimming below the view.
-            .dimAmount(0.8f)
-
-            // apply style for the expandable-view
-            .expandableViewStyle(null)
-
-            // ddd listener for the expandable-view
-            .addExpandableViewListener(object : ExpandableView.Listener {
-                override fun onOpenExpandableView() {}
-                override fun onCloseExpandableView() {}
-            })
+            .startLocation(0, 0)
+            .draggable(true)
+            .style(null)
+            .fillMaxWidth(true)
+            .enableAnimateToEdge(true)
+            .dimAmount(0.9f)
     }
 }
 ```
 
 </details>
 
-### 2, Notification
+<br>
+
+### 2, Override default `Notification`
 <details><summary>Java</summary>
 
 ```java
-public class MyService extends FloatingBubbleService {
-    
-    ...
-
-    // config the initial notification for Bubble on Android 8 and up.
-    // return null if you want to show the notification later.
+public class MyService extends ExpandableBubbleService {
     @Override
-    public Notification initialNotification() {
-        return new NotificationCompat.Builder(this, channelId())
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-                .setContentTitle("bubble is running")
-                .setContentText("click to do nothing")
-                .setPriority(NotificationCompat.PRIORITY_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
-                .build();
-    }
+    public void startNotificationForeground() {
+        startForeground(...);
 
-    @NonNull
-    @Override
-    public String channelId() {
-        return "you_channel_id";
+        // or you can use NotificationHelper class
+        // val noti = NotificationHelper(this)
+        // noti.createNotificationChannel()
+        // startForeground(noti.notificationId, noti.defaultNotification())
     }
-
-    @NonNull
-    @Override
-    public String channelName() {
-        return "your channel name";
-    }
-
-    @Override
-    public int notificationId() {
-        return 69;
-    }
-    ...
 }
 ```
 
@@ -485,23 +398,14 @@ public class MyService extends FloatingBubbleService {
 
 ```kotlin
 class MyService : FloatingBubbleService() {
+    override fun startNotificationForeground() {
+        startForeground(...)
 
-    // config the initial notification for Bubble on Android 8 and up.
-    // return null if you want to show the notification later.
-    open fun initialNotification(): Notification? {
-        return NotificationCompat.Builder(this, channelId())
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_rounded_blue_diamond)
-            .setContentTitle("bubble is running")
-            .setPriority(PRIORITY_MIN)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .setSilent(true)
-            .build()
+        // or you can use NotificationHelper class
+        // val noti = NotificationHelper(this)
+        // noti.createNotificationChannel()
+        // startForeground(noti.notificationId, noti.defaultNotification())
     }
-
-    override fun channelId() = "your_channel_id"
-    override fun channelName() = "your_channel_name"
-    override fun notificationId() = 69
 }
 ```
 
@@ -518,83 +422,33 @@ Starting in Android 13 (API level 33), notifications are only visible if the "PO
 
 </details>
 
-### 3, Check if bubble is running
+<br>
 
-```java
-    Boolean b = FloatingBubbleService.isRunning();
-```
-
-### 4, Choosing the Initial View for the Bubble Service
-
-```java
-public class MyService extends FloatingBubbleService {
-    ...
-
-    @NonNull
-    @Override
-    public Route initialRoute() { // "Route.Bubble" by default
-        return Route.Empty;      
-        // Route.Empty: create the service without any view
-        // Route.Bubble: create the service with the bubble
-        // Route.ExpandableView: create the service with the expandable-view
-    }
-    ...
-}
-```
-
-
-### 5, Detect key press on expandable-view
-<details><summary>XML version</summary>
-
-```kotlin
-    override fun setupExpandableView(action: ExpandableView.Action): ExpandableView.Builder? {
-        ...
-        val wrapper: ViewGroup = object : FrameLayout(this) {
-            override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-                if (event.keyCode == KeyEvent.KEYCODE_BACK) {
-                    action.popToBubble()
-                    return true
-                }
-                return super.dispatchKeyEvent(event)
-            }
-        }
-
-        val layout = inflater.inflate(R.layout.layout_view_test, wrapper) // pass "wrapper" here
-        ...
-    }
-```
-
-</details>
-<details open><summary>Jetpack Compose version</summary>
-
-```kotlin
-@Composable
-fun SomeComposable(){
-    ...
-    OverrideDispatchKeyEvent { event ->
-        if (event?.keyCode == KeyEvent.KEYCODE_BACK) {
-            // your code here
-        }
-        null
-    }
-}
-```
-</details>
-
-
-### 6, Methods in Bubble Service
+### 3, Methods in `ExpandableBubbleService`
 
 | Name | Description |
 | :- | :- |
-| `currentRoute()` | Returns the current route of the service (Empty, Bubble, ExpandableView) |
-| `showBubbles()` | Displays the the bubbles |
-| `removeBubbles()` | Removes the floating bubble |
-| `showExpandableView()` | Displays the expandable-view |
-| `removeExpandableView()` | Removes the expandable-view |
-| `removeAllViews()` | Removes all views |
-| `notify(Notification)` | Displays or updates notification |
+| `removeAll()` | remove all bubbles |
+| `expand()` | show expanded-bubble |
+| `minimize()` | show bubble |
+| `enableBubbleDragging()` | enable bubble dragging or not |
+| `enableExpandedBubbleDragging()` | enable expanded-bubble dragging or not |
+| `animateBubbleToEdge()` | animate bubble to edge of the screen |
+| `animateExpandedBubbleToEdge()` | animate expanded-bubble to edge of the screen |
 
-<!-- | `updateNotification()`| Updates the displayed notification by calling (again) `setupNotificationBuilder()` | -->
+<br>
+
+### 4, Helper Class
+- ViewHelper()
+     - fromBitmap(context, bitmap): View
+     - fromBitmap(context, bitmap, widthDp, heightDp): View
+     - fromDrawable(context, drawableRes): View
+     - fromDrawable(context, drawableRes, widthDp, heightDp)
+
+- NotificationHelper(context, channelId, channelName, notificationId)
+     - notify(Notification): update notification based on notificationId
+     - createNotificationChannel(): create notification channel from `android 8` and above
+     - defaultNotification(): return default notification
 
 </br>
 

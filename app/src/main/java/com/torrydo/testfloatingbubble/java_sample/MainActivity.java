@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.torrydo.floatingbubbleview.FloatingBubbleService;
 import com.torrydo.testfloatingbubble.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,18 +20,20 @@ public class MainActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.button);
 
+//        ExpandableLayout layout = new ExpandableLayout();
+
         button.setOnClickListener(v ->
                 {
 
-                    Intent intent = new Intent(this, MyService.class);
+//                    Intent intent = new Intent(this, MyService.class);
 
-                    intent.putExtra("key1", "word");
+//                    intent.putExtra("key1", "word");
 
-                    if (FloatingBubbleService.isRunning()) {
-                        stopMyService(intent);
-                    } else {
-                        startMyService(intent);
-                    }
+//                    if (FloatingBubbleService.isRunning()) {
+//                        stopMyService(intent);
+//                    } else {
+//                        startMyService(intent);
+//                    }
                 }
         );
     }

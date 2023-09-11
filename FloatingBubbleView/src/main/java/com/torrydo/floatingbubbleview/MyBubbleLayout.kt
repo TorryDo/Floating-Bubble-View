@@ -5,9 +5,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.LinearLayout
 
-internal class MyBubbleLayout(
+internal open class MyBubbleLayout(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet? = null,
 ) : LinearLayout(
     context,
     attrs,
@@ -28,6 +28,5 @@ internal class MyBubbleLayout(
         event?.let(doOnTouchEvent)
         return super.onTouchEvent(event)
     }
-
 
 }

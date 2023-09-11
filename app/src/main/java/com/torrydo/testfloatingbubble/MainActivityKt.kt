@@ -6,13 +6,12 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.torrydo.floatingbubbleview.FloatingBubbleService
-import com.torrydo.floatingbubbleview.Route
 
 class MainActivityKt : AppCompatActivity() {
 
     companion object{
         var isVisible = false
+        var isBubbleRunning = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +22,7 @@ class MainActivityKt : AppCompatActivity() {
 
         button.setOnClickListener {
 
-            if (FloatingBubbleService.isRunning()) {
+            if (isBubbleRunning) {
                 stopMyService()
             } else {
                 val intent = Intent(this, MyServiceKt::class.java)
@@ -33,6 +32,7 @@ class MainActivityKt : AppCompatActivity() {
                 isVisible = false
             }
 
+            isBubbleRunning = !isBubbleRunning
         }
     }
 
