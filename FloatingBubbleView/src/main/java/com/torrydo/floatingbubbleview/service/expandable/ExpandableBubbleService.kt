@@ -1,6 +1,7 @@
 package com.torrydo.floatingbubbleview.service.expandable
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.dynamicanimation.animation.SpringForce
 import com.torrydo.floatingbubbleview.CloseBubbleBehavior
 import com.torrydo.floatingbubbleview.FloatingBubbleListener
@@ -9,11 +10,17 @@ import com.torrydo.floatingbubbleview.bubble.FloatingBottomBackground
 import com.torrydo.floatingbubbleview.bubble.FloatingBubble
 import com.torrydo.floatingbubbleview.bubble.FloatingCloseBubble
 import com.torrydo.floatingbubbleview.service.FloatingBubbleService
+import com.torrydo.floatingbubbleview.sez
 
 abstract class ExpandableBubbleService : FloatingBubbleService() {
 
     private var _context: Context? = null
     private val context get() = _context!!
+
+    // 0: nothing
+    // 1: bubble
+    // 2: expanded-bubble
+    private var state = 0
 
     var bubble: FloatingBubble? = null
         private set
@@ -92,7 +99,6 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                         context,
                         containCompose = false,
                         forceDragging = false,
-//                        onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent,
                     )
                 expandedBubble!!.rootGroup.addView(expandedView)
             } else {
@@ -101,7 +107,6 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                         context,
                         containCompose = true,
                         forceDragging = false,
-//                        onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent,
                     )
                 expandedBubble!!.rootGroup.addView(expandedCompose)
             }
@@ -126,16 +131,22 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
         closeBubble?.remove()
         bottomBackground?.remove()
         expandedBubble?.remove()
+
+        state = 0
     }
 
     fun expand() {
         expandedBubble!!.show()
         bubble?.remove()
+
+        state = 2
     }
 
     fun minimize() {
         bubble!!.show()
         expandedBubble?.remove()
+
+        state = 1
     }
 
     fun enableBubbleDragging(b: Boolean) {
@@ -253,6 +264,25 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
     //endregion
 
     // override service
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        bubble?.remove()
+        closeBubble?.remove()
+        bottomBackground?.remove()
+        expandedBubble?.remove()
+
+        sez.refresh()
+        createBubbles(this, configBubble(), configExpandedBubble())
+
+        when(state){
+            1 -> minimize()
+            2 -> expand()
+        }
+
+
+    }
 
     abstract fun configBubble(): BubbleBuilder?
     abstract fun configExpandedBubble(): ExpandedBubbleBuilder?

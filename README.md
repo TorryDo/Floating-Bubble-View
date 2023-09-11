@@ -218,7 +218,7 @@ class MyService: ExpandableBubbleService() {
 
 ## III, Usage 🔥 <a name="usage"/>
 
-### 1, Bubble and ExpandableView
+### 1, `configBubble()` and `configExpandedBubble()`
 
 <details><summary>Java</summary>
 
@@ -336,7 +336,7 @@ class MyServiceKt : ExpandableBubbleService() {
             .closeBehavior(CloseBubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
             
             // the more value (dp), the larger closeable-area
-            .distanceToClose(200)
+            .distanceToClose(100)
             
             // enable bottom background, false by default
             .bottomBackground(true)

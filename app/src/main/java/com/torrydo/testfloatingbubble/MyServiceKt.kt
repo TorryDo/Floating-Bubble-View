@@ -35,12 +35,12 @@ class MyServiceKt : ExpandableBubbleService() {
         return BubbleBuilder(this)
 
             // set bubble view
-            .bubbleView(imgView)
+//            .bubbleView(imgView)
 
             // or our sweetie, Jetpack Compose
-//            .bubbleCompose {
-//                BubbleCompose()
-//            }
+            .bubbleCompose {
+                BubbleCompose(expand = { expand() })
+            }
 
             // set style for the bubble, fade animation by default
             .bubbleStyle(null)
@@ -60,10 +60,10 @@ class MyServiceKt : ExpandableBubbleService() {
 
             // DYNAMIC_CLOSE_BUBBLE: close-bubble moving based on the bubble's location
             // FIXED_CLOSE_BUBBLE (default): bubble will automatically move to the close-bubble when it reaches the closable-area
-            .closeBehavior(CloseBubbleBehavior.DYNAMIC_CLOSE_BUBBLE)
+            .closeBehavior(CloseBubbleBehavior.FIXED_CLOSE_BUBBLE)
 
             // the more value (dp), the larger closeable-area
-            .distanceToClose(200)
+            .distanceToClose(100)
 
             // enable bottom background, false by default
             .bottomBackground(true)
@@ -95,9 +95,9 @@ class MyServiceKt : ExpandableBubbleService() {
 
         return ExpandedBubbleBuilder(this)
             .expandedView(expandedView)
-            .expandedCompose {
-                ExpandedCompose()
-            }
+//            .expandedCompose {
+//                ExpandedCompose()
+//            }
             .startLocation(0, 0)
             .draggable(true)
             .style(null)
