@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TestComposeView(
     modifier: Modifier = Modifier,
@@ -32,6 +35,10 @@ fun TestComposeView(
 ) {
 
     var num by remember { mutableStateOf(0) }
+
+    var txt by remember {
+        mutableStateOf("")
+    }
 
     val items = remember { mutableStateListOf<String>() }
 
@@ -53,6 +60,9 @@ fun TestComposeView(
             Button(onClick = { popBack() }) {
                 Text(text = "pop back!")
             }
+
+            TextField(value = txt, onValueChange = {txt = it})
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()

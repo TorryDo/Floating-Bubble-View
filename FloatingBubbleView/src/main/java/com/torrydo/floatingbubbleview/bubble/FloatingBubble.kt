@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
 import android.graphics.PointF
+import android.util.Log
 import android.view.*
+import android.widget.FrameLayout
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import com.torrydo.floatingbubbleview.AnimHelper
@@ -22,11 +24,18 @@ class FloatingBubble(
     private val forceDragging: Boolean = false,
 //    private val ignoreSwipeGesture: Boolean = true,
     containCompose: Boolean,
-    private val listener: FloatingBubbleListener? = null
-//    onDispatchKeyEvent: ((KeyEvent) -> Boolean)? = null
+    private val listener: FloatingBubbleListener? = null,
+    onDispatchKeyEvent: ((KeyEvent) -> Boolean?)? = null
 ) : Bubble(
     context = context,
-    root = LayoutInflater.from(context).inflate(R.layout.bubble, null),
+    root = object : MyBubbleLayout(context) {
+        override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+            if(onDispatchKeyEvent != null){
+                return onDispatchKeyEvent(event) ?: super.dispatchKeyEvent(event)
+            }
+            return super.dispatchKeyEvent(event)
+        }
+    },
     containCompose = containCompose
 ) {
 

@@ -99,6 +99,7 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                         context,
                         containCompose = false,
                         forceDragging = false,
+                        onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent
                     )
                 expandedBubble!!.rootGroup.addView(expandedView)
             } else {
@@ -107,6 +108,7 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                         context,
                         containCompose = true,
                         forceDragging = false,
+                        onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent
                     )
                 expandedBubble!!.rootGroup.addView(expandedCompose)
             }

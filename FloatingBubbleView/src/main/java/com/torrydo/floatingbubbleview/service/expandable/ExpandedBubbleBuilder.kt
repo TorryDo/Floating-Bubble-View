@@ -31,7 +31,7 @@ class ExpandedBubbleBuilder(
     private var dimAmount = 0.5f
     private var startLocation: Point = Point(0, 0)
 
-    internal var onDispatchKeyEvent: ((KeyEvent) -> Boolean)? = null
+    internal var onDispatchKeyEvent: ((KeyEvent) -> Boolean?)? = null
 
     private var isFillMaxWidth: Boolean = false
 
@@ -41,14 +41,13 @@ class ExpandedBubbleBuilder(
             format = PixelFormat.TRANSLUCENT
 
             // danger, these may ignore match_parent
-            if(isFillMaxWidth.not()){
+            if (isFillMaxWidth.not()) {
                 width = WindowManager.LayoutParams.WRAP_CONTENT
             }
             height = WindowManager.LayoutParams.WRAP_CONTENT
 
-            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+            flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+//                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
                     WindowManager.LayoutParams.FLAG_DIM_BEHIND
 
             x = startLocation.x
@@ -74,7 +73,7 @@ class ExpandedBubbleBuilder(
         return this
     }
 
-    internal fun onDispatchKeyEvent(callback: (KeyEvent) -> Boolean): ExpandedBubbleBuilder {
+    fun onDispatchKeyEvent(callback: (KeyEvent) -> Boolean?): ExpandedBubbleBuilder {
         this.onDispatchKeyEvent = callback
         return this
     }

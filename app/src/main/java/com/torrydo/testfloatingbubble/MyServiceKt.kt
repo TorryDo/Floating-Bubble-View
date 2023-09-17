@@ -1,5 +1,6 @@
 package com.torrydo.testfloatingbubble
 
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import com.torrydo.floatingbubbleview.CloseBubbleBehavior
@@ -41,6 +42,7 @@ class MyServiceKt : ExpandableBubbleService() {
             .bubbleCompose {
                 BubbleCompose(expand = { expand() })
             }
+//            .forceDragging(false)
 
             // set style for the bubble, fade animation by default
             .bubbleStyle(null)
@@ -66,7 +68,7 @@ class MyServiceKt : ExpandableBubbleService() {
             .distanceToClose(100)
 
             // enable bottom background, false by default
-            .bottomBackground(true)
+            .bottomBackground(false)
 
             .addFloatingBubbleListener(object : FloatingBubbleListener {
                 override fun onFingerMove(
@@ -94,15 +96,21 @@ class MyServiceKt : ExpandableBubbleService() {
         }
 
         return ExpandedBubbleBuilder(this)
-            .expandedView(expandedView)
-//            .expandedCompose {
-//                ExpandedCompose()
-//            }
+//            .expandedView(expandedView)
+            .expandedCompose {
+                TestComposeView(popBack = {minimize()})
+            }
+            .onDispatchKeyEvent {
+                if(it.keyCode == KeyEvent.KEYCODE_BACK){
+                    minimize()
+                }
+                null
+            }
             .startLocation(0, 0)
             .draggable(true)
             .style(null)
-            .fillMaxWidth(true)
+            .fillMaxWidth(false)
             .enableAnimateToEdge(true)
-            .dimAmount(0.9f)
+            .dimAmount(0.5f)
     }
 }

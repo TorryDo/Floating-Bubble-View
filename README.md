@@ -5,9 +5,9 @@ An Android library that adds floating bubbles to your home screen 🎨, supports
 
 <div align="center">
 
-💖 Find this library useful? Don't forget to show some love by giving a `Star⭐`. Thank You 🥰
+Find this library useful? Don't forget to show some love by giving a `Star⭐` 🥰
 
-| 🍀 Bubble 🎨 |  🔥 Custom 💘   | 
+| Bubble |  Custom | 
 | :-: | :-: |
 | <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/bubble.gif" height="600" width="272"> | <img src="https://github.com/TorryDo/assets/blob/main/floating_bubble_view/demo/custom_view.gif" height="600" width="276"> |
 
@@ -360,6 +360,12 @@ class MyServiceKt : ExpandableBubbleService() {
             .expandedView(expandedView)
             .expandedCompose { 
                 ExpandedCompose()
+            }
+            .onDispatchKeyEvent {
+                if(it.keyCode == KeyEvent.KEYCODE_BACK){
+                    minimize()
+                }
+                null
             }
             .startLocation(0, 0)
             .draggable(true)
