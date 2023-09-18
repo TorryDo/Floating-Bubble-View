@@ -34,6 +34,9 @@ class MyServiceKt : ExpandableBubbleService() {
 
         return BubbleBuilder(this)
 
+            //disables bugged ignoreChildEvent
+            .forceDragging(false)
+
             // set bubble view
 //            .bubbleView(imgView)
 

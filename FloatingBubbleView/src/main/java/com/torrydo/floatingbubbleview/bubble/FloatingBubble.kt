@@ -231,9 +231,8 @@ class FloatingBubble(
                     ignoreChildClickEvent(motionEvent)
                 }
             } else {
-                this.setOnTouchListener { view, motionEvent ->
-                    handleMovement(motionEvent)
-                    true
+                doOnTouchEvent = {
+                    handleMovement(it)
                 }
             }
         }
