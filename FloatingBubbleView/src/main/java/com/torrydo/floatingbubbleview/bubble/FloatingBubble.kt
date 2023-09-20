@@ -176,7 +176,7 @@ class FloatingBubble(
     private fun customTouch() {
 
         val dpi = getX()
-        val max_xy_move = dpi / 7
+        val max_xy_move = dpi / 22
 //        Log.d("<>", "dpi | xy: ${dpi} - ${max_xy_move}");
 //        Log.d("<>", "sdfasfasdf ${context.resources.configuration}: ");
 
@@ -215,10 +215,12 @@ class FloatingBubble(
                     ignoreClick = false
                 }
 
+                MotionEvent.ACTION_UP -> {
+                    ignoreClick = false
+                }
+
                 MotionEvent.ACTION_MOVE -> {
-                    if (abs(event.x) > max_xy_move || abs(event.y) > max_xy_move) {
-                        ignoreClick = true
-                    }
+                    ignoreClick = abs(event.rawX - rawPointOnDown.x) > max_xy_move || abs(event.rawY - rawPointOnDown.y) > max_xy_move
                 }
             }
 
