@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
 import android.graphics.PointF
-import android.util.Log
 import android.view.*
-import android.widget.FrameLayout
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import com.torrydo.floatingbubbleview.AnimHelper
@@ -28,12 +26,9 @@ class FloatingBubble(
     onDispatchKeyEvent: ((KeyEvent) -> Boolean?)? = null
 ) : Bubble(
     context = context,
-    root = object : MyBubbleLayout(context) {
-        override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-            if(onDispatchKeyEvent != null){
-                return onDispatchKeyEvent(event) ?: super.dispatchKeyEvent(event)
-            }
-            return super.dispatchKeyEvent(event)
+    root = LayoutInflater.from(context).inflate(R.layout.bubble, null).apply {
+        if (onDispatchKeyEvent != null) {
+            (this as MyBubbleLayout).setOnDispatchKeyEvent(onDispatchKeyEvent)
         }
     },
     containCompose = containCompose
@@ -154,32 +149,22 @@ class FloatingBubble(
             endY = y,
             event = object : AnimHelper.Event {
                 override fun onUpdatePoint(x: Float, y: Float) {
-
                     layoutParams.x = x.toInt()
                     layoutParams.y = y.toInt()
 
 //                    builder.listener?.onMove(x.toFloat(), y.toFloat()) // don't call this line, it'll spam multiple MotionEvent.OnActionMove
                     update()
-
                 }
             },
             stiffness = stiffness,
         )
     }
 
-    private fun getX() = context.resources.configuration.smallestScreenWidthDp
-
-    //    private val MAX_XY_MOVE = 80f
+    private val MAX_XY_MOVE = 1f
     private var ignoreClick: Boolean = false
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
-
-        val dpi = getX()
-        val max_xy_move = dpi / 22
-//        Log.d("<>", "dpi | xy: ${dpi} - ${max_xy_move}");
-//        Log.d("<>", "sdfasfasdf ${context.resources.configuration}: ");
-
 
         fun handleMovement(event: MotionEvent) {
             when (event.action) {
@@ -220,7 +205,9 @@ class FloatingBubble(
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    ignoreClick = abs(event.rawX - rawPointOnDown.x) > max_xy_move || abs(event.rawY - rawPointOnDown.y) > max_xy_move
+                    if (abs(event.rawX - rawPointOnDown.x) > MAX_XY_MOVE || abs(event.rawY - rawPointOnDown.y) > MAX_XY_MOVE) {
+                        ignoreClick = true
+                    }
                 }
             }
 
