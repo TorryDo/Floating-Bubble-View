@@ -361,18 +361,25 @@ class MyServiceKt : ExpandableBubbleService() {
             .expandedCompose { 
                 ExpandedCompose()
             }
+            // handle key code
             .onDispatchKeyEvent {
                 if(it.keyCode == KeyEvent.KEYCODE_BACK){
                     minimize()
                 }
                 null
             }
+            // set start location in dp
             .startLocation(0, 0)
+            // allow expanded bubble can be draggable or not
             .draggable(true)
+            // fade animation by default
             .style(null)
+            // 
             .fillMaxWidth(true)
+            // animate to the left/right side when release, trfalseue by default 
             .enableAnimateToEdge(true)
-            .dimAmount(0.9f)
+            // set background dimmer
+            .dimAmount(0.6f)
     }
 }
 ```
