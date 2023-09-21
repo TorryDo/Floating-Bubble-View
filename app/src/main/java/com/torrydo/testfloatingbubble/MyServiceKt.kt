@@ -36,12 +36,12 @@ class MyServiceKt : ExpandableBubbleService() {
         return BubbleBuilder(this)
 
             // set bubble view
-//            .bubbleView(imgView)
+            .bubbleView(imgView)
 
             // or our sweetie, Jetpack Compose
-            .bubbleCompose {
-                BubbleCompose(expand = { expand() })
-            }
+//            .bubbleCompose {
+//                BubbleCompose(expand = { expand() })
+//            }
 //            .forceDragging(false)
 
             // set style for the bubble, fade animation by default
