@@ -23,6 +23,7 @@ class MyServiceKt : ExpandableBubbleService() {
 
     override fun onCreate() {
         super.onCreate()
+        super.enableServiceTermination(true)
         minimize()
     }
 
@@ -66,6 +67,9 @@ class MyServiceKt : ExpandableBubbleService() {
 
             // the more value (dp), the larger closeable-area
             .distanceToClose(100)
+
+            // The more value (dp), the higher the close view
+            .closeBubbleBottomPadding(10)
 
             // enable bottom background, false by default
             .bottomBackground(false)
