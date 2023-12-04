@@ -11,6 +11,8 @@ import com.torrydo.floatingbubbleview.bubble.FloatingBubble
 import com.torrydo.floatingbubbleview.bubble.FloatingCloseBubble
 import com.torrydo.floatingbubbleview.service.FloatingBubbleService
 import com.torrydo.floatingbubbleview.sez
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 abstract class ExpandableBubbleService : FloatingBubbleService() {
 
@@ -21,6 +23,10 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
     // 1: bubble
     // 2: expanded-bubble
     private var state = 0
+
+    var firstX: Float = 0f
+    var firstY: Float = 0f
+    var distanceToTriggerCloseButton: Int = 0
 
     var bubble: FloatingBubble? = null
         private set
@@ -87,6 +93,10 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
             // setup bottom-background
             if (bubbleBuilder.isBottomBackgroundEnabled) {
                 bottomBackground = FloatingBottomBackground(context)
+            }
+
+            if(bubbleBuilder.distanceToTriggerCloseButtonPx != 0){
+                distanceToTriggerCloseButton = bubbleBuilder.distanceToTriggerCloseButtonPx
             }
 
         }
@@ -209,6 +219,8 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
 
         override fun onFingerDown(x: Float, y: Float) {
             mBubble.safeCancelAnimation()
+            firstX = x
+            firstY = y
         }
 
         override fun onFingerMove(x: Float, y: Float) {
@@ -227,7 +239,9 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                     }
                 }
             }
-            if (isCloseBubbleEnabled && isCloseBubbleVisible.not()) {
+            if (isCloseBubbleEnabled && isCloseBubbleVisible.not() && sqrt(
+                    (x - firstX).toDouble().pow(2) + (y - firstY).pow(2)
+                ) > distanceToTriggerCloseButton) {
                 tryShowCloseBubbleAndBackground()
                 isCloseBubbleVisible = true
             }

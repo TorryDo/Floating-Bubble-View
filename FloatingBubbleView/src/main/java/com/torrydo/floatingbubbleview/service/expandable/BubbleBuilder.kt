@@ -38,6 +38,8 @@ class BubbleBuilder(
 
     internal var distanceToClosePx = 200
 
+    internal var distanceToTriggerCloseButtonPx = 0
+
     internal var closeBubbleBottomPaddingPx = 80
 
     internal var listener: FloatingBubbleListener? = null
@@ -99,6 +101,22 @@ class BubbleBuilder(
      * */
     fun distanceToClose(dp: Int): BubbleBuilder {
         this.distanceToClosePx = dp.toPx()
+        return this
+    }
+
+    /**
+     * @param dp minimum distance bubble needs to be moved to show close-bubble
+     * */
+    fun distanceToTriggerCloseButton(dp: Int): BubbleBuilder {
+        this.distanceToTriggerCloseButtonPx = dp.toPx()
+        return this
+    }
+
+    /**
+     * @param px minimum distance bubble needs to be moved to show close-bubble
+     * */
+    fun distanceToTriggerCloseButtonPx(px: Int): BubbleBuilder {
+        this.distanceToTriggerCloseButtonPx = px
         return this
     }
 
