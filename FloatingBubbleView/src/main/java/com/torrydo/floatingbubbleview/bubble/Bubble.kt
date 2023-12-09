@@ -71,16 +71,19 @@ open class Bubble(
     /**
      * - don't call remove if the view did not call show() previously
      * - call windowManager.removeViewImmediate() will make the view can't change when added again
+     * - add this line 'if (root.windowToken == null) return' will prevent the view from being removed in some cases
      * */
     open fun remove() {
-        if (root.windowToken == null) return
-        windowManager.removeView(root)
+//        if (root.windowToken == null) return
+        try {
+            windowManager.removeView(root)
 
-        if (containCompose) {
-            composeOwner!!.onPause()
-            composeOwner!!.onStop()
-            composeOwner!!.onDestroy()
-        }
+            if (containCompose) {
+                composeOwner!!.onPause()
+                composeOwner!!.onStop()
+                composeOwner!!.onDestroy()
+            }
+        }catch (_: Exception){}
     }
 
     fun update() {
