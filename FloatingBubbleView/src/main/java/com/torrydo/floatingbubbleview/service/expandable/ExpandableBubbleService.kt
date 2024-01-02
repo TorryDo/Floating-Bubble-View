@@ -48,7 +48,9 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                     context,
                     forceDragging = bubbleBuilder.forceDragging,
                     containCompose = false,
-                    listener = bubbleBuilder.listener
+                    listener = bubbleBuilder.listener,
+                    animateBeforeExpandViewShow = bubbleBuilder.isAnimatedBeforeExpand,
+                    locationBeforeExpand = bubbleBuilder.expandPoint
                 )
                 bubble!!.rootGroup.addView(bubbleBuilder.bubbleView)
             } else {
@@ -56,7 +58,9 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                     context,
                     forceDragging = bubbleBuilder.forceDragging,
                     containCompose = true,
-                    listener = bubbleBuilder.listener
+                    listener = bubbleBuilder.listener,
+                    animateBeforeExpandViewShow = bubbleBuilder.isAnimatedBeforeExpand,
+                    locationBeforeExpand = bubbleBuilder.expandPoint
                 )
                 bubble!!.rootGroup.addView(bubbleBuilder.bubbleCompose)
             }
@@ -99,13 +103,13 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                         context,
                         containCompose = false,
                         forceDragging = false,
-                        onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent
+                        onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent,
                     )
                 expandedBubble!!.rootGroup.addView(expandedView)
             } else {
                 expandedBubble =
                     FloatingBubble(
-                        context,
+                        context = context,
                         containCompose = true,
                         forceDragging = false,
                         onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent
@@ -138,8 +142,18 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
     }
 
     fun expand() {
-        expandedBubble!!.show()
-        bubble?.remove()
+        if (bubble?.animateBeforeExpandViewShow == true) {
+            animateBubbleToLocationPx(
+                x = bubble?.locationBeforeExpand?.x ?: 0,
+                y = bubble?.locationBeforeExpand?.y ?: 0
+            ) {
+                expandedBubble!!.show()
+                bubble?.remove()
+            }
+        } else {
+            expandedBubble!!.show()
+            bubble?.remove()
+        }
 
         state = 2
     }
@@ -168,8 +182,13 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
     }
 
     // testing
-    internal fun animateBubbleToLocationPx(x: Int, y: Int) {
-        bubble?.animateTo(x.toFloat(), y.toFloat(), stiffness = SpringForce.STIFFNESS_VERY_LOW)
+    internal fun animateBubbleToLocationPx(x: Int, y: Int, onAnimateEnd: (() -> Unit)? = null) {
+        bubble?.animateTo(
+            x.toFloat(),
+            y.toFloat(),
+            stiffness = SpringForce.STIFFNESS_VERY_LOW,
+            onEnd = onAnimateEnd
+        )
     }
 
     // testing
@@ -278,7 +297,7 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
         sez.refresh()
         createBubbles(this, configBubble(), configExpandedBubble())
 
-        when(state){
+        when (state) {
             1 -> minimize()
             2 -> expand()
         }
