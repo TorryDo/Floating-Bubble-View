@@ -47,7 +47,7 @@ class BubbleBuilder(
     internal var isBubbleDraggable: Boolean = true
 
     internal var isAnimatedBeforeExpand : Boolean = false
-    internal var expandPoint : Point = Point(0,0)
+    internal var expandViewInitialPoint : Point = Point(0,0)
     fun defaultLayoutParams(): WindowManager.LayoutParams {
         return WindowManager.LayoutParams().apply {
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
@@ -220,14 +220,14 @@ class BubbleBuilder(
     }
 
     fun pointOfShowExpandViewLocationPx(x: Int, y: Int) : BubbleBuilder {
-        expandPoint.x = x
-        expandPoint.y = y
+        expandViewInitialPoint.x = x
+        expandViewInitialPoint.y = y
         return this
     }
 
     fun pointOfShowExpandViewLocation(x: Int, y: Int) : BubbleBuilder {
-        expandPoint.x = x.toPx()
-        expandPoint.y = y.toPx()
+        expandViewInitialPoint.x = x.toPx()
+        expandViewInitialPoint.y = y.toPx()
         return this
     }
 

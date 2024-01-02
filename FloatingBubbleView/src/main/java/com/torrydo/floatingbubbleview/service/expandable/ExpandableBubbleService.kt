@@ -50,7 +50,7 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                     containCompose = false,
                     listener = bubbleBuilder.listener,
                     animateBeforeExpandViewShow = bubbleBuilder.isAnimatedBeforeExpand,
-                    locationBeforeExpand = bubbleBuilder.expandPoint
+                    locationBeforeExpand = bubbleBuilder.expandViewInitialPoint
                 )
                 bubble!!.rootGroup.addView(bubbleBuilder.bubbleView)
             } else {
@@ -60,7 +60,7 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                     containCompose = true,
                     listener = bubbleBuilder.listener,
                     animateBeforeExpandViewShow = bubbleBuilder.isAnimatedBeforeExpand,
-                    locationBeforeExpand = bubbleBuilder.expandPoint
+                    locationBeforeExpand = bubbleBuilder.expandViewInitialPoint
                 )
                 bubble!!.rootGroup.addView(bubbleBuilder.bubbleCompose)
             }
