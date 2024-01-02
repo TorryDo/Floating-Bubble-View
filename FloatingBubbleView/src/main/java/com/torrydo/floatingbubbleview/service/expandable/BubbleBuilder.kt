@@ -46,6 +46,8 @@ class BubbleBuilder(
     internal var forceDragging: Boolean = true
     internal var isBubbleDraggable: Boolean = true
 
+    internal var isAnimatedBeforeExpand : Boolean = false
+    internal var expandPoint : Point = Point(0,0)
     fun defaultLayoutParams(): WindowManager.LayoutParams {
         return WindowManager.LayoutParams().apply {
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
@@ -209,6 +211,23 @@ class BubbleBuilder(
     fun startLocationPx(x: Int, y: Int): BubbleBuilder {
         startPoint.x = x
         startPoint.y = y
+        return this
+    }
+
+    fun animateBeforeExpand(animated:Boolean) : BubbleBuilder {
+        isAnimatedBeforeExpand = animated
+        return this
+    }
+
+    fun pointOfShowExpandViewLocationPx(x: Int, y: Int) : BubbleBuilder {
+        expandPoint.x = x
+        expandPoint.y = y
+        return this
+    }
+
+    fun pointOfShowExpandViewLocation(x: Int, y: Int) : BubbleBuilder {
+        expandPoint.x = x.toPx()
+        expandPoint.y = y.toPx()
         return this
     }
 
