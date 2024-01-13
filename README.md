@@ -1,11 +1,11 @@
 # 🍀Floating Bubble View
-An Android library that adds floating bubbles to your home screen 🎨, supports both XML and 💘 Jetpack Compose
+An Android library that creates floating bubbles on top of the screen 🎨, supports both XML and 💘 Jetpack Compose
 
 <br>
 
 <div align="center">
 
-Find this library useful? Don't forget to show some love by giving a `Star⭐` 🥰
+<h6> Find this library useful? 🥰 Don't forget to show some love by giving a &nbsp; -Star⭐- </h6>
 
 | Bubble |  Custom | 
 | :-: | :-: |
@@ -393,6 +393,7 @@ class MyServiceKt : ExpandableBubbleService() {
 
 ```java
 public class MyService extends ExpandableBubbleService {
+    ...
     @Override
     public void startNotificationForeground() {
         startForeground(...);
@@ -411,6 +412,8 @@ public class MyService extends ExpandableBubbleService {
 
 ```kotlin
 class MyService : FloatingBubbleService() {
+    ...
+    // optional, of course
     override fun startNotificationForeground() {
         startForeground(...)
 
@@ -431,7 +434,7 @@ Starting in Android 13 (API level 33), notifications are only visible if the "PO
 
 > The service will run normally even if the notification is not visible. 🍀
 
-> P/s: You still need to initialize the notification before showing any view.
+> You still need to initialize the notification before showing any view.
 
 </details>
 
@@ -470,9 +473,10 @@ Starting in Android 13 (API level 33), notifications are only visible if the "PO
 Contributions are welcome! 🙌
 
 - If you come across a bug or have an idea for a new feature, please let us know by creating an [Issue](https://github.com/TorryDo/Floating-Bubble-View/issues) 🐛💡
+- If you're interested in taking on an [open issue](https://github.com/TorryDo/Floating-Bubble-View/issues), please comment on it so others are aware 😊
 - If you've already fixed a bug or implemented a feature, feel free to submit a [Pull request](https://github.com/TorryDo/Floating-Bubble-View/pulls) 🚀
 - Having questions, ideas, or feedback? Don't worry, I gotchu. Simply open a [Discussion](https://github.com/TorryDo/Floating-Bubble-View/discussions) 🔊
-- Find this project useful? Don't forget to show some love by giving a star ⭐
+- Find this project useful? 🥰 Don't forget to show some love by giving a star ⭐
 
 Thank you! 💖
 
