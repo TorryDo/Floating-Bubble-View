@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.IBinder
 import com.torrydo.floatingbubbleview.canDrawOverlays
 import com.torrydo.floatingbubbleview.helper.NotificationHelper
-import com.torrydo.floatingbubbleview.service.expandable.BubbleBuilder
-import com.torrydo.floatingbubbleview.service.expandable.ExpandedBubbleBuilder
 import com.torrydo.floatingbubbleview.sez
 
 

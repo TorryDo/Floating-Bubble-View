@@ -58,7 +58,7 @@ class FloatingCloseBubble(
             halfWidthPx = width / 2
             halfHeightPx = height / 2
             baseX = halfSafeScreenWidth - halfWidthPx
-            baseY = sez.safeHeight - height - bottomPaddingPx
+            baseY = sez.safeHeight - (halfHeightPx + bottomPaddingPx)
 
             centerCloseBubbleX = halfSafeScreenWidth
             centerCloseBubbleY = baseY + halfHeightPx

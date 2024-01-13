@@ -1,7 +1,9 @@
 package com.torrydo.testfloatingbubble
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,11 +27,21 @@ class MainActivityKt : AppCompatActivity() {
             if (isBubbleRunning) {
                 stopMyService()
             } else {
-                val intent = Intent(this, MyServiceKt::class.java)
-                intent.putExtra("size", 60)
-                intent.putExtra("noti_message", "HELLO FROM MAIN ACT")
-                ContextCompat.startForegroundService(this, intent)
-                isVisible = false
+                // Check if the application has draw over other apps permission, and request it if not
+                if (!Settings.canDrawOverlays(this)) {
+                    startActivity(
+                        Intent(
+                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:$packageName")
+                        )
+                    )
+                } else {
+                    val intent = Intent(this, MyServiceKt::class.java)
+                    intent.putExtra("size", 60)
+                    intent.putExtra("noti_message", "HELLO FROM MAIN ACT")
+                    ContextCompat.startForegroundService(this, intent)
+                    isVisible = false
+                }
             }
 
             isBubbleRunning = !isBubbleRunning
