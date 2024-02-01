@@ -1,5 +1,6 @@
 package com.torrydo.testfloatingbubble
 
+import android.graphics.Point
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,7 @@ class MyServiceKt : ExpandableBubbleService() {
     }
 
     override fun configBubble(): BubbleBuilder? {
+        val showExpandViewPoint = calculateExpandViewStartPoint()
         val imgView = ViewHelper.fromDrawable(this, R.drawable.ic_rounded_blue_diamond, 60, 60)
 
         imgView.setOnClickListener {
@@ -85,6 +87,8 @@ class MyServiceKt : ExpandableBubbleService() {
 
                 override fun onFingerDown(x: Float, y: Float) {} // ..., when finger tap the bubble
             })
+            .animateBeforeExpand(true)
+            .pointOfShowExpandViewLocationPx(showExpandViewPoint.x,0)
 
     }
 
@@ -98,10 +102,10 @@ class MyServiceKt : ExpandableBubbleService() {
         return ExpandedBubbleBuilder(this)
 //            .expandedView(expandedView)
             .expandedCompose {
-                TestComposeView(popBack = {minimize()})
+                TestComposeView(popBack = { minimize() })
             }
             .onDispatchKeyEvent {
-                if(it.keyCode == KeyEvent.KEYCODE_BACK){
+                if (it.keyCode == KeyEvent.KEYCODE_BACK) {
                     minimize()
                 }
                 null
@@ -113,4 +117,12 @@ class MyServiceKt : ExpandableBubbleService() {
             .enableAnimateToEdge(true)
             .dimAmount(0.5f)
     }
+}
+
+private fun MyServiceKt.calculateExpandViewStartPoint(): Point {
+    val metrics = resources.displayMetrics
+    val bubbleViewWidthPx = (60 * metrics.density).toInt()
+    val startPositionWidth = (metrics.widthPixels / 2) - bubbleViewWidthPx
+    val startPositionHeight = metrics.heightPixels
+    return Point(startPositionWidth,startPositionHeight)
 }

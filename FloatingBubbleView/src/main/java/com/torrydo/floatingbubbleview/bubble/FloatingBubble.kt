@@ -22,6 +22,8 @@ class FloatingBubble(
     private val forceDragging: Boolean = false,
 //    private val ignoreSwipeGesture: Boolean = true,
     containCompose: Boolean,
+    val animateBeforeExpandViewShow : Boolean = false,
+    val locationBeforeExpand : Point = Point(0,0),
     private val listener: FloatingBubbleListener? = null,
     onDispatchKeyEvent: ((KeyEvent) -> Boolean?)? = null
 ) : Bubble(
@@ -141,7 +143,12 @@ class FloatingBubble(
     /**
      * pass close bubble point
      * */
-    fun animateTo(x: Float, y: Float, stiffness: Float = SpringForce.STIFFNESS_MEDIUM) {
+    fun animateTo(
+        x: Float,
+        y: Float,
+        stiffness: Float = SpringForce.STIFFNESS_MEDIUM,
+        onEnd: (() -> Unit)? = null
+    ) {
         AnimHelper.animateSpringPath(
             startX = newPoint.x.toFloat(),
             startY = newPoint.y.toFloat(),
@@ -154,6 +161,11 @@ class FloatingBubble(
 
 //                    builder.listener?.onMove(x.toFloat(), y.toFloat()) // don't call this line, it'll spam multiple MotionEvent.OnActionMove
                     update()
+                }
+
+                override fun onEnd() {
+                    onEnd?.invoke()
+                    super.onEnd()
                 }
             },
             stiffness = stiffness,
