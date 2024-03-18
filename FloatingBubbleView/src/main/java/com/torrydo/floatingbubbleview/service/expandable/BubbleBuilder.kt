@@ -37,8 +37,8 @@ class BubbleBuilder(
     internal var isBottomBackgroundEnabled = false
 
     internal var distanceToClosePx = 200
-
     internal var closeBubbleBottomPaddingPx = 80
+    internal var triggerClickableAreaPx = 5f
 
     internal var listener: FloatingBubbleListener? = null
     internal var behavior: CloseBubbleBehavior = CloseBubbleBehavior.FIXED_CLOSE_BUBBLE
