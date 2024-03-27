@@ -5,7 +5,7 @@ An Android library that creates floating bubbles on top of the screen 🎨, supp
 
 <div align="center">
 
-<h6> Find this library useful? 🥰 Don't forget to show some love by giving a &nbsp; -Star⭐- </h6>
+<h6> Like this project? 🥰 Don't forget to show some love by giving a Star⭐ </h6>
 
 | Bubble |  Custom | 
 | :-: | :-: |
@@ -249,6 +249,7 @@ public class MyServiceJava extends ExpandableBubbleService {
                 .closeBubbleView(ViewHelper.fromDrawable(this, R.drawable.ic_close_bubble))
                 .closeBubbleStyle(R.style.default_close_bubble_style)
                 .distanceToClose(100)
+                .triggerClickablePerimeterPx(5f)
                 .closeBehavior(CloseBubbleBehavior.FIXED_CLOSE_BUBBLE)
                 .startLocation(100, 100)
                 .enableAnimateToEdge(true)
@@ -346,6 +347,9 @@ class MyServiceKt : ExpandableBubbleService() {
                 override fun onFingerUp(x: Float, y: Float) {}   // ..., when finger release from bubble
                 override fun onFingerDown(x: Float, y: Float) {} // ..., when finger tap the bubble
             })
+
+            // set the clickable perimeter of the bubble in pixels (default = 5f)
+            .triggerClickablePerimeterPx(5f)
 
     }
 

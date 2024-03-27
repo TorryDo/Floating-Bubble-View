@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
 import android.graphics.PointF
+import android.util.Log
 import android.view.*
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
@@ -20,10 +21,10 @@ import kotlin.math.abs
 class FloatingBubble(
     private val context: Context,
     private val forceDragging: Boolean = false,
-//    private val ignoreSwipeGesture: Boolean = true,
     containCompose: Boolean,
     private val listener: FloatingBubbleListener? = null,
-    onDispatchKeyEvent: ((KeyEvent) -> Boolean?)? = null
+    onDispatchKeyEvent: ((KeyEvent) -> Boolean?)? = null,
+    private val triggerClickableAreaPx: Float = 1f,
 ) : Bubble(
     context = context,
     root = LayoutInflater.from(context).inflate(R.layout.bubble, null).apply {
@@ -160,11 +161,16 @@ class FloatingBubble(
         )
     }
 
-    private val MAX_XY_MOVE = 1f
     private var ignoreClick: Boolean = false
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customTouch() {
+        val MAX_XY_MOVE = triggerClickableAreaPx
+
+//        val smallestWidth = context.resources.configuration.smallestScreenWidthDp
+//        Log.d("<> smallest width", smallestWidth.toString())
+//        MAX_XY_MOVE = smallestWidth / 30f
+//        Log.d("<> MAX XY move", MAX_XY_MOVE.toString())
 
         fun handleMovement(event: MotionEvent) {
             when (event.action) {

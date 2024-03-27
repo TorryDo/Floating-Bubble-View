@@ -2,6 +2,7 @@ package com.torrydo.floatingbubbleview.service.expandable
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.PointF
 import androidx.dynamicanimation.animation.SpringForce
 import com.torrydo.floatingbubbleview.CloseBubbleBehavior
 import com.torrydo.floatingbubbleview.FloatingBubbleListener
@@ -11,6 +12,7 @@ import com.torrydo.floatingbubbleview.bubble.FloatingBubble
 import com.torrydo.floatingbubbleview.bubble.FloatingCloseBubble
 import com.torrydo.floatingbubbleview.service.FloatingBubbleService
 import com.torrydo.floatingbubbleview.sez
+import kotlin.math.abs
 
 abstract class ExpandableBubbleService : FloatingBubbleService() {
 
@@ -42,34 +44,31 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
         this._context = context
 
         if (bubbleBuilder != null) {
-            // setup bubble
+            // setup bubble ------------------------------------------------------------------------
+            bubble = FloatingBubble(
+                context,
+                forceDragging = bubbleBuilder.forceDragging,
+                containCompose = bubbleBuilder.bubbleCompose != null,
+                listener = bubbleBuilder.listener,
+                triggerClickableAreaPx = bubbleBuilder.triggerClickablePerimeterPx
+            )
             if (bubbleBuilder.bubbleView != null) {
-                bubble = FloatingBubble(
-                    context,
-                    forceDragging = bubbleBuilder.forceDragging,
-                    containCompose = false,
-                    listener = bubbleBuilder.listener
-                )
                 bubble!!.rootGroup.addView(bubbleBuilder.bubbleView)
             } else {
-                bubble = FloatingBubble(
-                    context,
-                    forceDragging = bubbleBuilder.forceDragging,
-                    containCompose = true,
-                    listener = bubbleBuilder.listener
-                )
                 bubble!!.rootGroup.addView(bubbleBuilder.bubbleCompose)
             }
+
             bubble!!.mListener = CustomBubbleListener(
                 bubble!!,
                 bubbleBuilder.isAnimateToEdgeEnabled,
                 closeBehavior = bubbleBuilder.behavior,
-                isCloseBubbleEnabled = true
+                isCloseBubbleEnabled = true,
+                triggerClickableAreaPx = bubbleBuilder.triggerClickablePerimeterPx
             )
             bubble!!.layoutParams = bubbleBuilder.defaultLayoutParams()
             bubble!!.isDraggable = bubbleBuilder.isBubbleDraggable
 
-            // setup close-bubble
+            // setup close-bubble ------------------------------------------------------------------
             if (bubbleBuilder.closeView != null) {
                 closeBubble = FloatingCloseBubble(
                     context,
@@ -93,25 +92,18 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
 
         // setup expanded-bubble
         expandedBuilder?.apply {
-            if (expandedView != null) {
-                expandedBubble =
-                    FloatingBubble(
-                        context,
-                        containCompose = false,
-                        forceDragging = false,
-                        onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent
-                    )
-                expandedBubble!!.rootGroup.addView(expandedView)
-            } else {
-                expandedBubble =
-                    FloatingBubble(
-                        context,
-                        containCompose = true,
-                        forceDragging = false,
-                        onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent
-                    )
+            expandedBubble = FloatingBubble(
+                context,
+                containCompose = expandedCompose != null,
+                forceDragging = false,
+                onDispatchKeyEvent = expandedBuilder.onDispatchKeyEvent,
+            )
+            if (expandedCompose != null) {
                 expandedBubble!!.rootGroup.addView(expandedCompose)
+            } else {
+                expandedBubble!!.rootGroup.addView(expandedView)
             }
+
             expandedBubble!!.mListener = CustomBubbleListener(
                 expandedBubble!!,
                 mAnimateToEdge = expandedBuilder.isAnimateToEdgeEnabled,
@@ -202,13 +194,17 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
         private val mBubble: FloatingBubble,
         private val mAnimateToEdge: Boolean,
         private val closeBehavior: CloseBubbleBehavior = CloseBubbleBehavior.FIXED_CLOSE_BUBBLE,
-        private val isCloseBubbleEnabled: Boolean = true
+        private val isCloseBubbleEnabled: Boolean = true,
+        private val triggerClickableAreaPx: Float = 1f
     ) : FloatingBubbleListener {
 
         private var isCloseBubbleVisible = false
 
+        private var onDownLocation = PointF(0f, 0f)
+
         override fun onFingerDown(x: Float, y: Float) {
             mBubble.safeCancelAnimation()
+            onDownLocation = PointF(x, y)
         }
 
         override fun onFingerMove(x: Float, y: Float) {
@@ -228,8 +224,11 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                 }
             }
             if (isCloseBubbleEnabled && isCloseBubbleVisible.not()) {
-                tryShowCloseBubbleAndBackground()
-                isCloseBubbleVisible = true
+                // TODO: check if close-bubble should be shown
+                if (abs(onDownLocation.x - x) > triggerClickableAreaPx || abs(onDownLocation.y - y) > triggerClickableAreaPx) {
+                    tryShowCloseBubbleAndBackground()
+                    isCloseBubbleVisible = true
+                }
             }
         }
 
@@ -278,7 +277,7 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
         sez.refresh()
         createBubbles(this, configBubble(), configExpandedBubble())
 
-        when(state){
+        when (state) {
             1 -> minimize()
             2 -> expand()
         }
