@@ -38,6 +38,8 @@ class MyServiceKt : ExpandableBubbleService() {
             // set bubble view
             .bubbleView(imgView)
 
+            .triggerClickablePerimeterPx(5f)
+
             // or our sweetie, Jetpack Compose
 //            .bubbleCompose {
 //                BubbleCompose(expand = { expand() })

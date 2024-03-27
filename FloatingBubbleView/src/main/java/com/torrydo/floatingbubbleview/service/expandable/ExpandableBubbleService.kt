@@ -50,7 +50,7 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                 forceDragging = bubbleBuilder.forceDragging,
                 containCompose = bubbleBuilder.bubbleCompose != null,
                 listener = bubbleBuilder.listener,
-                triggerClickableAreaPx = bubbleBuilder.triggerClickableAreaPx
+                triggerClickableAreaPx = bubbleBuilder.triggerClickablePerimeterPx
             )
             if (bubbleBuilder.bubbleView != null) {
                 bubble!!.rootGroup.addView(bubbleBuilder.bubbleView)
@@ -63,7 +63,7 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
                 bubbleBuilder.isAnimateToEdgeEnabled,
                 closeBehavior = bubbleBuilder.behavior,
                 isCloseBubbleEnabled = true,
-                triggerClickableAreaPx = bubbleBuilder.triggerClickableAreaPx
+                triggerClickableAreaPx = bubbleBuilder.triggerClickablePerimeterPx
             )
             bubble!!.layoutParams = bubbleBuilder.defaultLayoutParams()
             bubble!!.isDraggable = bubbleBuilder.isBubbleDraggable

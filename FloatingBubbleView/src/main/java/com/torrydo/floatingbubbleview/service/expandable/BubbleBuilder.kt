@@ -38,7 +38,7 @@ class BubbleBuilder(
 
     internal var distanceToClosePx = 200
     internal var closeBubbleBottomPaddingPx = 80
-    internal var triggerClickableAreaPx = 5f
+    internal var triggerClickablePerimeterPx = 5f
 
     internal var listener: FloatingBubbleListener? = null
     internal var behavior: CloseBubbleBehavior = CloseBubbleBehavior.FIXED_CLOSE_BUBBLE
@@ -72,6 +72,21 @@ class BubbleBuilder(
             }
         }
 
+    }
+
+    /**
+     * Set the clickable perimeter of the bubble in pixels (default = 5f).
+     *
+     * For example, when the bubble is dragged, it will still perform a click if
+     * the new location (when the bubble is released) is not further than the last location by the specified pixel amount.
+     *
+     * @param f The size of the clickable area in pixels.
+     * @return This BubbleBuilder instance for method chaining.
+     */
+    @Discouraged("the name will be changed if I found a better one")
+    fun triggerClickablePerimeterPx(f: Float): BubbleBuilder{
+        this.triggerClickablePerimeterPx = f
+        return this
     }
 
     fun bubbleDraggable(b: Boolean): BubbleBuilder{
