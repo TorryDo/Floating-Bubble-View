@@ -18,10 +18,10 @@ jobs:
       - name: Checkout github repo
         uses: actions/checkout@v2
 
-      - name: set up JDK 11
-        uses: actions/setup-java@v2
+      - name: set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'adopt'
           cache: gradle
 
