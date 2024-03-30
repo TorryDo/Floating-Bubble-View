@@ -118,6 +118,16 @@ class BubbleBuilder(
     }
 
     /**
+     * The padding beneath the close icon.
+     *
+     * @param dp Distance beneath the close icon
+     */
+    fun closeBubbleBottomPadding(dp: Int): BubbleBuilder {
+        this.closeBubbleBottomPaddingPx = dp
+        return this
+    }
+
+    /**
      * @param enabled show gradient dark background on the bottom of the screen
      * */
     fun bottomBackground(enabled: Boolean): BubbleBuilder {

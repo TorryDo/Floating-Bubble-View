@@ -30,6 +30,9 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
     var expandedBubble: FloatingBubble? = null
         private set
 
+    private var enableServiceTermination: Boolean = true
+        private set
+
     private var closeBubble: FloatingCloseBubble? = null
     private var bottomBackground: FloatingBottomBackground? = null
 
@@ -151,6 +154,16 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
         expandedBubble?.isDraggable = b
     }
 
+    /**
+     * Specify whether the background service should be terminated or not.
+     * If enabled, the floating popup, close icon, expanded view, foreground notification will all be terminated.
+     *
+     * @param b Boolean parameter, where true enables automatic service termination.
+     */
+    fun enableServiceTermination(b: Boolean) {
+        enableServiceTermination = b
+    }
+
     fun animateBubbleToEdge() {
         bubble?.animateIconToEdge()
     }
@@ -254,7 +267,8 @@ abstract class ExpandableBubbleService : FloatingBubbleService() {
             }
 
             if (shouldDestroy) {
-                serviceInteractor?.requestStop()
+                removeAll()
+                if (enableServiceTermination) serviceInteractor?.requestStop()
             } else {
                 if (mAnimateToEdge) {
                     mBubble.animateIconToEdge()
